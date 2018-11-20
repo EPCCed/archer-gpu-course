@@ -1,0 +1,87 @@
+!
+!     This is a simple CUDA code that negates an array of integers.  It
+!     introduces the concepts of device-memory management, and kernel
+!     invocation.
+!
+!     Training material developed by George Beckett, based on original
+!     material provided by James Perry and Alan Gray
+!     Copyright EPCC, The University of Edinburgh, 2011
+!
+!     15/FEB/11 - MGB created initial FORTRAN90 port.
+
+!
+! Main routine
+!
+program intro
+  use cudafor
+  use gpu_utils
+  use array_negate
+
+  implicit none
+
+  integer, parameter      :: ARRAY_SIZE = 256
+
+  ! The number of CUDA blocks and threads per block to use.
+  ! These should always multiply to give the array size.
+  ! For the single block kernel, NUM_BLOCKS should be 1 and
+  ! THREADS_PER_BLOCK should be the array size
+  type(dim3) :: blocksPerGrid, threadsPerBlock
+  integer, parameter      :: NUM_BLOCKS = 1
+  integer, parameter      :: THREADS_PER_BLOCK = 256
+
+  integer, allocatable, dimension(:) :: h_a, h_out
+  integer                 :: i, istat
+
+  integer, device, allocatable, dimension(:) :: d_a
+
+
+  integer :: deviceNum
+  type (cudaDeviceProp) :: prop
+
+  ! print device name
+  istat = cudaGetDevice(deviceNum)
+  istat = cudaGetDeviceProperties(prop, deviceNum)
+  write(*,"('   Device name: ',a)") trim(prop%name)
+  
+  ! Allocate memory on host
+  ! h_a holds the input array, h_out holds the result
+  allocate (h_a(ARRAY_SIZE))
+  allocate (h_out(ARRAY_SIZE))
+
+  ! Allocate memory on device
+  ! Part 1A: allocate device memory
+
+  ! Initialise host arrays
+  do i = 1, ARRAY_SIZE
+     h_a(i) = i - 1
+     h_out(i) = 0
+  end do
+
+  ! Copy input array from host to GPU
+  ! Part 1B: copy host array h_a to device array d_a
+
+  ! Run the kernel on the GPU
+  ! Part 2A: configure and launch kernel (un-comment and complete)
+  ! blocksPerGrid  = dim3( , , )
+  ! threadsPerBlock = dim3( , , )
+  ! call g_negate <<<  >>> ( , )
+
+  ! wait for all threads to complete and check for errors
+  istat = cudaThreadSynchronize()
+  call checkCUDAError
+
+  ! copy the result array back to the host
+  ! Part 1C: copy device array d_a to host array h_out
+
+  ! Print out the result
+  write (*,*) "Results: "
+  write (*,*) h_out
+
+  ! Free device buffer
+  ! Part 1D: free d_a 
+
+  ! Free host buffers
+  deallocate (h_a)
+  deallocate (h_out)
+
+end program intro

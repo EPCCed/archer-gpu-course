@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>GPU Course Slides Entry Point</title>
+
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/white.css">
+    <link rel="stylesheet" href="css/local.css">
+
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="lib/css/vs.css">
+  </head>
+
+  <body>
+    <div class="reveal">
+    <div class="slides">
+
+    <!-- Programme of Course Material -->
+
+    <section id="Programme">
+      <h3>Welcome to the Course!</h3>
+      <p><a href = "./src/timetable.html">Timetable and Local Information</a></p>
+      <img class = "plain" src = "img/ARCHER_logo.png" alt = "ARCHER Logo" width = "80%">
+    </section>
+
+    </div>
+    </div>
+
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.js"></script>
+
+    <script>
+	// More info about config & dependencies:
+	// - https://github.com/hakimel/reveal.js#configuration
+	// - https://github.com/hakimel/reveal.js#dependencies
+	Reveal.initialize({
+		controls: false,
+                center: false,
+		dependencies: [
+			{ src: 'plugin/markdown/marked.js' },
+			{ src: 'plugin/markdown/markdown.js' },
+			{ src: 'plugin/notes/notes.js', async: true },
+			{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+			]
+		});
+    </script>
+  </body>
+</html>

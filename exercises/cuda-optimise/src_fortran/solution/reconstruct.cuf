@@ -1,0 +1,373 @@
+!
+!     This is a CUDA FORTRAN program that performs an iterative reverse
+!     edge-detection algorithm.
+!
+!     Training material developed by George Beckett, based on original
+!     material provided by James Perry, Alan Gray, and David Henty.
+!     Copyright EPCC, The University of Edinburgh, 2011
+!
+!     14/APR/11 - MGB created initial FORTRAN90 port
+
+
+! ------------
+! Main routine
+! ------------
+program reverse
+  use cudafor
+  use reverse_kernels
+
+  implicit none
+
+  ! Image dimensions
+  integer, parameter :: N      = 2048
+
+  ! CUDA decomposition
+  integer :: TPB
+  integer :: TPB_X, TPB_Y 
+  type(dim3) :: blocksPerGrid, threadsPerBlock
+
+  ! Number of iterations to run
+  integer, parameter :: ITERATIONS = 100
+
+
+  ! Tolerance for comparing host and GPU results
+  real (kind=rp), parameter    :: MAX_DIFF   = 0.01
+
+  ! Timing variables - using cpu_time(), which requires FORTRAN95
+  real (kind=tp) :: start_time, end_time
+  real (kind=tp) :: start_time_inc_data, end_time_inc_data
+  real (kind=tp) :: cpu_start_time, cpu_end_time
+
+  ! Host and device arrays
+  real (kind=rp), allocatable, dimension(:,:)         :: input, output_validate
+  real (kind=rp), allocatable, dimension(:,:)         :: edge
+  real (kind=rp), allocatable, dimension(:,:)         :: img, output
+  real (kind=rp), device, allocatable, dimension(:,:) :: d_input, d_output 
+  real (kind=rp), device, allocatable, dimension(:,:) :: d_edge
+
+  ! Other variables
+  integer        :: x, y
+  integer        :: iter, istat, i, j
+  integer        :: errors
+  real (kind=rp) :: diff
+
+  
+  integer :: istat, deviceNum
+  type (cudaDeviceProp) :: prop
+
+  ! print device name
+  istat = cudaGetDevice(deviceNum)
+  istat = cudaGetDeviceProperties(prop, deviceNum)
+  write(*,"('   Device name: ',a)") trim(prop%name)
+
+
+
+  !
+  ! Allocate host and device memory
+  !
+  allocate(input(N+2, N+2))
+  allocate(output_validate(N+2, N+2))
+  allocate(output(N+2, N+2))
+  allocate(edge(N, N))
+  allocate(img(N, N))
+
+  allocate(d_input(N+2, N+2))
+  allocate(d_output(N+2, N+2))
+  allocate(d_edge(N+2, N+2))
+
+  !
+  ! Read in edge data
+  !
+  call datread(N, N, edge, "edge2048x2048.dat")
+
+  !
+  ! Zero buffer so that halo is zeroed
+  ! and then populate interior of array
+  !
+  input(:,:) = 0.0
+  input(2:N+1,2:N+1) = edge(1:N,1:N)
+
+  !
+  ! Copy data to device memory
+  !
+  call cpu_time(start_time_inc_data)
+
+  d_input                      = input(1:N+2,1:N+2)
+  d_output                     = input(1:N+2,1:N+2)
+  d_edge(2:N+1,2:N+1) = edge(1:N,1:N)
+
+
+ print *, "Image Size:  ", N, "x", N
+ print *, "Iterations:  ", ITERATIONS
+
+
+! CUDA decomposition
+
+ TPB_X=16  
+ TPB_Y=16  
+ if( (mod(N,TPB_X) .ne. 0) .or.  (mod(N,TPB_Y) .ne. 0)  ) then  
+    stop 'Error: threads per block must exactly divide N in each dimension'  
+ end if  
+  
+ blocksPerGrid  = dim3(N/TPB_X,  N/TPB_Y,  1)  
+ threadsPerBlock = dim3(TPB_X, TPB_Y, 1)  
+
+ print *, "Blocks:  ", blocksPerGrid
+ print *, "Threads per block:  ", threadsPerBlock
+
+
+ call cpu_time(start_time) 
+
+
+  !
+  ! Main iterative loop
+  !
+
+
+  do iter=1,ITERATIONS 
+
+  !
+  ! Run GPU kernel
+  !
+
+     call inverseEdgeDetect2D <<< blocksPerGrid, threadsPerBlock >>> & 
+          (N, N, d_input, d_output, d_edge) 
+
+     istat = cudaThreadSynchronize()
+
+
+     ! copy output to input directly on device 
+     d_input = d_output 
+
+  end do
+
+  call cpu_time(end_time)
+
+  !
+  ! Retrieve output from device
+  !
+  output = d_input(1:N+2,1:N+2)
+
+  call cpu_time(end_time_inc_data)
+
+  !
+  ! Run host version of algorithm
+  ! 
+
+  call cpu_time(cpu_start_time)
+
+  do iter=1,ITERATIONS
+     call run_on_host(N, N, input, output_validate, edge)
+
+     input(:,:) = output_validate(:,:)
+  end do
+
+  call cpu_time(cpu_end_time)
+
+  !
+  ! Check that GPU version and host version results match
+  !
+  errors = 0
+
+  do j=1,N
+     do i=1,N
+        diff = abs(output(i,j) - output_validate(i,j))
+        if(diff .gt. MAX_DIFF) then
+           errors = errors+1
+!           print *, "Error at ", i, j, &
+!                "CPU=", output_validate(i,j), &
+!                "GPU=", output(i,j)
+        end if
+     end do
+  end do
+
+  if(errors .eq. 0) then
+     print *, "***TEST PASSED SUCCESSFULLY***"
+      else
+     print *, "***ERROR: TEST FAILED***"
+ end if
+
+  !
+  ! Copy results to output buffer
+  !
+  img(1:N,1:N) = output(2:N+1,2:N+1)
+
+  !
+  ! Write to file
+  !
+  call pgmwrite(N, N, img, "output.pgm")
+
+  !
+  ! Free host and device memory
+  !
+  deallocate(input)
+  deallocate(output_validate)
+  deallocate(output)
+  deallocate(edge)
+  deallocate(img)
+
+  deallocate(d_input)
+  deallocate(d_output)
+  deallocate(d_edge)
+
+  !
+  ! Print timings
+  !
+  print *, "GPU time (inc. data transfers) : ", (end_time_inc_data - &
+       start_time_inc_data)
+  print *, "CPU time                       : ", &
+       (cpu_end_time - cpu_start_time)
+
+end program reverse
+
+
+!
+!  Iteration of reverse-edge-detection algorithm (host version)
+!
+subroutine run_on_host(width, height, source, destination, edge)
+  use reverse_kernels
+
+  implicit none
+
+  integer, intent(in)                         :: width, height
+  real (kind=rp), dimension(height+2,width+2) :: source, destination
+  real (kind=rp), dimension(height, width)    :: edge
+
+  ! Local variables
+  integer :: i, j
+
+  do j=2,width+1
+     do i=2,height+1
+        destination(i,j) = 0.25*( &
+             source(i-1,j) + &
+             source(i+1,j) + &
+             source(i,j-1) + &
+             source(i,j+1) - &
+             edge(i-1,j-1))     ! Remember edge does not include halo
+     end do
+  end do
+end subroutine run_on_host
+
+!
+! Read input 
+!
+subroutine datread(width, height, edge, filename)
+  use reverse_kernels
+
+  implicit none
+
+  integer, intent(in)                     :: width, height
+  real (kind=rp), dimension(height,width) :: edge
+  character*(*)                           :: filename
+
+  integer :: width_tmp, height_tmp
+  integer :: i, j
+
+  integer, parameter :: iounit = 12
+
+  open(unit=iounit, file=filename, status="old", action="read")
+
+  read(iounit, *) width_tmp, height_tmp
+
+  if ((width .NE. width_tmp) .OR. (height .NE. height_tmp)) then
+     write (*,*) "datread: size mismatch, (width, height) = (", &
+          width_tmp, height_tmp, "), expected ", width, height
+     stop
+  end if
+
+  read (iounit, *) ((edge(i,j), j=1,width), i=1,height)
+
+  close(unit=iounit)
+end subroutine datread
+
+subroutine pgmwrite(width, height, image, filename)
+  use reverse_kernels
+
+  implicit none
+
+  integer, intent(in)                      :: width, height
+  real (kind=rp), dimension(height, width) :: image
+  character*(*)                            :: filename
+
+  integer :: i, j
+  integer, parameter           :: iounit = 10
+  real (kind=rp), parameter    :: thresh = 255.0
+  real (kind=rp)               :: imgmax, imgmin
+  integer, dimension(height, width) :: grey
+
+!  imgmax = maxval(image(:,:))
+!  imgmin = minval(image(:,:))
+
+  do i=1, width
+     do j=1, height
+  
+        if (ABS(image(i,j)) .lt. imgmin) then
+           
+           imgmin=ABS(image(i,j))
+           
+        end if
+        if (ABS(image(i,j)) .gt. imgmax) then
+           imgmax=ABS(image(i,j))
+
+        end if
+
+     end do
+  end do
+
+    do j=1,width
+       do i=1,height
+          
+          
+
+          if (imgmax .gt. thresh) then
+             grey(i,j)=int(thresh * &
+                  ABS(image(i,j)-imgmin)/(imgmax-imgmin) + 0.5)
+          else
+             grey(i,j)=int(ABS(image(i,j))+ 0.5)
+          end if
+
+       end do
+    end do
+
+  ! Increase contrast by boosting lower values
+    do j=1,width
+       do i=1,height
+          grey(i,j) = int( thresh*sqrt( real(grey(i,j))/thresh ) )
+       end do
+    end do
+
+
+!  grey(1:height,1:width) = int(thresh * &
+!       (image(1:height,1:width)-imgmin)/(imgmax-imgmin) + 0.5)
+
+  ! Increase contrast by boosting lower values
+  !  do j=1,width
+  !     do i=1,height
+  !        grey(i,j) = int( thresh*sqrt( real(grey(i,j))/thresh ) )
+  !     end do
+  !  end do
+
+  open(unit=iounit, file=filename)
+
+  write(iounit, fmt='(''P2''/''# Written by pgmwrite'')')
+  write(iounit, *) width, height
+  write(iounit, *) 255
+  write(iounit, fmt='(17(i3,'' ''))') &
+       ((grey(i,j), j=1,width), i=1,height)
+
+  close(unit=iounit)
+end subroutine pgmwrite
+
+!
+! Utility function to check for and to report errors
+!
+subroutine checkCUDAError
+  integer :: error_code
+
+  error_code = cudaGetLastError()
+
+  if (error_code .NE. cudaSuccess) then
+     write (*,*) "Cuda error: ", error_code
+     ! stop
+  end if
+end subroutine checkCUDAError

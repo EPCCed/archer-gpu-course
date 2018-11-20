@@ -1,0 +1,294 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>reveal.js</title>
+
+-<link rel="stylesheet" href="../css/reveal.css">
+<link rel="stylesheet" href="../css/theme/white.css">
+<link rel="stylesheet" href="../css/local.css">
+
+<!-- Theme used for syntax highlighting of code -->
+<link rel="stylesheet" href="../lib/css/vs.css">
+
+<!-- Printing and PDF exports -->
+<script>
+var link = document.createElement( 'link' );
+link.rel = 'stylesheet';
+link.type = 'text/css';
+link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+document.getElementsByTagName( 'head' )[0].appendChild( link );
+</script>
+</head>
+
+<!-- Start of presentation --> 
+<body>
+<div class="reveal">
+<div class="slides">
+
+  <section>
+
+    <h1 style = "text-transform: none !important">
+        Constant Memory Shared Memory </h1>
+    <!-- That replies on getting the line break right! -->
+    <!-- 
+    <p>Kevin Stratford</p>
+    <p> kevin@epcc.ed.ac.uk </p> -->
+    <br>
+    <p>Material by: Kevin Stratford </p>
+    <img class = "plain" src ="../img/epcc_logo.png" alt = "EPCC Logo" />
+
+  </section>
+
+  <section>
+
+    <h4> CUDA Memory so far...</h4>
+
+    <ul>
+    <li> Global memory </li>
+    <ul class = "inner">
+        <li> Allocated on host</li>
+        <li> Available to both host and device read/write </li>
+    </ul>
+    <li> Local variables in kernels </li>
+    <ul class = "inner">
+       <li> Private on a per thread basis
+       <li> Usually expected to be held in registers </li>
+    </ul>
+    </ul>
+  </section>
+
+  <section>
+    <h4> Other types of memory </h4>
+
+    <ul>
+    <li> Constant cache memory </li>
+    <ul class = "inner">
+       <li> Read only in kernel</li>
+       <li> No cache coherency mechanism required to support writes
+       <li> Fast and effectively very high bandwidth 
+    </ul>
+    <li> Shared memory
+    <ul class = "inner">
+       <li> Shared between threads in the same block</li>
+       <li> Often declared statically in the kernel (can be dynamic)
+       <li> Lifetime of the kernel
+    </ul>
+    </ul>
+  </section>
+
+
+  <section>
+    <h4> Schematic: C </h4>
+
+    <p>
+    <pre class = "stretch"><code class = "cpp" data-trim>
+/* Constant data declared at file scope with
+ *  __constant__ memory space qualifier  */
+
+static __constant__ double coeffs[3];
+
+int someHostFunction(...) {
+
+  /* ... assign some values at run time ... */
+
+  double values[3];
+
+  /* ... and before the relevant kernel ... */
+
+  cudaMemcpyToSymbol(coeffs, values, 3*sizeof(double));
+
+  ...
+}
+    </code></pre>
+
+  </section>
+
+
+  <section>
+    <h4> Schematic: C kernel </h4>
+
+    <p>
+    <pre><code class = "cpp" data-trim>
+
+/* Still in the appropriate scope ... */
+
+static __constant__ double coeffs[3];
+
+__global__ void someKernel(...) {
+
+  ...
+
+  /* Reference constant data as usual ... */
+
+  result = coeffs[0]*x + coeffs[1]*y + coeffs[2]*z;
+}
+    </code></pre>
+
+  </section>  
+
+  <section>
+    <h4> Schematic: Fortran </h4>
+
+    <pre class = "stretch"><code class = "fortran" data-trim>
+! Constant variable declared at e.g., module scope
+! with constant attribute
+
+real, constant :: coeffs[3]
+
+contains
+
+subroutine someHostRoutine(...)
+
+  ! ...assign some values at runtime ...
+
+  coeffs(:) = values(1:3)
+
+  ! ...and call relevant kernel ...
+
+end subroutine someHostRoutine
+    </code></pre>
+
+  </section>
+
+  <section>
+    <h4> Schematic: Fortran kernel </h4>
+
+    <p>
+    <pre><code class = "fortran" data-trim>
+! Still in the appropriate scope ...
+
+real, constant :: coeffs[3]
+
+contains
+
+attributes(global) subroutine someKernel(...)
+
+  ! Reference constant data as usual ...
+
+  result = coeffs[1]*x + coeffs[2]*y + coeffs[3]*z
+
+end subroutine someKernel
+
+    </code></pre>
+
+  </section>
+
+  <section>
+    <h4> Constant memory </h4>
+
+    <ul>
+    <li> A relatively scarce resource </li>
+    <ul class = "inner">
+       <li> Typically 64 kB in total (can inquire at runtime) </li>
+       <li> No huge look-up tables!
+       <li> Also used for kernel actual arguments (by value)
+    </ul>
+    <li> Any "overflow" will spill to normal global memory
+    <ul class = "inner">
+      <li> ... and accesses will be relatively slow
+    </ul>
+    </ul>
+
+  </section>
+
+  <section>
+
+    <h4> Shared Memory </h4>
+
+    <ul>
+    <li> Shared between threads in a block </li>
+    <ul class = "inner">
+       <li> Useful for temporary values, particularly if significant reuse
+       <li> Marshalling data within a block
+       <li> May be used to perform reductions (sum, min, max)
+    </ul>
+    <li> May require care in synchronisation with a block
+    <ul class = "inner">
+      <li> Basic synchonisation is <code>__syncthreads()</code>
+      <li> Many others 
+    </ul>
+    <li> Declaration
+    <ul class = "inner">
+      <li> C: via <code>__shared__</code> memory space qualifier
+      <li> Fortran: via <code>shared</code> attribute 
+    </ul>
+
+    </ul>
+  </section>
+
+  <section>
+    <h4> Example: Reverse elements in array </h4>
+
+    <!-- Note in the fragment, the two spaces after the end of
+         the <p> tag are the actual indent that appears -->
+
+    <pre><code class = "cpp" data-trim data-noescape>
+/* Reverse elements so that the order 0,1,2,3,...
+ * becomes ...,3,2,1,0
+ * Assume we have one block. */
+
+__global__ void reverseElements(int * myArray) {
+
+  __shared__ int tmp[THREADS_PER_BLOCK];
+
+  int idx = threadIdx.x;
+  tmp[idx] = myArray[idx];
+<p class = "fragment" style = "margin: 0em">  __syncthreads();</p>
+  myArray[THREADS_PER_BLOCK - (idx+1)] = tmp[idx];
+}    
+    </code></pre>
+  </section>
+
+  <section>
+    <h4> Shared Memory Summary </h4>
+
+    <ul>
+    <li> Again, a relatively scarce resource </li>
+    <ul class = "inner">
+       <li> E.g., 50 kB per block
+       <li> Some care may be required (check at runtime)
+    </ul>
+    <li> Various performance considerations
+    <ul class = "inner">
+      <li> E.g., "bank conflicts"
+      <li> Warp divergence related to synchronisation
+    </ul>
+    </ul>
+
+  </section>
+
+</div>
+</div>
+
+<!-- End of presentation -->
+
+<script src="../lib/js/head.min.js"></script>
+<script src="../js/reveal.js"></script>
+
+<script>
+// More info about config & dependencies:
+// - https://github.com/hakimel/reveal.js#configuration
+// - https://github.com/hakimel/reveal.js#dependencies
+Reveal.initialize({
+  controls: false,
+  slideNumber: true,
+  center: false,
+  math: { mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js',
+          config: 'TeX-AMS_HTML-full'
+         // See http://docs.mathjax.org/en/latest/config-files.html
+        },
+  dependencies: [
+	{ src: '../plugin/markdown/marked.js' },
+	{ src: '../plugin/markdown/markdown.js' },
+	{ src: '../plugin/notes/notes.js', async: true },
+        { src: '../plugin/math/math.js', async: true},
+	{ src: '../plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+		]
+});
+</script>
+
+</body>
+</html>

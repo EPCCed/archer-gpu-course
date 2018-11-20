@@ -1,0 +1,57 @@
+!
+!     Training material developed by George Beckett, based on original
+!     material provided by James Perry and Alan Gray
+!     Copyright EPCC, The University of Edinburgh, 2011
+!
+!     15/FEB/11 - MGB created initial FORTRAN90 port.
+
+module array_negate
+
+  implicit none
+  integer, parameter :: THREADS_PER_BLOCK = 256
+
+  integer, constant  :: carray_size
+
+contains
+
+  attributes(global) subroutine reverse(size_aa, a_in, a_out)
+
+    integer, value, intent(in)                 :: size_aa
+    integer, dimension(size_aa), intent(in   ) :: a_in
+    integer, dimension(size_aa), intent(inout) :: a_out
+
+    integer, dimension(THREADS_PER_BLOCK), shared :: tmp
+    integer :: idx, blockOffset
+
+    idx = threadidx%x + (blockidx%x - 1)*blockDim%x
+
+    tmp(THREADS_PER_BLOCK - threadIdx%x + 1) = a_in(idx)
+    call syncthreads()
+
+    blockOffset = size_aa - blockIdx%x*blockDim%x
+    a_out(blockOffset + threadIdx%x) = tmp(threadIdx%x)
+
+  end subroutine reverse
+
+  ! Alternate version with array_size in constant memory.
+  ! The relevant assignment must appear in the host code.
+
+  attributes(global) subroutine reverse_constant(a_in, a_out)
+
+    integer, dimension(carray_size), intent(in   ) :: a_in
+    integer, dimension(carray_size), intent(inout) :: a_out
+
+    integer, dimension(THREADS_PER_BLOCK), shared  :: tmp
+    integer :: idx, blockOffset
+
+    idx = threadidx%x + (blockidx%x - 1)*blockDim%x
+
+    tmp(THREADS_PER_BLOCK - threadIdx%x + 1) = a_in(idx)
+    call syncthreads()
+
+    blockOffset = carray_size - blockIdx%x*blockDim%x
+    a_out(blockOffset + threadIdx%x) = tmp(threadIdx%x)
+
+  end subroutine reverse_constant
+
+end module array_negate

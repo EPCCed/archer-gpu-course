@@ -1,0 +1,42 @@
+!
+!     This is a CUDA FORTRAN module that contains various variants of 
+!     a kernel that negates an array of integers.  It introduces the
+!     concepts of device-memory management, and kernel invocation.
+!
+!     Training material developed by George Beckett, based on original
+!     material provided by James Perry and Alan Gray
+!     Copyright EPCC, The University of Edinburgh, 2011
+!
+!     15/FEB/11 - MGB created initial FORTRAN90 port.
+
+module array_negate
+  implicit none
+
+contains
+  !
+  !  Array negation kernel (basic single-block version) for part 2B
+  !
+  attributes(global) subroutine g_negate(size_aa, aa)
+    implicit none
+
+    integer, value, intent(in)                 :: size_aa
+    integer, dimension(size_aa), intent(inout) :: aa
+
+
+
+  end subroutine g_negate
+
+  !
+  ! Multi-block version of kernel for part 2C
+  !
+  attributes(global) subroutine g_negate_multiblock(size_aa, aa)
+    implicit none
+
+    integer, value, intent(in)                 :: size_aa
+    integer, dimension(size_aa), intent(inout) :: aa
+
+
+
+  end subroutine g_negate_multiblock
+
+end module array_negate

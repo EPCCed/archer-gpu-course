@@ -1,0 +1,616 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>reveal.js</title>
+
+<link rel="stylesheet" href="../css/reveal.css">
+<link rel="stylesheet" href="../css/theme/white.css">
+<link rel="stylesheet" href="../css/local.css">
+
+<!-- Theme used for syntax highlighting of code -->
+<link rel="stylesheet" href="../lib/css/vs.css">
+
+<!-- Printing and PDF exports -->
+<script>
+var link = document.createElement( 'link' );
+link.rel = 'stylesheet';
+link.type = 'text/css';
+link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+document.getElementsByTagName( 'head' )[0].appendChild( link );
+</script>
+</head>
+
+<!-- Start of presentation --> 
+<body>
+<div class="reveal">
+<div class="slides">
+
+
+  <section>
+
+    <h1>CUDA Programming</h1>
+    <p>Kevin Stratford</p>
+    <p> kevin@epcc.ed.ac.uk </p>
+    <p>Material by: Alan Gray, Kevin Stratford </p>
+    <img class = "plain" src ="../img/epcc_logo.png" alt = "EPCC Logo" />
+
+  </section>
+
+  <section>
+    <h4> Overview </h4>
+
+    <ul>
+      <li> Compute Unified Device Architecture</li>
+      <li> Background </li>
+      <li> CUDA blocks and threads </li>
+      <li> Data management </li>
+    </ul>
+  </section>
+
+  <section>
+    <h4> Development </h4>
+
+    <ul>
+      <li> Early graphics interfaces difficult to program
+      <ul>
+        <li> Partcularly for scientific applications
+      </ul>
+      <li> CUDA developed around 2007 to ease development
+      <li> C/C++ interface
+      <ul>
+        <li> Host side interface to control GPU memory etc
+        <li> Kernels executed on the device by <i>threads</i>
+      </ul>
+      <li> Extended to CUDA Fortran with appropriate compiler
+    </ul>
+  </section>
+
+  <section>
+     <h4> Host and Device </h4>
+
+     <ul>
+       <li> Separate memory / address spaces </li>
+     </ul>
+
+      <img class = "plain" src = "./ag-schematic-host-device.png"
+           alt = "A schematic diagram showing CPU host and GPU device
+                  with separate address spaces connected via (PCIe) bus">
+  </section>
+
+  <section>
+     <h4> Streaming Multiprocossers </h4>
+
+     <img class = "plain" src = "./ag-schematic-sm.png" width = "60%"
+          alt = "A schematic showing a GPU device made up of a number
+                 of streaming multiprocessors (SMs). Each SM consists
+                 of a number of cores and shared memory.">
+      <dl>
+         <dt> A two level hierarchy: </dt>
+         <ul class = "inner">
+            <li> Many streaming multiprocessors each with many cores
+            <li> Exact numbers depend on particular hardware
+         </ul>
+       </dl>
+
+  </section>
+
+  <section>
+     <h4> Grids, Blocks, and Threads </h4>
+
+      <dl>
+         <dt> Reflected in programming model </dt>
+         <ul class = "inner">
+            <li> Problem abstracted to <i>blocks</i> (map to SMs)
+            <li> Each block contains a number of <i>threads</i> (map to cores)
+         </ul>
+         <dt> Don't care about details of mapping to hardware </dt>
+         <ul class = "inner">
+            <li> Just describe a grid of blocks a threads
+            <li> Hardware will schedule work as it sees fit
+         </ul>
+
+       </dl>
+
+  </section>
+
+  <section>
+     <h4><code>dim3</code> structure </h4>
+
+     <dl style = "font-size: 100%">
+     CUDA introduces a container for x,y,z dimensions
+     <dt>C:</dt>
+     <pre><code class = "cpp" data-trim>
+     struct {
+       unsigned int x;
+       unsigned int y;
+       unsigned int z;
+     }; 
+     </code></pre>
+     <dt> Fortran: </dt>
+     <pre><code class = "fortran" data-trim>
+     type :: dim3
+       integer :: x
+       integer :: y
+       integer :: z
+     end type dim3
+     </code></pre>
+     </dl>
+  </section>
+
+  <section>
+    <h4> Example </h4>
+
+    <pre><code class = "cpp">
+/* Consider the one-dimensional loop: */
+
+for (int i = 0; i < LOOP_LENGTH; i++) {
+   result[i] = 2*i;
+}
+    </code></pre>
+  </section>
+
+  <section>
+    <h4> CUDA C Kernel Function </h4>
+
+    <pre><code class = "cpp">
+__global__ void myKernel(int * result) {
+
+  int i;
+
+  i = threadIdx.x;
+  result[i] = 2*i;
+}
+    </code></pre>
+  </section>
+
+  <section>
+    <h4> Executing a kernel </h4>
+
+    <pre><code class = "cpp">
+/* Kernel is launched by on the host by specifying
+ * Number of blocks (sometimes "blocksPerGrid")
+ * Number of threads per block */
+
+dim3 blocks;
+dim3 threadsPerBlock;
+
+blocks.x = 1;
+threadsPerBlock.x = LOOP_LENGTH;
+
+myKernel &lt&lt&lt blocks, threadsPerBlock &gt&gt&gt (result);
+    </code></pre>
+    <dl style = "font-size: 100%">
+      <dt>Referred to as the execution configuration</dt>
+    </dl>
+  </section>
+
+  <section>
+    <h4> CUDA Fortran  </h4>
+    <p>
+    <pre class = "stretch"><code class = "fortran">
+! In Fortran an analogous kernel is...
+ 
+attributes(global) subroutine myKernel(result)
+  integer, dimension(:) :: result
+  integer               :: i
+
+  i = threadIdx%x
+  result(i) = 2*i
+end subroutine myKernel
+
+! ... with execution ...
+
+blocks%x = 1
+threadsPerBlock%x = LOOP_LENGTH
+call myKernel &lt&lt&lt blocks, threadsPerBlock &gt&gt&gt (result)
+    </code></pre>
+
+  </section>
+
+
+  <section>
+    <h4> More than one block </h4>
+    <p>
+    <pre class = "stretch"><code class = "cpp">
+/* One block only uses one SM; use of resources is very poor.
+ * Usually want large arrays using many blocks. */
+
+__global__ void myKernel(int * result) {
+
+  int i = blockIdx.x*blockDim.x + threadIdx.x;
+  result[i] = 2*i;
+}
+
+/* ... with execution ... */
+
+block.x = NBLOCKS;
+threadsPerBlock.x = LOOP_LENGTH/NBLOCKS;
+myKernel &lt&lt&lt blocks, threadsPerBlock &gt&gt&gt (result);
+     </code></pre>
+
+  </section>
+
+  <section>
+    <h4> More then one block: Fortran </h4>
+    <p>
+    <pre class = "stretch"><code class = "fortran">
+attributes(global) subroutine myKernel(result)
+  integer, dimension(:) :: result
+  integer               :: i
+
+  i = (blockIdx%x - 1)*blockDim%x + threadIdx%x
+  result(i) = 2*i
+end subroutine myKernel
+
+! ... with execution ...
+
+blocks%x = NBLOCKS
+threadsPerBlock%x = LOOP_LENGTH/NBLOCKS
+call myKernel &lt&lt&lt blocks, threadsPerBlock &gt&gt&gt (result)
+    </code></pre>
+
+  </section>
+
+
+  <section>
+    <h4> Internal variables: C </h4>
+
+    <dl style = "font-sze: 80%">
+      <dt> All provided by the implementation:
+      <ul class = "inner">
+        <li> Fixed at kernel invocation:
+      </ul>
+    </dl>
+      <pre><code class = "cpp" data-trim>
+dim3 gridDim;    /* Number of blocks */
+dim3 blockDim;   /* Number of threads per block */
+    </code></pre>
+
+    <dl style = "font-sze: 80%">
+      <ul class = "inner">
+        <li> Unique to each block:
+      </ul>
+    </dl>
+    <pre><code class = "cpp" data-trim>
+dim3 blockIdx;   /* 0 &lt= blockIdx.x &lt gridDim.x etc */
+    </code></pre>
+
+    <dl style = "font-sze: 80%">
+      <ul class = "inner">
+        <li> Unique to each thread:
+      </ul>
+    </dl>
+    <pre><code class = "cpp" data-trim>
+dim3 threadIdx;  /* 0 &lt= threadIdx.x &lt blockDim.x etc */
+    </code></pre>
+
+  </section>
+
+  <section>
+    <h4> Internal variables: Fortran </h4>
+
+    <dl style = "font-sze: 80%">
+      <dt> Again provided by the implementation:
+      <ul class = "inner">
+        <li> Fixed at kernel invocation:
+      </ul>
+    </dl>
+      <pre><code class = "fortran" data-trim>
+type (dim3) :: gridDim   ! Number of blocks
+type (dim3) :: blockDim  ! Number of threads per block
+    </code></pre>
+
+    <dl style = "font-sze: 80%">
+      <ul class = "inner">
+        <li> Unique to each block:
+      </ul>
+    </dl>
+    <pre><code class = "fortran" data-trim>
+type (dim3) :: blockIdx  ! 1 &lt= blockIdx%x &lt= gridDim%x etc
+    </code></pre>
+
+    <dl style = "font-sze: 80%">
+      <ul class = "inner">
+        <li> Unique to each thread:
+      </ul>
+    </dl>
+    <pre><code class = "fortran" data-trim>
+type (dim3) :: threadIdx ! 1 &lt= threadIdx%x &lt= blockDim%x etc
+    </code></pre>
+
+  </section>
+
+
+
+  </section>
+
+  <section>
+    <h4> Two-dimensional example </h4>
+    <p>
+    <pre><code class = "cpp">
+__global__ void matrix2d(float a[N][N], float b[N][N],
+                         float c[N][N]) {
+
+  int j = blockIdx.x*blockDim.x + threadIdx.x;
+  int i = blockIdx.y*blockDim.y + threadIdx.y;
+
+  c[i][j] = a[i][j] + b[i][j];
+}
+    </code></pre>
+    <pre><code class = "cpp" data-trim>
+/* ... with execution, e.g.,  ... */
+
+dim3 blocksPerGrid(N/16, N/16, 1);
+dim3 threadsPerBlock(16, 16, 1);
+
+matrix2d &lt&lt&lt blocksPerGrid, threadsPerBlock &gt&gt&gt (a, b, c);
+    </code></pre>
+
+  </section>
+
+  <section>
+    <h4> Synchronisation between host and device </h4>
+
+    <dl style = "font-size: 80%">
+      <dt> Kernel launches are asynchronous </dt>
+      <ul class = "inner">
+        <li> Return immediately on the host
+        <li> Synchronisation required to ensure completion
+        <li> Errors can appear asynchronously!
+        <!-- Mananged memory -->
+      </ul>
+    </dl>
+    <pre><code class = "cpp">
+myKernel &lt&lt&ltblocksPerGrid, threadsPerBlock&gt&gt&gt (...)
+
+/* ... could perform independent work here ... */
+
+err = cudaDeviceSynchronize();
+
+/* ... now safe to obtain results of kernel ... */
+    </code></pre>
+
+    <dl style = "font-size: 80%">
+      <dt> Many other CUDA operations have asynchronous analogues </dt>
+      <ul class = "inner">
+        <li> <code>cudaMemcpyAsync()</code>, ...
+      </ul>
+    </dl>
+
+  </section>
+
+  <section>
+    <h4> Synchronisation on the device </h4>
+
+    <dl style = "font-size: 80%">
+      <dt> Synchronisation between threads in the same block is possible
+      <ul class = "inner">
+        <li> Allows co-ordination of action in shared memory
+        <li> Allows reductions
+      </ul>
+      <dt> Historically, not possible to synchronise between blocks
+      <ul class = "inner">
+        <li> Can only exit the kernel
+        <li> Synchronise on host and start another kernel
+      </ul>
+    </dl>
+
+  </section>
+
+  <section>
+    <h4> Memory Management </h4>
+
+    <dl style = "font-size: 80%">
+      <dt> Recall host and device have separate address spaces
+      <ul class = "inner">
+        <li> Data accessed by kernel must be in the device memory
+        <li> This is managed largely explicitly
+        <!-- Mananged memory -->
+      </ul>
+    </dl>
+
+  </section>
+
+
+  <section>
+    <h4> Memory Allocation: C </h4>
+
+    <dl style = "font-size: 80%">
+      <dt> Allocation managed via standard C pointers
+    </dl>
+    <pre><code class = "cpp">
+/* For example, provide an allocation of "nSize" floats
+ * in the device memory: */
+
+float * data;
+
+err = cudaMalloc(&data, nSize*sizeof(float));
+
+...
+
+err = cudaFree(data);
+    </code></pre>
+    <dl style = "font-size: 80%">
+      <dt> Such pointers cannot be dereferenced on the host
+    </dl>
+
+  </section>
+
+  <section>
+    <h4> Memory Movement: <code>cudaMemcpy()</code> </h4>
+
+    <dl style = "font-size: 80%">
+      <dt> Initiated on the host:
+    </dl>
+    <pre><code class = "cpp" data-trim>
+
+/* Copy host data values to device memory ... */
+err = cudaMemcpy(dataDevice, dataHost, nSize*sizeof(float),
+                 cudaMemcpyHostToDevice);
+
+/* And back again ... */
+err = cudaMemcpy(dataHost, dataDevice, nSize*sizeof(float),
+                 cudaMemcpyDeviceToHost);
+    </code></pre>
+
+    <dl style = "font-size: 80%">
+      <dt> API:
+    </dl>
+    <pre><code class = "cpp" data-trim>
+cudaError_t cudaMemcpy(void * dest, const void * src,
+                       size_t count,
+                       cudaMemcpyKind kind);
+     </code></pre>
+  </section>
+
+  <section>
+
+    <h4> Memory allocation: CUDA Fortran </h4>
+
+    <dl style = "font-size: 80%">
+      <dt> Declare variable to be in the device memory space
+      <ul class = "inner">
+        <li> Via the <code> device</code> attribute
+        <li> Compiler then knows that the variable should be treated
+             appropriately
+      </ul>
+    </dl>
+    <pre><code class = "fortran">
+! Make an allocation in device memory:
+real, device, allocatable :: dataDevice(:)
+
+allocate(dataDevice(nSize), stat = ...)
+
+...
+
+deallocate(dataDevice)
+    </code></pre>
+
+
+    <dl style = "font-size: 80%">
+      <dt> Or, can use the C-like API </dt>
+      <ul class = "inner">
+        <li> <code>cudaMalloc()</code>, <code>cudaFree()</code>
+      </ul>
+    </dl>
+    
+  </section>
+
+  <section>
+    <h4> Memory movement: CUDA Fortran </h4>
+
+    <dl style = "font-size: 80%">
+      <dt> May be performed via simple assignment
+      <ul class = "inner">
+        <li> Again, compiler knows what action to take via declarations
+      </ul>
+    </dl>
+    <pre><code class = "fortran">
+! Copy from host to device
+
+dataDevice(:) = dataHost(:)
+
+! ... and back again ...
+
+dataHost(:) = dataDevice(:)
+    </code></pre>
+
+    <dl style = "font-size: 80%">
+      <dt> Can be more explicit using C-like API
+    </dl>
+    <pre><code class = "fortran" data-trim>
+err = cudaMemcpy(dataDevice, dataHost, nSize,
+                 cudaMemcpyHostToDevice)
+    </code></pre>
+
+  </section>
+
+  <section>
+    <h4> Compilation </h4>
+
+    <dl style = "font-size: 80%">
+      <dt> CUDA C source </dt>
+      <ul class = "inner">
+         <li> File extension <code>.cu</code> by convention </li>
+         <li> Compiled via NVIDIA <code>nvcc</code></li>
+      </ul>
+    </dl>
+    <pre><code class = "bash" data-trim>
+$ nvcc -o example example.cu
+    </code></pre>
+
+    <dl style = "font-size: 80%">
+      <dt> CUDA Fortran source </dt>
+      <ul class = "inner">
+         <li> File extension <code>.cuf</code> by convention
+         <li> Compiled via Portland Group compiler <code>pgf90</code>
+         <li> Use <code>-Mcuda</code> (if file extension not <code>.cuf</code>)
+      </ul>
+    </dl>
+
+    <pre><code class = "bash" data-trim>
+$ pgf90 -Mcuda -o example example.cuf
+    </code></pre>
+
+  </section>
+
+  <section>
+    <h4> Summary </h4>
+
+    <dl style = "font-size: 80%">
+      <dt> CUDA C and CUDA Fortran </dt>
+      <ul class = "inner">
+         <li> Provide API and extensions for programming NVIDIA GPUs
+         <li> Memory management
+         <li> Kernel execution
+      </ul>
+      <dt> CUDA emcompasses wide range of functionality </dt>
+      <ul class = "inner">
+         <li> Can make significant progress with a small subset
+      </ul>
+      <dt> Still evolving (along with hardware) </dt>
+      <ul class = "inner">
+         <li> Currently CUDA v9
+         <li> About one release per year
+         <li> Features can disapear / become outmoded
+      </ul>
+
+    </dl>
+
+  </section>
+
+</div>
+</div>
+
+<!-- End of presentation -->
+
+<script src="../lib/js/head.min.js"></script>
+<script src="../js/reveal.js"></script>
+
+<script>
+// More info about config & dependencies:
+// - https://github.com/hakimel/reveal.js#configuration
+// - https://github.com/hakimel/reveal.js#dependencies
+Reveal.initialize({
+  controls: false,
+  slideNumber: true,
+  center: false,
+  math: { mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js',
+          config: 'TeX-AMS_HTML-full'
+         // See http://docs.mathjax.org/en/latest/config-files.html
+        },
+  dependencies: [
+	{ src: '../plugin/markdown/marked.js' },
+	{ src: '../plugin/markdown/markdown.js' },
+	{ src: '../plugin/notes/notes.js', async: true },
+        { src: '../plugin/math/math.js', async: true},
+	{ src: '../plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+		]
+});
+</script>
+
+</body>
+</html>

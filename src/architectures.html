@@ -1,0 +1,430 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>reveal.js</title>
+
+<link rel="stylesheet" href="../css/reveal.css">
+<link rel="stylesheet" href="../css/theme/white.css">
+<link rel="stylesheet" href="../css/local.css">
+
+<!-- Theme used for syntax highlighting of code -->
+<link rel="stylesheet" href="../lib/css/zenburn.css">
+
+<!-- Printing and PDF exports -->
+<script>
+var link = document.createElement( 'link' );
+link.rel = 'stylesheet';
+link.type = 'text/css';
+link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+document.getElementsByTagName( 'head' )[0].appendChild( link );
+</script>
+</head>
+
+<!-- Start of presentation --> 
+<body>
+<div class="reveal">
+<div class="slides">
+
+
+  <section>
+
+    <h1>GPU Concepts / Architectures</h1>
+    <p>Kevin Stratford</p>
+    <p> kevin@epcc.ed.ac.uk </p>
+    <p>Material by: Alan Gray, Kevin Stratford </p>
+    <img class = "plain" src ="../img/epcc_logo.png" alt = "EPCC Logo" />
+
+  </section>
+
+  <section>
+    <h4>Outline</h4>
+
+    <ul>
+    <li> Factors influencing performance </li>
+    <li> How do CPU / GPU architectures differ? </li>
+    <li> Some trends in architecture </li>
+    <li> Programming scientific applications? </li>
+
+  </section>
+
+  <section>
+    <h4> Factors influencing performance </h4>
+    <div class="lblock">
+      <img class = "plain" src = "./ag-schematic-4factors.png"
+           alt = "Schematic diagram represeting data transfer between
+                  processor and memory. The processor may have one or
+                  more levels of cachme memory."/>
+    </div>
+
+    <div class="rblock">
+      <ol>
+        <li> Clock speed: processing rate per compute element </li>
+        <li> Memory latency: time to retreive a data element  </li>
+        <li> Memory bandwidth: amount of data transferred in unit time </li>
+        <li> Parallelism: replicating the basic units of computation </li>
+      </ol>
+    </div>
+
+  </section>
+
+  <section>
+    <h4> CPUs: Clock speed </h4>
+
+    <ul>
+      <li> Power consumed by a device $\propto fV^2$</li>
+      <li> Historically, devices got faster by increasing clock frequency $f$
+      <ul class = "inner">
+         <li> Voltage $V$ decreased to keep power managable
+      </ul>
+      <li> Now, voltage cannot be decreased easily
+      <ul class = "inner">
+        <li> Bits are represented as a voltage difference
+        <li> Engineering constraints mean a finite voltage difference must be
+             maintained for correct operation
+      </ul>
+      <li> Increased clock frequency no longer available
+    </ul>
+  </section>
+
+  <section>
+    <!-- The image comes from the web site quoted (2017) -->
+    <!-- Note the MHz on the vertical scale has fallen off -->
+    <img class="plain" src="../img/ks-cpudb-2017.jpg" width = "80%"
+         alt = "Clock frequency in MHz against year of manufacture">
+    <p style="font-size: 0.7em">
+    See <a href = "http://cpudb.stanford.edu/visualize/clock_frequency">
+                   http://cpudb.stanford.edu/visualize/clock_frequency</a>
+  </section>
+
+  <section>
+    <h4> CPUs: Memory latency </h4>
+
+    <ul style = "font-size: 100%">
+      <li> Memory latency is a serious concern in design
+      <ul class = "inner">
+        <li> Can cost $O(100)$ clock cycles to retrieve data from main memory
+        <li> Steps often taken in hardware to reduce latencies
+      </ul>
+      <li> Cache hierarchies
+      <ul class = "inner">
+        <li> Large on-chip caches to stage data
+        <li> L1, L2, L3, ..., controllers, coherency mechanisms, ...
+      </ul>
+      <li> Other latency-hiding measures
+      <ul class = "inner">
+        <li> Hardware multithreading ("hyperthreading")
+        <li> Out-of-order execution
+      </ul>
+    </ul>
+
+  </section>
+
+  <section>
+
+    <dl style = "font-size: 80%">
+      <dt> E.g., Intel Sandybridge die
+    </dl>
+
+    <img class = "plain" src = "./intel-sandybridge-e-3960X-die.jpg"
+         alt = "A typical picture of a CPU design
+                (here Intel Sandybridge) showing the amount of
+                real estate set aside for cache memory and memory control">
+
+     <p style = "font-size: 50%">
+     Image: <a href = "http://www.theregister.co.uk/">
+                       http://www.theregister.co.uk/</a>  (Source: Intel)
+  </section>
+
+  <section>
+    <h4> CPUs: Memory bandwidth </h4>
+
+    <ul>
+      <li> CPUs generally use commodity DDR RAM
+      <ul class = "inner">
+        <li> "Double Data Rate"
+        <li> Manufacturers often don't publish bandwidth data
+        <li> A standard benchmark might give $O(100)$ GB / s
+      </ul>
+      <li> In practice, memory bandwidth can be important
+      <ul class = "inner">
+        <li> Many real applications bandwidth limited
+      </ul>
+    </ul>
+
+  </section>
+
+
+  <section>
+
+     <h4> CPUs: Parallelism </h4>
+
+    <ul>
+      <li> Source of increased performance now to use more cores
+      <li> Almost all commodity processors are now "many-core" or "multi-core"
+      <li> Limited clock speed keeps power consumption per core managable
+    </ul>
+
+  </section>
+
+  <section>
+
+    <dl style = "font-size: 80%">
+      <dt> E.g., Intel Knights Landing die (72 cores)
+    </dl>
+
+    <img class = "plain" src = "./intel-knl-die.jpg" width = "75%"
+         alt = "Picture of Intel Knights Landing die showing a relatively
+                large area devoted to 72 cores">
+    <p style = "font-size: 50%"> Image: http://www.hardwareluxx.de/
+                                 (Source: Intel)
+  </section>
+
+  <section>
+    <h4> CPUs: Summary </h4>
+
+    <ul>
+      <li> CPUs: a highly successful design for general purpose computing
+      <ul class = "inner">
+        <li> Used for operating systems, data bases, input/output, ...
+        <li> Inevitable design compromises...
+      </ul>
+      <li> ...mean not specifically intended for HPC
+      <ul class = "inner">
+        <li> Much functionality, e.g., branch prediction, may not be required
+        <li> Hardware / power devoted to infrequent (HPC) operations
+      </ul>
+    
+      <li> Huge commercial market
+      <ul class = "inner">
+        <li> Huge investment involved in fabrication of new chips
+        <li> Bespoke HPC chips not economically viable
+      </ul>
+    </ul>
+
+  </section>
+
+  <section>
+    <h4> ... from the
+    <a href = "http://en.wikipedia.org/wiki/The_dismal_science">
+               dismal science</a>...</h4>
+  </section>
+
+  <section>
+    <h4> GPUs </h4>
+
+    <ul>
+      <li> Large lucrative market in another area: games
+      <ul class = "inner">
+        <li> Require Graphical Processing Units
+        <li> Two dominant manufacturers: AMD and NVIDIA
+      </ul>
+      <li> GPUs are designed to do rendering
+      <ul class = "inner">
+        <li> An embarrassingly parallel problem
+        <li> Favours a balance between floating point/memory bandwidth
+      </ul>
+      <li> How is design reflected in factors influencing performance?
+       
+    </ul>
+
+  </section>
+
+
+  <section>
+    <h4> GPUs: Clock speed </h4>
+ 
+    <ul>
+      <li> Underlying clock frequency relatively modest
+      <ul class = "inner">
+        <li> Perhaps in high 100s MHz
+      </ul>
+      <li> Performance based on parallelism...
+    </ul>
+
+  </section>
+
+  <section>
+    <h4> GPUs: Memory latency </h4>
+ 
+    <ul>
+      <li> Problem has not gone away
+      <ul class = "inner">
+        <li> Strategy to hide it again related to  parallelism
+      </ul>
+      <li> Schedule very many independent tasks
+      <ul class = "inner">
+        <li> More than can be accommodated on hardware at one time
+      </ul>
+      <li> If one task encounters a long-latency operation
+      <ul class = "inner">
+        <li> ... swapped out and schedule another task
+        <li> Done in hardware, so fast
+        <li> Multithreading "writ large"
+      </ul>
+    
+    </ul>
+
+  </section>
+
+
+  <section>
+    <h4> GPUs: Memory Bandwidth </h4>
+
+    <img src = "./nvidia-x86-performance.png"
+         alt = "Graphs comparing the performance of x86 and NVIDIA harware.
+                On the left is Peak floating point operations per second
+                against year of manufacture, and on the right is peak memory
+                bandwidth against year of manufactor.
+                The Figure is from NVIDIA">
+
+    <p style = "font-size: 50%"> Source: NVIDIA
+
+  </section>
+
+  <section>
+
+     <dl style = "font-size: 80%">
+       <dt> Parallelism: Basic unit is streaming
+            multiprocessor (SM)
+     </dl>
+
+     <img class = "plain" width = "70%"
+          src = "./nvidia-sm-block-diagram.png"
+          alt = "NVIDIA Streaming Multiprocssor. There are 64 cores per SM
+                 in this particular device (Pascal).">
+
+     <p style = "font-size: 50%"> Source:
+     <a href = "https://devblogs.nvidia.com/parallelforall/inside-pascal/">
+                https://devblogs.nvidia.com/parallelforall/inside-pascal/</a>
+  </section>
+
+  <section>
+
+     <dl style = "font-size: 80%">
+       <dt> Many SMs form a graphics processing cluster (GPC)
+     </dl>
+
+    <img class = "plain" width = "80%"
+         src = "./nvidia-gpc-block-diagram.png">
+    <p style = "font-size: 50%"> Source: 
+    <a href = "https://devblogs.nvidia.com/parallelforall/inside-pascal/">
+                https://devblogs.nvidia.com/parallelforall/inside-pascal/</a>
+  </section>
+
+
+  <section>
+    <h4> Trends in Architecture </h4>
+
+ 
+    <ul>
+      <li> Certain convergence in architectures
+      <ul class = "inner">
+        <li> CPUs / GPUs will probably become more integrated
+        <li> Memory space may become more uniform
+      </ul>
+      <li> No doubt in need for parallelism
+      <ul class = "inner">
+        <li> More cores / threads
+      </ul>
+    </ul>
+
+  </section>
+
+  <section>
+     <h4> Programming </h4>
+ 
+    <ul>
+      <li> Graphics processing languages were / are used
+      <ul class = "inner">
+        <li> DirectX, OpenGL
+        <li> One or two early "heroic efforts" in scientific applications
+      </ul>
+      <li> In 2007 NVIDIA developed CUDA
+      <ul class = "inner">
+        <li> Compute Unified Device Architecture
+        <li> Primarily to make graphics programming easier
+        <li> As a by-product, scientific applications become more tractable
+      </ul>
+    </ul>
+
+  </section>
+
+  <section>
+     <h4> Programming </h4>
+ 
+    <ul>
+      <li> At the same time, OpenCL was developed
+
+      <ul class = "inner">
+        <li> Important in mobile phones, games
+        <li> Not so much traction in scientific applications
+      </ul>
+      <li> Directives-based approaches are available
+      <ul class = "inner">
+        <li> Standards situation was relatively slow to become clear
+        <li> Relatively pain-free
+        <li> Sources of poor performance can be obscured
+      </ul>
+    </ul>
+
+  </section>
+
+  <section>
+    <h4> Big Data / Machine Learning </h4>
+
+
+    <img class = "plain"
+         src = "https://imgs.xkcd.com/comics/self_driving.png"
+         alt = "An XKCD cartoon lampooning 'AI'">
+
+     <p style = "font-size: 50%"> Source:
+     <a href = "https://xkcd.com/1897/"> https://xkcd.com/1897/</a>
+
+  </section>
+
+  <section>
+    <h4> Summary </h4>
+
+    <ul>
+      <li> GPUs offer the opportunity of cost and energy efficient
+           computing
+      <li> The holy grail for programming: <br>
+           performance, portability, productivity
+    </ul>
+  </section>
+
+</div>
+</div>
+
+<!-- End of presentation -->
+
+<script src="../lib/js/head.min.js"></script>
+<script src="../js/reveal.js"></script>
+
+<script>
+// More info about config & dependencies:
+// - https://github.com/hakimel/reveal.js#configuration
+// - https://github.com/hakimel/reveal.js#dependencies
+Reveal.initialize({
+  controls: false,
+  slideNumber: true,
+  center: false,
+  math: { mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js',
+          config: 'TeX-AMS_HTML-full'
+         // See http://docs.mathjax.org/en/latest/config-files.html
+        },
+  dependencies: [
+	{ src: '../plugin/markdown/marked.js' },
+	{ src: '../plugin/markdown/markdown.js' },
+	{ src: '../plugin/notes/notes.js', async: true },
+        { src: '../plugin/math/math.js', async: true},
+	{ src: '../plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+		]
+});
+</script>
+
+</body>
+</html>

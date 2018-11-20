@@ -1,0 +1,479 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>reveal.js</title>
+
+-<link rel="stylesheet" href="../css/reveal.css">
+<link rel="stylesheet" href="../css/theme/white.css">
+<link rel="stylesheet" href="../css/local.css">
+
+<!-- Theme used for syntax highlighting of code -->
+<link rel="stylesheet" href="../lib/css/vs.css">
+
+<!-- Printing and PDF exports -->
+<script>
+var link = document.createElement( 'link' );
+link.rel = 'stylesheet';
+link.type = 'text/css';
+link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+document.getElementsByTagName( 'head' )[0].appendChild( link );
+</script>
+</head>
+
+<!-- Start of presentation --> 
+<body>
+<div class="reveal">
+<div class="slides">
+
+  <section>
+
+    <h1 style = "text-transform: none !important">Performance Optimisation</h1>
+    <!--
+    <p>Kevin Stratford</p>
+    <p> kevin@epcc.ed.ac.uk </p> -->
+    <br>
+    <p>Material by: Alan Gray, Kevin Stratford </p>
+    <img class = "plain" src ="../img/epcc_logo.png" alt = "EPCC Logo" />
+
+  </section>
+
+  <section>
+    <h3>Sources of poor performance</h3>
+
+    <ul>
+    <li> Potential sources of poor performance include: </li>
+    <ul class = "inner">
+        <li> Lack of parallelism </li>
+        <li> Copying data to/from device</li>
+        <li> Device under-utilisation / memory latency
+        <li> Memory bandwidth
+        <li> Code branches
+    </ul>
+    <li> Possible solutions </li>
+    <ul class = "inner">
+       <li> Should be relevant on many GPU devices</li>
+       <li> "Mileage may vary"
+    </ul>
+    <li> Some comments on profiling
+    <ul class = "inner">
+       <li> Do you have a performance problem?</li>
+    </ul>
+    </ul>
+  </section>
+
+  <section>
+    <h4> Exposing parallelism </h4>
+
+    <ul>
+    <li> Amdahl's Law: </li>
+    <ul class = "inner">
+        <li> Parallel performance limited by fraction of code that is serial</li>
+        <li> Applies particularly to GPUs
+    </ul>
+    <li> Performance relies on use of many parallel threads </li>
+    <ul class = "inner">
+       <li> Degree of parallelism higher than typical CPU</li>
+       <li> Typically want at least $O(10^5) - O(10^6)$ threads in a kernel
+    </ul>
+    <li> Effort must be made to expose parallelism
+    <ul class = "inner">
+       <li> As much as absolutely possible </li>
+       <li> Rewriting / refactoring / different algorithm</li>
+    </ul>
+    </ul>
+
+  </section>
+
+  <section>
+    <h4> Copying between host and device </h4>
+
+    <ul>
+    <li> Separate memory spaces mean some copying inevitable
+    <ul class = "inner">
+        <li> Via PCI/Express bus
+        <li> Relatively slow/expensive</li>
+    </ul>
+    <li> Simply must avoid unnecessary copies </li>
+    <ul class = "inner">
+       <li> Keep data resident on device</li>
+       <li> May involve moving all relevant code to device</li>
+       <li> Recalculation / extra computation instead of data communication
+    </ul>
+    <!-- note Device Memory allocation can also be expensive -->
+    </ul>
+  </section>
+
+  <section>
+    <h4> Removing data transfer </h4>
+
+    <dl style = "font-size: 80%">
+
+    <dt> Consider a common pattern: </dt>
+
+    <pre><code class = "cpp" data-trim>
+for (it = 0; it < nTimeSteps; it++) {
+  myCheapHostOperation(hostData);
+  cudaMemcpy(..., cudaMemcpyHostToDevice);
+  myExpensiveKernel &lt&lt&lt...&gt&gt&gt (deviceData, ...);
+  cudaMemcpy(..., cudaMemcpyDeviceToHost);
+}
+    </code></pre>
+
+   <dt> Must be refactored to: </dt>
+
+   <pre><code class = "cpp" data-trim>
+cudaMemcpy(..., cudaMemcpyHostToDevice);
+
+for (it = 0; it < nTimeSteps; it++) {
+  myCheapKernel &lt&lt&lt ... &gt&gt&gt (deviceData, ...);
+  myExpensiveKernel &lt&lt&lt ... &gt&gt&gt (deviceData, ...)
+}
+
+cudeMemcpy(..., cudaMemcpyDeviceToHost);
+   </code></pre>
+    </dl>
+  </section>
+
+  <section>
+    <h4> Occupancy and latency hiding </h4>
+
+    <ul>
+      <li> Work decomposed and distributed between threads </li>
+      <ul class = "inner">
+        <li> Suggests may want as many threads as there are cores
+        <li> ...or some cores will be left idle
+      </ul>
+      <li> Actually want $$ N_{threads} >> N_{cores}$$
+      <br>
+      <li> Latency for access to main memory
+      <ul class = "inner">
+        <li> Perhaps 100 clock cycles
+        <li> If other threads are available, can be swapped in quickly
+      </ul>
+
+    </ul>
+  </section>
+
+  <section>
+    <h4> Example </h4>
+
+     <dl>
+       <dt> Suppose we have a two-dimensional loop </dt>
+     </dl>
+     <pre><code class = "cpp" data-trim>
+for (i = 0; i < 512; i++) {
+  for (j = 0; j < 512; j++) {
+    /* ... work ... */
+     </code></pre>
+
+     <dl>
+       <dt> Parallelise inner loop only </dt>
+       <ul class = "inner">
+         <li> Can use 512 threads
+         <li> Poor occupancy!
+       </ul>
+     </dl>
+
+     <dl>
+       <dt> Parallelise both loops </dt>
+       <ul class = "inner">
+         <li> Can use $512 \times 512 = 262,\!144$ threads
+         <li> Much better!
+       </ul>
+     </dl>
+
+
+  </section>
+
+  <section>
+    <h4> Memory coalescing </h4>
+
+    <ul>
+      <li> GPUs have a high <i>peak</i> memory bandwidth </li>
+      <ul class = "inner">
+        <li> But only achieved when accesses are <i> coalesced</i>
+        <li> That is, when:
+      </ul>
+
+      <p style = "text-align: center">
+      consecutive threads access consecutive memory locations
+      </p>
+
+      <li> If not, access may be serialised
+      <ul class = "inner">
+        <li> Performance disaster
+        <li> Need to refactor to allow coalescing
+      </ul>
+    </ul>
+
+  </section>
+
+  <section>
+    <h4> So, what is the correct order? </h4>
+
+
+    <dl style = "font-size: 80%">
+      <dt> In one dimension, the picture is relatively simple </dt>
+      <ul class = "inner">
+        <li> <code>threadsPerBlock = (nThreads, 1, 1) </code></li>
+        <li> Consective threads are those with consective index </li>
+      </ul>
+    </dl>    
+
+    <pre><code class = "cpp">
+/* In C: */
+idx = blockIdx.x*blockDim.x + threadIdx.x;
+output[idx] = input[idx];
+      </code></pre>
+      <pre><code class = "fortran" data-trim>
+! In Fortran:
+idx = (blockIdx%x - 1)*blockDim%x + threadIdx%x
+output(idx) = input(idx)
+      </code></pre>
+
+      <dl style = "font-size: 80%">
+        <dt>Both good; accesses are coalesced. </dt>
+      </dl>
+  </section>
+
+
+  <section>
+    <h4> Two-dimensional array: C </h4>
+
+    <dl style = "font-size: 80%">
+      <dt> Recall: right-most index runs fastest </dt>
+    </dl>    
+
+    <pre><code class = "cpp">
+/* Bad: consecutive threads have strided access */
+i = blockIdx.x*blockDim.x + threadIdx.x;
+for (j = 0; j < NJ; j++) {
+  output[i][j] = input[i][j];
+}
+    </code></pre>
+
+    <pre><code class = "cpp" data-trim>
+/* Good: consecutive threads have contiguous access */
+j = blockIdx.x*blockDim.x + threadIdx.x;
+for (i = 0; i < NI; i++) {
+  output[i][j] = input[i][j];
+}
+    </code></pre>
+
+  </section>
+
+  <section>
+    <h4> Two-dimensional array: Fortran </h4>
+
+    <dl style = "font-size: 80%">
+      <dt> Recall: left-most index runs fastest </dt>
+    </dl>    
+
+    <pre><code class = "fortran">
+! Bad: consecutive threads have strided access
+j = blockIdx.x*blockDim.x + threadIdx.x;
+do i = 1,  NI
+  output(i, j) = input(i, j);
+end do
+    </code></pre>
+
+    <pre><code class = "fortran" data-trim>
+! Good: consecutive threads have contiguous access
+i = blockIdx.x*blockDim.x + threadIdx.x;
+do j = 1, NJ
+  output(i, j) = input(i, j);
+end do
+    </code></pre>
+
+  </section>
+
+  <section>
+    <h4> Two-dimensional decomposition </h4>
+
+    <dl style = "font-size: 80%">
+      <dt> More complex </dt>
+      <ul class = "inner">
+        <li> <code> blocksPerGrid = (nBlocksX, nBlocksY, 1) </code>
+        <li> <code> threadsPerBlock = (nThreadsX, nThreadsY, 1) </code>
+        <li> x counts fastest, then y (and then z, in three dimensions)
+      </ul>
+    </dl>
+
+    <pre><code class = "cpp">
+/* C: note apparent transposition of i, j here... */
+int j = blockIdx.x*blockDim.x + threadIdx.x;
+int i = blockIdx.y*blockDim.y + threadIdx.y;
+
+output[i][j] = input[i][j];
+    </code></pre>
+
+    <pre><code class = "fortran" data-trim>
+! Fortran: looks more natural
+i = (blockIdx%x - 1)*blockDim%x + threadIdx%x
+j = (blockIdx%y - 1)*blockDim%y + threadIdx%y
+
+output(i, j) = input(i, j)
+    </code></pre>
+  </section>
+
+  <section>
+    <h4> Code branching </h4>
+
+
+    <dl style = "font-size: 80%">
+      <dt> Threads are scheduled in groups of 32 </dt>
+      <ul class = "inner">
+        <li> Share same instruction scheduling hardware units
+        <li> A group is referred to as a <i>warp</i>
+        <li> Warp executes instructions in lock-step (SIMT)
+      </ul>
+      <dt> Branches in the code can cause serialisation </dt>
+      <ul class = "inner">
+         <li> All threads execute all branches
+         <li> Throw away irrelevant results
+      </ul>
+    </dl>
+
+  </section>
+
+  <section>
+     <h4> Avoiding warp divergence </h4>
+
+    <dl style = "font-size: 80%">
+      <dt> Imagine want to split threads into two groups: </dt>
+    </dl>
+    <pre><code class = "cpp">
+/* Bad: threads in same warp diverge... */
+
+tid = blockIdx.x*blockDim.x + threadIdx.x;
+
+if (tid % 2 == 0) {
+  /* Threads 0, 2, 4, ... do one thing ... */
+}
+else {
+  /* Threads 1, 3, 5, ... do something else */
+}
+    </code></pre>
+  </section>
+
+  <section>
+    <h4> Avoiding warp divergence </h4>
+
+    <pre><code class = "cpp" data-trim>
+
+/* Good: threads in same warp follow same path ...
+ * Note use of the internal variable "warpSize" */
+
+tid = blockIdx.x*blockDim.x + threadIdx.x;
+
+if ( (tid / warpSize) % 2 == 0) {
+  /* Threads 0, 1, 2, 3, 4, ... do one thing ... */
+}
+else {
+  /* Threads 32, 33, 34, 35,  ... do something else */
+}
+    </code></pre>
+
+  </section>
+
+  <section>
+    <h4> Performance Problem? </h4>
+
+    <dl style = "font-size: 80%">
+      <dt> Compiler can help to prevent problems </dt>
+    </dl>
+    <pre><code class = "bash">
+$ nvcc -Xptxas -v ...
+    </code></pre>
+    <dl style = "font-size: 80%">
+      <dt> Verbose option for PTX stage</dt>
+      <ul class = "inner">
+        <li> Parallel Thread Execution assembler (an intermediate form)
+        <li> Reports register usage, constant/shared memory usage in kernels
+        <li> Reports spills to global memory (very harmful to performance)
+        <li> Use iteratively during development
+      </ul>
+    </dl>
+    
+
+  </section>
+
+  <section>
+    <h4> Profiling CUDA code </h4>
+
+    <dl style = "font-size: 80%">
+      <dt> Command-line profiler <code>nvprof</code> </dt>
+      <ul class = "inner">
+        <li> Provides traditional text profile report
+      </ul>
+    </dl>
+    <pre><code class = "bash">
+$ nvprof ./cudaExecutable
+    </code></pre>
+
+    <dl style = "font-size: 80%">
+      <dt> NVIDIAVisual profiler </dt>
+      <ul class = "inner">
+        <li> Full GUI profiler with many features
+        <li>
+    <a target = "_blank"
+       href = "http://docs.nvidia.com/cuda/profiler-users-guide/index.html">
+               http://docs.nvidia.com/cuda/profiler-users-guide/index.html</a>
+      </ul>
+    </dl>
+
+  </section>
+
+  <section>
+    <h4> Summary </h4>
+
+    <dl style = "font-size: 80%">
+      <dt> With care, a good fraction of peak performance is possible </dt>
+      <ul class = "inner">
+        <li> Can be quite difficult on CPU </li>
+      </ul>
+      <dt> Not all problems well suited </dt>
+      <ul class = "inner">
+        <li> Often just not enough parallelism
+      </ul>
+    </dl>
+
+
+
+  </section>
+
+</div>
+</div>
+
+<!-- End of presentation -->
+
+<script src="../lib/js/head.min.js"></script>
+<script src="../js/reveal.js"></script>
+
+<script>
+// More info about config & dependencies:
+// - https://github.com/hakimel/reveal.js#configuration
+// - https://github.com/hakimel/reveal.js#dependencies
+Reveal.initialize({
+  controls: false,
+  slideNumber: true,
+  center: false,
+  math: { mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js',
+          config: 'TeX-AMS_HTML-full'
+         // See http://docs.mathjax.org/en/latest/config-files.html
+        },
+  dependencies: [
+	{ src: '../plugin/markdown/marked.js' },
+	{ src: '../plugin/markdown/markdown.js' },
+	{ src: '../plugin/notes/notes.js', async: true },
+        { src: '../plugin/math/math.js', async: true},
+	{ src: '../plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+		]
+});
+</script>
+
+</body>
+</html>

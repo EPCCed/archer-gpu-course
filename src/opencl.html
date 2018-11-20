@@ -1,0 +1,349 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>reveal.js</title>
+
+-<link rel="stylesheet" href="../css/reveal.css">
+<link rel="stylesheet" href="../css/theme/white.css">
+<link rel="stylesheet" href="../css/local.css">
+
+<!-- Theme used for syntax highlighting of code -->
+<link rel="stylesheet" href="../lib/css/vs.css">
+
+<!-- Printing and PDF exports -->
+<script>
+var link = document.createElement( 'link' );
+link.rel = 'stylesheet';
+link.type = 'text/css';
+link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+document.getElementsByTagName( 'head' )[0].appendChild( link );
+</script>
+</head>
+
+<!-- Start of presentation --> 
+<body>
+<div class="reveal">
+<div class="slides">
+
+  <section>
+
+    <h1 style = "text-transform: none !important">OpenCL Programming</h1>
+    <!--
+    <p>Kevin Stratford</p>
+    <p> kevin@epcc.ed.ac.uk </p> -->
+    <br>
+    <p>Material by: James Perry, Kevin Stratford </p>
+    <img class = "plain" src ="../img/epcc_logo.png" alt = "EPCC Logo" />
+
+  </section>
+
+  <section>
+    <h3>Outline</h3>
+
+    <ul>
+    <li> Background </li>
+    <li> OpenCL terminology</li>
+    <ul class = "inner">
+        <li> Work groups and work items</li>
+    </ul>
+    <li> Programming with OpenCL </li>
+    <ul class = "inner">
+       <li> Initialising OpenCL and device discovery</li>
+       <li> Allocating and copying memory</li>
+       <li> Declaring a kernel</li>
+       <li> Specifying kernel arguments and launching kernels </li>
+    </ul>
+    <li> Some comments </li>
+    </ul>
+  </section>
+
+  <section>
+    <h3>Background</h3>
+  </section>
+
+  <section>
+    <h4> What is OpenCL? </h4>
+    <ul style = "font-size: 80%">
+      <li> An open standard for parallel programming using heterogeneous
+           architectures </li>
+      <li> Originally developed by Apple </li>
+      <li> Maintained by the Khronos Group
+           <a href = "http://www.khronos.org/" target = "_blank">
+                      http://www.khronos.org/</a>
+      <li> Supported by many manufacturers, e.g., AMD, ARM, Intel, NVIDIA, ...
+      <li> Same code will, in principle, run on all types of hardware </li>
+    </ul>
+    <p> See <a href = "http://www.khronos.org/opencl/" target = "_blank">
+                       http://www.khronos.org/opencl/</a>
+  </section>
+
+  <section>
+    <h4> OpenCL Components </h4>
+    <ul style = "font-size: 80%">
+      <li> Consists of:
+      <ul class = "inner">
+         <li> A programming language based on ANSI C for writing kernels
+         <li> Running kernels on devices
+         <li> An API for associated management of device, memory, kernels,
+              and so on. 
+      </ul>
+      <li> Kernel functions often compiled at runtime
+      <li> Same code will run on many different devices (it is portable)
+     
+    </ul>
+  </section>
+
+  <section>
+    <h4>Work Items and Work Groups</h4>
+
+    <ul style = "font-size: 80%">
+      <li> In OpenCL, each problem is composed of an array of work items
+      <ul class = "inner">
+        <li> May be one-dimensional, two-dimensional or three-dimensional </li>
+      </ul>
+      <li> The domain is sub-divided into <i> work groups </i>
+    </ul>
+
+    <img src = "./jp-schematic-opencl-work.png" class = "plain" width = "90%"
+         alt = "Schemetic diagram of a domain sub-divided into
+                work groups, each consisting of work items">
+
+    <ul style = "font-size: 80%">
+      <li> Here: <i>global dimension</i> $12 \times 8$;
+           <i>local dimension</i> $4 \times 4$
+    </ul>  
+  </section>
+
+  <section>
+    <h4>Host kernel</h4>
+    <pre><code class = "cpp" data-trim>
+
+/* Consider this host code, which computes c = a + b
+ * for a 1-d vector of floats of length n: */
+
+void add_vectors(float * a, float * b, float * c, int n) {
+
+  int i;
+
+  for (i = 0; i < n; i++) {
+    c[i] = a[i] + b[i];
+  }
+}
+    </code></pre>
+  </section>
+
+    <section>
+    <h4> OpenCL kernel</h4>
+
+    <pre class = "stretch"><code class = "cpp">
+/* Here is an equivalent OpenCL kernel */
+
+__kernel void add_vectors(__global float * a,
+                          __global float * b,
+                          __global float * c) {
+  int i;
+
+  /* There is no loop: each work item processes a separate
+   * array element */ 
+
+  i = get_global_id(0);
+  c[i] = a[i] + b[i];
+}
+
+/* This OpenCL function determines the global index */
+size_t get_global_id(uint dimidx);
+    </code></pre>
+    </section>
+
+    <section>
+      <h4> Work Groups </h4>
+
+      <ul style = "font-size: 80%">
+        <li> All the work items in the same work group are scheduled
+             on the same processing unit. E.g., on the same SM on an
+             NVIDIA card.
+        <li> Synchronisation is possible between work items in the same
+             work group
+        <li> Synchronisation not possible between work groups
+        <li> Items in the same work group shared same local memory 
+      </ul>
+    </section>
+
+
+    <section>
+      <h3> OpenCL host-side programming </h3>
+    </section>
+
+    <section>
+      <h4> Initialising OpenCL </h4>
+
+      <pre><code class = "cpp">
+#include "CL/opencl.h"
+      </code></pre>
+
+      <dl style = "font-size: 80%">
+        <dt> Can be rather a long-winded process </dt><br>
+        <dt> Performed via OpenCL API functions: </dt>
+         <ul class = "inner">
+           <li> Find the <i>platform</i> you require (e.g., CPU or GPU)
+           <li> Find the target <i>device</i> on that platform
+           <li> Create a <i>context</i> and <i>command queue</i> on the target
+                device
+           <li> Compile your <i>kernel</i> (at run time) for the device
+           <li> Queue the kernel for execution
+         </ul>
+      </dl>
+    </section>
+
+    <section>
+      <h4> Allocating device memory </h4>
+
+      <pre class = "stretch"><code class = "cpp">
+/* Device global memory is referenced on host by opaque
+ * "cl_mem" handles declared, e.g.: */
+
+cl_mem deviceMemory;
+
+/* Allocations are made in relevant OpenCL context: */
+
+deviceMemory = clCreateBuffer(clContext, CL_MEM_READ_WRITE, size,
+                              NULL, ierr);
+
+/* ... perform work ... */
+
+/* Device memory released via: */
+ierr = clReleaseMemObject(deviceMemory);
+      </code></pre>
+
+    </section>
+
+    <section>
+      <h4> Copying to and from device memory </h4>
+
+
+      <pre class = "stretch"><code class = "cpp">
+/* Transfer between host and device typically involves: */
+
+ierr = clEnqueueWriteBuffer(clQueue, buffer, CL_TRUE, 0, size,
+                            host_ptr, 0, NULL, NULL);
+
+/* ... perform required computation ...  */
+
+ierr = clEnqueueReadBuffer(clQueue, buffer, CL_TRUE, 0, size,
+                           host_ptr, 0, NULL, NULL);
+
+/* Note CL_TRUE indicates that these are blocking transfers;
+ * data may be used when the call returns.
+ * The final three arguments may refer to other events in the
+ * command queue (arguemnts which are not active here). */   
+      </code></pre>
+
+    </section>
+
+    <section>
+      <h4> Executing a kernel </h4>
+
+      <pre class = "stretch"><code class = "cpp">
+cl_int ierr;
+
+/* If we have a kernel:
+ * __kernel void add_vectors(float * d_input, int n); */
+
+/* Declare kernel arguments: */
+ierr = clSetKernelArg(clKernel, 0, sizeof(cl_mem), &d_input);
+ierr = clSetKernelArg(clKernel, 1, sizeof(int), &size);
+
+ierr = clEnqueuNDRangeKernel(clQueue, clKernel, ndim, NULL,
+                             globalSize, localSize,
+                             0, NULL, NULL);
+
+/* Wait for all work groups to finish */
+ierr = clFinish(clQueue);
+      </code></pre>
+    </section>
+
+    <section>
+      <h4> Writing kernels </h4>
+
+      <ul>
+        <li> OpenCL kernels are functions that run on the device
+        <li> Written in separate source file (cf. host code)
+        <li> Often .cl extension
+        <li> Often compiled at runtime
+        <li> OpenCL C kernel language is a subset of ANSI C
+        <li> Work item functions, work group functions ...
+      </ul>
+    </section>
+
+    <section>
+      <h4> Memory space qualifiers </h4>
+
+      <dl style = "font-size: 80%">
+        <dt> <code>__global</code></dt>
+        <ul class = "inner">
+          <li> Global memory
+          <li> Allocatable with read/write access on host
+          <li> Available to all work groups on a device (may be slow)
+        </ul>
+        <dt> <code>__constant</code></dt>
+        <ul class = "inner">
+          <li> Constant memory
+          <li> Read-only fast cache memory on device (may be of limited capacity)
+          <li> Available (read-only) to all work groups/items
+        </ul>
+        <dt> <code>__local</code></dt>
+        <ul class = "inner">
+          <li> Local memory
+          <li> Shared memory local to an individual work group
+          <li> Use schynchronisation to control updates
+        </dl>
+      </dt>
+    </section>
+
+    <section>
+      <h4> Some Comments </h4>
+
+      <ul style = "font-size: 80%">
+        <li> Very general and therefore very flexible and portable
+        <li> Can be verbose so use libraries to help
+        <li> Kernel side somewhat more limited than CUDA (eg. no standard headers in kernel code)
+        <li> There do exist Fortran interfaces
+        <li> Quite a lot of activity in C++/SPIR/SYCL standards area
+      </ul>
+    </section>
+
+</div>
+</div>
+
+<!-- End of presentation -->
+
+<script src="../lib/js/head.min.js"></script>
+<script src="../js/reveal.js"></script>
+
+<script>
+// More info about config & dependencies:
+// - https://github.com/hakimel/reveal.js#configuration
+// - https://github.com/hakimel/reveal.js#dependencies
+Reveal.initialize({
+  controls: false,
+  slideNumber: true,
+  center: false,
+  math: { mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js',
+          config: 'TeX-AMS_HTML-full'
+         // See http://docs.mathjax.org/en/latest/config-files.html
+        },
+  dependencies: [
+	{ src: '../plugin/markdown/marked.js' },
+	{ src: '../plugin/markdown/markdown.js' },
+	{ src: '../plugin/notes/notes.js', async: true },
+        { src: '../plugin/math/math.js', async: true},
+	{ src: '../plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+		]
+});
+</script>
+
+</body>
+</html>

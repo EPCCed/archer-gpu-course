@@ -1,0 +1,48 @@
+!
+!     This is a CUDA FORTRAN module that contains different variants of
+!     reverse edge-detection algorithm.
+!
+!     Training material developed by George Beckett, based on original
+!     material provided by James Perry, Alan Gray, and David Henty.
+!
+!     Copyright EPCC, The University of Edinburgh, 2011
+
+
+module reverse_kernels
+  implicit none
+
+  integer, parameter :: tp = kind(1.0)
+  integer, parameter :: rp = kind(1.0d0)
+
+contains
+
+  attributes(global) subroutine inverseEdgeDetect(height, width, &
+       source, destination, edge)
+    implicit none
+    
+    integer, value, intent(in) :: height, width ! Passing by value to avoid need to
+                                                ! assign in advance of call
+
+    real (kind=rp), dimension((height+2),(width+2)), intent(in)    :: source, edge
+    real (kind=rp), dimension((height+2),(width+2)), intent(inout) :: destination
+
+    integer :: row, col
+
+    ! Calculate global row index for this thread
+    col = ((blockidx%x-1)*blockdim%x + threadidx%x) + 1
+
+    do row=2,height+1
+       destination(row,col) = 0.25* &
+            (source(row-1,col) + &
+            source(row+1,col) + &
+            source(row,col-1) + &
+            source(row,col+1) - &
+            edge(row,col))
+    end do
+
+  end subroutine inverseEdgeDetect
+
+
+
+
+end module reverse_kernels

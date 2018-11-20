@@ -1,0 +1,29 @@
+!
+!     Training material developed by George Beckett, based on original
+!     material provided by James Perry and Alan Gray
+!     Copyright EPCC, The University of Edinburgh, 2011
+!
+!     15/FEB/11 - MGB created initial FORTRAN90 port.
+
+module array_negate
+
+  implicit none
+
+contains
+
+  attributes(global) subroutine reverse(size_aa, a_in, a_out)
+    implicit none
+
+    integer, value, intent(in)                 :: size_aa
+    integer, dimension(size_aa), intent(in   ) :: a_in
+    integer, dimension(size_aa), intent(inout) :: a_out
+
+    integer :: idx
+
+    idx = threadidx%x + ((blockidx%x-1) * blockdim%x)
+
+    a_out(idx) = a_in(size_aa - idx + 1)
+
+  end subroutine reverse
+
+end module array_negate

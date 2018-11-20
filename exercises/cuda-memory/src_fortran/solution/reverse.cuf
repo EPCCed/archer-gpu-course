@@ -1,0 +1,103 @@
+!
+!
+!     Training material developed by George Beckett, based on original
+!     material provided by James Perry and Alan Gray
+!     Copyright EPCC, The University of Edinburgh, 2011
+!
+
+!
+! Main routine
+!
+program intro
+  use cudafor
+  use gpu_utils
+  use array_negate
+
+  implicit none
+
+  integer, parameter      :: ARRAY_SIZE = 512 !65536
+
+  type (dim3)             :: blocksPerGrid
+  type (dim3)             :: threadsPerBlock
+
+  integer, allocatable, dimension(:) :: h_in, h_out
+  integer                 :: ncorrect
+  integer                 :: i, istat
+
+  integer, device, allocatable, dimension(:) :: d_in
+  integer, device, allocatable, dimension(:) :: d_out
+
+  integer :: deviceNum
+  type (cudaDeviceProp) :: prop
+
+  ! print device name
+  istat = cudaGetDevice(deviceNum)
+  istat = cudaGetDeviceProperties(prop, deviceNum)
+  write(*,"('   Device name: ',a)") trim(prop%name)
+  
+  ! Allocate memory on host
+  ! h_in holds the input array, h_out holds the result
+  allocate (h_in(ARRAY_SIZE))
+  allocate (h_out(ARRAY_SIZE))
+
+  ! Allocate memory on device
+
+  allocate (d_in(ARRAY_SIZE))
+  allocate (d_out(ARRAY_SIZE))
+
+  ! Initialise host arrays
+  do i = 1, ARRAY_SIZE
+     h_in(i) = i - 1
+     h_out(i) = 0
+  end do
+
+  ! Copy input array from host to GPU
+
+  d_in = h_in(1:ARRAY_SIZE)
+
+  ! Constant memory assignment
+
+  carray_size = ARRAY_SIZE
+
+  ! Run the kernel on the GPU
+
+  blocksPerGrid  = dim3(ARRAY_SIZE/THREADS_PER_BLOCK, 1, 1)
+  threadsPerBlock = dim3(THREADS_PER_BLOCK, 1, 1)
+  call reverse<<<blocksPerGrid, threadsPerBlock>>>(ARRAY_SIZE, d_in, d_out) 
+
+  ! Constant memory version; uncomment if required.
+  ! call reverse_constant<<<blocksPerGrid, threadsPerBlock>>>(d_in, d_out) 
+
+  ! wait for all threads to complete and check for errors
+  istat = cudaDeviceSynchronize()
+  call checkCUDAError()
+
+  ! copy the result array back to the host
+
+  h_out = d_out(1:ARRAY_SIZE)
+
+  ! Print out the result
+  write (*,*) "Results: "
+
+  ncorrect = 0
+  do i = 1, ARRAY_SIZE
+    if (h_out(i) == h_in(ARRAY_SIZE-i+1)) ncorrect = ncorrect + 1
+  end do
+
+  write (*,*) "Number of correctly reversed elements: ", ncorrect
+  if (ncorrect == ARRAY_SIZE) then
+    write (*,*) "Correct"
+  else
+    write (*,*) "Incorrect"
+  end if
+
+  ! Free device buffer
+
+  if (allocated(d_out)) deallocate(d_out)
+  if (allocated(d_in))  deallocate(d_in)
+
+  ! Free host buffers
+  deallocate (h_in)
+  deallocate (h_out)
+
+end program intro

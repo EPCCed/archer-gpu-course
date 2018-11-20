@@ -1,0 +1,55 @@
+/*
+ * CSS local to this presentation
+ */
+h3 {
+   text-transform: none !important;
+}
+h4 {
+   text-transform: none !important;
+}
+p {
+   font-size: 0.75em;
+}
+pre {
+   box-shadow: none !important;
+}
+ul {
+   font-size: 0.75em;
+}
+ul.inner {
+   font-size: 0.75em;
+}
+dl {
+   display: block;
+   float: left;
+   width: 100%;
+}
+p.breadcrumb {
+   color: #666;
+   background: transparent;
+   font-size: 0.5em;
+   float: left;
+   clear: both;
+}
+p.note {
+   font-size: 0.5em;
+}
+div.rblock {
+   float: right;
+   display: block;
+   width: 40%;
+   font-size: 0.7em;
+}
+div.lblock {
+   float: left;
+   display: block;
+   width: 50%;
+   font-size: 0.75em;
+}
+
+/* Without this, the slide number is a fixed font size, which makes it
+ * a bit small for presentation */
+
+.reveal .slide-number {
+  font-size: 100%;
+}

@@ -1,0 +1,410 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>reveal.js</title>
+
+-<link rel="stylesheet" href="../css/reveal.css">
+<link rel="stylesheet" href="../css/theme/white.css">
+<link rel="stylesheet" href="../css/local.css">
+
+<!-- Theme used for syntax highlighting of code -->
+<link rel="stylesheet" href="../lib/css/vs.css">
+
+<!-- Printing and PDF exports -->
+<script>
+var link = document.createElement( 'link' );
+link.rel = 'stylesheet';
+link.type = 'text/css';
+link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+document.getElementsByTagName( 'head' )[0].appendChild( link );
+</script>
+</head>
+
+<!-- Start of presentation --> 
+<body>
+<div class="reveal">
+<div class="slides">
+
+  <section>
+
+    <h1 style = "text-transform: none !important">Using Directives</h1>
+    <!--
+    <p>Kevin Stratford</p>
+    <p> kevin@epcc.ed.ac.uk </p> -->
+    <br>
+    <p>Material by: Mark Bull, Alan Gray, Alistair Hart (Cray),
+       Kevin Stratford </p>
+    <img class = "plain" src ="../img/epcc_logo.png" alt = "EPCC Logo" />
+
+  </section>
+
+  <section> <h4> Aim </h4>
+
+    <dl>
+      <dt> An instruction, or directive, to compiler to generate parallel
+           code for GPU (more generally, "accelerator")</dt>
+      <ul>
+        <li> OpenACC </li>
+        <li> OpenMP </li>
+      </ul>
+    </dl>
+  </section>
+
+  <section> <h4> OpenACC: Directives for Accelerators </h4>
+
+     <dl>
+        <dt> Standard first announced in November 2011 </dt>
+        <ul class = "inner">
+           <li> <a target = "_blank"
+                   href = "http://www.openacc.org/">
+                           http://www.openacc.org/</a>
+           <li> Many relevant industry bodies involved
+           <li> C/C++ or Fortran
+           <li> Support from e.g., Cray, PGI (Gnu gcc 7) compilers
+         </ul>
+     </dl>
+  </section>
+
+
+  <section> <h4> Directive format </h4>
+
+     <dl>
+       <dt> C: </dt>
+     </dl>
+      <pre><code class = "cpp" data-trim>
+#pragma acc parallel [clause ...]
+{
+  /* ...structured block .. */
+}
+      </code></pre>
+      <dl>
+        <dt>Fortran:</dt>
+      </dl>
+      <pre><code class = "fortran" data-trim>
+!$acc parallel [clause ...]
+! ... structured block ...
+!$acc end parallel 
+      </code></pre>
+      <dl>
+        <dt> Both ignored if non-OpenACC compilation
+      </dl>
+
+  </section>
+
+
+  <section> <h4>  Parallelism based on loops </h4>
+
+      <dl>
+        <dt> C:
+      </dl>
+      <pre><code class = "cpp" data-trim>
+#pragma acc parallel loop
+for (n = 0; n < NSIZE; n++) {
+  /* ...structured block .. */
+}
+      </code></pre>
+      <dl>
+        <dt> Fortran:
+      </dl>
+      <pre><code class = "fortran" data-trim>
+!$acc parallel loop
+do n = 1, NSIZE
+  ! ...loop body...
+end do
+!$acc end parallel loop
+      </code></pre>
+
+  </section>
+
+
+  <section> <h4> More than one loop </h4>
+
+    <!--- A rather long lbock, rblock ... -->
+
+    <div class = "lblock" style = "width: 40%">
+      <dl>
+        <dt> C: </dt>
+      </dl>
+      <pre><code class = "cpp">
+#pragma acc parallel
+{
+  #pragma acc loop
+  for (i = 0; i < NI; i++) {
+    /* ... loop one ... */
+  }
+
+  ...
+
+  #pragma acc loop
+  for (i = 0; i < NI; j++) {
+    /* ... loop two ... */
+  }
+}
+      </code></pre>
+    </div>
+
+    <div class = "rblock" style = "width: 60%">
+      <dl>
+        <dt> Fortran: </dt>
+      </dl>
+      <pre><code class = "fortran">
+!$acc parallel
+  ...
+  !$acc loop
+  do i = 1, NI
+    ! ... loop one ..
+  end do
+  !$acc end loop
+
+  ...
+
+  !$acc loop
+  do i = 1, NI
+    ! ... loop two ...
+  end do
+  !$acc end loop
+
+!$acc end parallel
+      </code></pre>
+    </div>
+
+    <dl style = "font-size; 80%">
+      <dt> Note <code>parallel</code> does little in itself </dt>
+      <ul class = "inner">
+        <li> Combined with <code>loop</code> to distribute work
+      </ul>
+     </dl>
+  </section>
+
+
+  <section> <h4> How and where is work distributed? </h4>
+
+     <ul>
+       <li> OpenACC abstracts hardware as <i>gangs</i>, <i>vectors</i>
+       <ul class = "inner">
+         <li> Gang $\sim$ CUDA block of threads
+         <li> Vector $\sim$ CUDA thread
+       </ul>
+       <li> Use both blocks and threads
+
+     </ul>
+     <pre style = "font-size: 80%"><code class = "cpp" data-trim>
+#pragma acc loop gang vector
+     </code></pre>
+     <ul>
+       <li> May be used with <code>loop</code> or <code>parallel loop</code>
+
+  </section>
+
+
+  <section>    <h4> Controlling execution </h4>
+
+    <ul>
+      <li> Set the number of blocks
+      <ul class = "inner">
+         <li> <code>num_gangs(nblocks)</code> clause
+      </ul>
+      <li> Sety number of threads per block
+      <ul class = "inner">
+        <li> <code>vector_length(nthreads)</code> clause
+        <li> <code>nthreads</code> one of 1, 64, 128 (the default), 256, 512, 1024
+      </ul>
+      <li> May be used with <code>loop</code> or <code>parallel loop</code>
+    </ul>
+
+  </section>
+
+
+  <section>    <h4> Clauses </h4>
+
+    <ul>
+      <li> Many other clauses
+      <ul class = "inner">
+        <li> <code>seq</code>: loop should be executed sequentially
+        <li> <code> if (condition)</code>:conditional execution on accelerator
+        <li> <code>reduction</code>: sum, minimum, maximum operations
+        <li> <code>collapse()</code>: merge loop nests
+        <li> ...
+
+    </ul>
+  </section>
+
+  <section>
+    <h4> Data movement </h4>
+
+    <dl>
+      <dt>Consider:</dt>
+    </dl>
+    <pre><code class = "fortran" data-trim>
+!$acc parallel loop
+do i = 1, NI
+  output(i) = input(i)
+end do
+!$acc end parallel loop
+    </code></pre>
+    <dl>
+      <dt> Compiler arranges necessary data transfers </dt>
+      <ul class = "inner">
+        <li> On entry: <code>input()</code> copied to device </li>
+        <li> On exit: <code>output()</code> copied back to host </li>
+      </ul>
+    </dl>
+
+  </section>
+
+
+  <section> <h4> Explicit control of data movement </h4>
+
+    <dl>
+      <dt> Use the <code>data</code> directive </dt>
+      <dt> C: </dt>
+    </dl>
+    <pre><code class = "cpp" data-trim>
+#pragma acc data [clause ...]
+{
+  /* ... structured block ... */
+}
+    </code></pre>
+    <dl>
+      <dt> Fortran: </dt>
+    </dl>
+    <pre><code class = "fortran" data-trim>
+!$acc data [clause ...]
+! ... structured block ...
+!$acc end data
+    </code></pre>
+  </section>
+
+
+  <section> <h4> Preventing unnecessary transfers </h4>
+
+    <pre class = "stretch"><code class = "fortran" data-trim>
+!$acc data copyin(input) copyout(output)
+
+!$acc parallel loop
+do i = 1, NI
+  output(i) = input(i)
+end do
+!$acc end parallel loop
+
+write (*,*) "Copied input to output"
+
+!$acc parallel loop
+do i = 1, NI
+  output(i) = function_of(output(i))
+end do
+!$add end parallel loop
+
+!$acc end data
+    </code></pre>
+  </section>
+
+
+  <section> <h4> Data clauses </h4>
+
+    <dl style = "font-size: 80%">
+      <dt><code>copyin</code> </dt>
+      <dd> Copy data to accelerator at start of region </dd>
+      <dt> <code>copyout</code> </dt>
+      <dd> Copy data to host at end of region </dd>
+      <dt> <code>copy</code> </dt>
+      <dd> Do both (<code>copyin</code> and <code>copyout</code>) </dd>
+      <dt> <code> create </code> </dt>
+      <dd> No copy at all. Allocate temporary storage on  device </dd>
+      <dt> <code> present </code> </dt>
+      <dd> Indicate already present on device </dd>
+    </dl>
+  </section>
+
+  <section> <h4> Data <code>present</code> </h4>
+
+    <div class = "lblock" style = "width: 40%">
+      <pre><code class = "fortran">
+program example
+  integer :: a(10000)
+
+  !$acc data copy(a)
+
+  !$acc parallel loop
+    ! ... initialise a()
+  !$add end parallel loop
+
+  call my_double(a)
+
+  !$acc end data
+end program example
+      </code></pre>
+    </div>
+
+    <div class = "rblock" style = "width: 60%">
+    <pre><code class = "fortran">
+subroutine my_double(b)
+  integer, intent(inout) :: b(:)
+  integer :: i
+
+  !$acc parallel loop present(b)
+  do i = 1, size(b)
+    b(i) = 2*b(i)
+  end do
+  !$acc end parallel loop
+
+end subroutine my_double
+    </code></pre>
+    </div>
+
+    <dl style = "font-size: 80%">
+    <dt> Prevents an additional (erroneous?) copy in subroutine </dt>
+    </dl>
+  </section>
+
+  <section> <h4> Summary </h4>
+
+    <ul>
+      <li> Directives ask the compiler to do the work
+      <ul class = "inner">
+        <li> Faster in development
+        <li> More portable (?)
+        <li> Less direct control (and perhaps poorer performance)
+        <li> May be intractable for very complex code
+      </ul>
+      <li> May be replaced by OpenMP as method of choice (?)
+    </ul>
+  </section>
+
+</div>
+</div>
+
+
+
+<!-- End of presentation -->
+
+<script src="../lib/js/head.min.js"></script>
+<script src="../js/reveal.js"></script>
+
+<script>
+// More info about config & dependencies:
+// - https://github.com/hakimel/reveal.js#configuration
+// - https://github.com/hakimel/reveal.js#dependencies
+Reveal.initialize({
+  controls: false,
+  slideNumber: true,
+  center: false,
+  math: { mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js',
+          config: 'TeX-AMS_HTML-full'
+         // See http://docs.mathjax.org/en/latest/config-files.html
+        },
+  dependencies: [
+	{ src: '../plugin/markdown/marked.js' },
+	{ src: '../plugin/markdown/markdown.js' },
+	{ src: '../plugin/notes/notes.js', async: true },
+        { src: '../plugin/math/math.js', async: true},
+	{ src: '../plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+		]
+});
+</script>
+
+</body>
+</html>

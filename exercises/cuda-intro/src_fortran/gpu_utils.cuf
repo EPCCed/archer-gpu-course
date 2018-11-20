@@ -1,0 +1,30 @@
+!
+!     This is a FORTRAN module that contains useful utility subroutines
+!     for programs that run CUDA FORTRAN kernels on a GPGPU.
+!
+!     Training material developed by George Beckett, based on original
+!     material provided by James Perry and Alan Gray
+!     Copyright EPCC, The University of Edinburgh, 2011
+!
+!     15/FEB/11 - MGB created initial FORTRAN90 port.
+
+module gpu_utils
+  use cudafor
+
+  implicit none
+
+contains
+
+  ! Utility function to check for and to report errors
+  subroutine checkCUDAError
+    integer :: error_code
+
+    error_code = cudaGetLastError()
+
+    if (error_code .NE. cudaSuccess) then
+       write (*,*) "Cuda error: ", error_code
+       stop
+    end if
+  end subroutine checkCUDAError
+
+end module gpu_utils

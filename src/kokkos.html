@@ -1,0 +1,646 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>reveal.js</title>
+
+<link rel="stylesheet" href="../css/reveal.css">
+<link rel="stylesheet" href="../css/theme/white.css">
+<link rel="stylesheet" href="../css/local.css">
+
+<!-- Theme used for syntax highlighting of code -->
+<link rel="stylesheet" href="../lib/css/vs.css">
+
+<!-- Printing and PDF exports -->
+<script>
+var link = document.createElement( 'link' );
+link.rel = 'stylesheet';
+link.type = 'text/css';
+link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+document.getElementsByTagName( 'head' )[0].appendChild( link );
+</script>
+</head>
+
+<!-- Start of presentation --> 
+<body>
+<div class="reveal">
+<div class="slides">
+
+  <section>
+    <h4> Overview </h4>
+
+    <ul style = "display: block; float: left; width: 100%">
+      <li> Portability and Performance Portability</li>
+      <li> Patterns, Policies, and Loop Bodies </li>
+      <li> Views, Memory Space, Execution Space </li>
+      <li> Data Layout </li>
+      <li> Hierarchical Parallelism </li>
+      <li> Other features </li>
+      <li> Comments / Summary </li>
+    </ul>
+  </section>
+
+  <section>
+      <h4> The Nature of the Problem </h4>
+
+      <img class = "plain" src = "./node.png"  alt = "Node architecture">
+ 
+  </section>
+
+  <section>
+     <h4> The Scale of the Problem </h4>
+
+     <p> Consider Summit (IBM Power9 + NVIDIA Tesla V100) </p>
+
+     <table>
+       <thead>
+         <tr> <th> Level </th>  <th> Consisting... </th><th> Threads</th> </tr>
+       </thead>
+       <tbody>
+         <tr> <td> Warp    </td> <td> 32 SIMT    </td> <td> 32      </td> </tr>
+         <tr> <td> SM      </td> <td> 64 Warps   </td> <td> 2,048   </td> </tr>
+         <tr> <td> GPC     </td> <td> 80 SMs     </td> <td> 163,840 </td> </tr>
+         <tr> <td> Node    </td> <td> 2x3 GPCs   </td> <td> 983,040 </td> </tr>
+         <tr> <td> Machine </td> <td> 4600 Nodes </td> <td> 4,521,984,000 </td>
+         </tr>
+       </tbody>
+     </table>
+
+  </section>
+
+  <section>
+    <h4> Options for applications </h4> 
+
+    <dl style = "font-size: 80%">
+      <dt> Maintain a number of implementations of relevant kernels</dt>
+        <ul class = "inner">
+          <li> May be appropriate... </li>
+        </ul>
+      <dt> Domain Specific Language (DSL) </dt>
+        <ul class = "inner">
+           <li> Usually suggests some source-to-source translation </li>
+        </ul>
+      <dt> Portability layer </dt>
+        <ul class = "inner">
+          <li> E.g., Intel Thread Bulding Blocks
+          <li> OpenCL / SYCL
+          <li> Kokkos
+        </ul>
+    </dl>
+
+  </section>
+
+  <section>
+    <h4> Pattern, Policy, and Loop Body</h4>
+
+    <pre><code class = "cpp" data-trim>
+/* Consider a loop (scale with "a" constant): */
+
+for (int index = 0; index < nElements; index++) {
+   x[index] = a*x[index];
+}
+
+/* Pattern... */
+for (...)
+
+/* Execution Policy... */
+(int index = 0; index < nElements; index++)
+
+/* Body... */
+x[index] = a*x[index];
+    </code></pre>
+
+  <p style = "font-size: 80%">
+  A combination of pattern and policy drives execution of the body </p>
+
+  </section>
+
+  <section>
+
+    <h4> Consider OpenMP </h4>
+
+    <pre><code class = "cpp" data-trim>
+    #pragma omp parallel for
+    for (int index = 0; index < nElements; index++) {
+      x[index] = a*x[index];
+    }
+
+    /* Pattern ... */
+    #pragma omp ... for
+    for (...)
+
+    /* Policy ... */
+    #pragma omp parallel ...
+    ... (int index = 0; index < nElements; index++)    
+
+    /* Body (as before) ... */
+    </code></pre>
+
+  <p style = "font-size: 80%">
+  Distribute iterations of the body between asynchronous threads
+
+  </section>
+
+  <section>
+
+    <h4> Kokkos </h4>
+
+    <pre><code class = "cpp" data-trim>
+
+    #include "Kokkos_Core.hpp"
+
+    /* ... */
+
+    Kokkos::parallel_for(policy, body);
+
+    /* ...being pattern, policy, computational body */
+    </code></pre>
+
+  <p> The body is specified as a function object.
+
+  </section>
+
+  <section>
+
+    <h4> Loop body </h4>
+
+    <pre><code class = "cpp" data-trim>
+    /* Use a function object... */
+
+    struct Scal {
+      double a_;
+      double * x_;
+      Scal(double a, double * x) : a_ (a), x_(x) {};
+      void operator() (int index) const {
+        x_[index] = a_*x_[index];
+      } 
+    };
+    </code></pre>
+
+    <pre><code class = "cpp" data-trim>
+      /* ... with a policy which states that the range is
+       * of the appropriate length "nElements" */
+
+      double a = 2.0;
+      double * x = new double[nElements];
+
+      Scal scal(a, x);
+      Kokkos::parallel_for(nElements, scal);
+    </code></pre>
+
+  </section>
+
+
+  <section>
+
+    <h4> Convenience: use a lambda </h4>
+
+
+    <pre><code class = "cpp" data-trim>
+      /* As before, we have in scope ... */
+      double a = 2.0;
+      double * x = new double[nElements];
+
+      /* ... */
+
+      Kokkos::parallel_for(nElements, [=] (int index) {
+        x[index] = a*x[index];
+      });
+    </code></pre>
+
+  </section>
+
+  <section>
+
+    <h4> A different pattern</h4>
+
+    <pre><code class = "cpp" data-trim>
+       /* Consider a vector product = < a b > */
+
+       double * a = new double[nElements];
+       double * b = new double[nElements];
+
+       /*  ...  */
+
+       double result = 0.0;
+       for (int index = 0; index < nElements; index++) {
+         result += a[index]*b[index];
+       }
+    </code></pre>
+
+  </section>
+
+  <section>
+
+    <h4> In OpenMP... </h4>
+
+    <pre class = "stretch"><code class = "cpp" data-trim>
+       /* ... we have a reduction ... */
+
+       #omp pragma parallel for reduction (+: result)
+       for (int index = 0; index < nElements; index++) {
+         result += a[index]*b[index];
+       }
+
+       /* Pattern ... */
+       #pragma ... for reduction(+: result)
+       for (...)
+
+       /* Policy... */
+       #pragma omp parallel ...
+       ... (int index = 0; index < nElements; index++)
+    </code></pre>
+
+  </section>
+
+  <section>
+
+    <h4> In Kokkos... </h4>
+
+    <pre class = "stretch"><code class = "cpp" data-trim>
+
+       /* ... use Kokkos::parallel_reduce() pattern ... */
+
+       double result = 0.0;
+
+       Kokkos::parallel_reduce(nElements, [=] (int index, double & sum) {
+         /* Form a contribution to the sum... */
+         sum += a[index]*b[index];
+       }, result);
+
+
+       /* nb.
+        * 1: variable sum is "thread-private" and managed by Kokkos.
+        *
+        * 2: nowhere have we said this is a sum: it is a default
+        *    (one of many in Kokkos)
+        */
+    </code></pre>
+
+  </section>
+
+  <section>
+    <h4> Views, Memory Space, Execution Space </h4>
+
+  </section>
+
+
+  <section>
+
+    <h4> Views </h4>
+
+    <pre><code class = "cpp" data-trim>
+      /* Kokkos provides a lightweight class which represents
+       * one-dimensional, two-dimensional etc arrays: e.g.,: */
+
+      Kokkos::View &lt double * &gt x("my vector", nElements);
+
+      Kokkos::parallel_for(nElements, [=] (int index) {
+        x(index) = a*x(index);
+      });
+
+    </code></pre>
+
+    <p class = "fragment" data-fragment-index = "2" style = "font-size: 80%">
+    Data associated with the <code>View</code> is in the default 
+    <code>MemorySpace</code>
+
+  </section>
+
+  <section>
+    <h4> Memory Space </h4>
+
+    <p style = "font-size: 80%">
+    Default controlled as part of compilation, e.g.:
+    <pre><code class = "bash" data-trim>
+
+       > make KOKKOS_DEVICES=OpenMP
+
+    </code></pre>
+
+    <p style = "font-size: 80%">
+    May be controlled explicitly via template argument
+    <pre class = "stretch"><code class = "cpp" data-trim>
+
+      /* E.g., */
+      Kokkos::View &lt double *, CudaSpace &gt x("my vector", nElements)
+    </code></pre>
+
+  </section>
+
+  <section>
+
+    <h4> Host Mirror Views</h4>
+
+    <pre class = "stretch"><code class = "cpp" data-trim>
+
+      /* A convenience for default memory space... */
+      typedef Kokkos::View &lt double * &gt ViewVectorType;
+
+      /* Declare vector in default space */
+      ViewVectorType x("my vector", nElements);
+
+      /* Declare a "host mirror view" */
+      ViewVectorType::HostMirror h_x = Kokkos::create_mirror_view(x);
+
+      /* Initialise the host view */
+      Kokkos::parallel_for(nElements, [=] (int index) {
+        h_x(index) = 1.0;
+      });
+
+      /* Explicit copy */
+      Kokkos::deep_copy(x, h_x);
+    </code></pre>
+
+  </section>
+
+  <section>
+
+    <h4> Execution Space </h4>
+
+    <p style = "font-size: 80%">
+    A memory space has an associated <code>ExecutionSpace</code>
+
+    <pre class = "stretch"><code class = "cpp" data-trim>
+
+      /* May set explicitly via the policy */
+
+      Kokkos::RangePolicy &lt HostSpace &gt policy(0, nElements);
+
+      Kokkos::parallel_for(policy, [=] (int index) {
+        h_x(index) = a*h_x(index);
+      });
+    </code></pre>
+
+  </section>
+
+  <section>
+    <h4> Data Layout </h4>
+
+  </section>
+
+  <section>
+
+    <h4> Slightly more complex problem... </h4>
+
+
+    <pre class = "stretch"><code class = "cpp" data-trim>
+      /* Consider an inner product < y^T Ax > involving
+       * matrix A (M rows, N columns) */
+
+      double * A = new double[M*N];
+      double * x = new double[N];
+      double * y = new double[M];
+      ...
+      result = 0.0;
+      for (int i = 0; i < M; i++) {
+        sum = 0.0;
+        for (int j = 0; j < N; j++) {
+          sum += A[i*N + j]*x[j];
+        }
+        result += y[i]*sum;
+      }
+    </code></pre>
+
+  </section>
+
+  <section>
+    <h4> Row and Column Major </h4>
+
+    <img class = "plain" src = "right-left.png" alt = "Data layouts">
+  </section>
+
+  <section>
+
+    <h4> Layout Right </h4>
+
+    <pre class = "stretch"><code class = "cpp" data-trim>
+       typedef Kokkos::LayoutRight Layout;
+
+       /* All views have a layout... */
+       Kokkos::View &lt double **, Layout &gt A("Matrix A", M, N);
+       Kokkos::View &lt double *,  Layout &gt x("Vector x", N);
+       Kokkos::View &lt double *,  Layout &gt y("Vector y", M);
+
+       /* ... */
+
+       Kokkos::parallel_reduce(M, [=] (int i, double & rSum) {
+         double sum = 0.0;
+         for (int j = 0; j < N; j++) {
+           sum += A(i,j)*x(j);
+         }
+         rSum += y(i)*sum;
+       }, result);
+    </code></pre>
+
+    <p class = "fragment" data-fragment-index = "2" style = "font-size: 80%">
+    But is the layout, well, right?
+
+  </section>
+
+  <section>
+    <h4> Default Layouts </h4>
+
+    <p  style = "font-size: 80%">
+    Each <code>ExecutionSpace</code> has associated default layout
+
+    <dl style = "font-size: 80%">
+      <dt> CPU uses: <code> Kokkos::LayoutRight </code> </dt>
+      <dt> GPU uses: <code> Kokkos::LayoutLeft  </code> </dt>
+    </dl>
+
+    <p style = "font-size: 80%; line-height: 300%">
+    Appropriate layout crucial to performance.
+
+  </section>
+
+  <section>
+    <h4> Hierarchical Parallelism</h4>
+  </section>
+
+  <section>
+    <h4> Parallelism </h4>
+
+    <div style = "width: 100%; position: absolute; z-index: 1">
+    <pre><code class = "cpp" data-trim>
+
+       /* Parallelism is over rows M ... */
+
+       Kokkos::parallel_reduce(M, [=] (int i, double & rSum) {
+         double sum = 0.0;
+         for (int j = 0; j < N; j++) {
+           sum += A(i,j)*x(j);
+         }
+         rSum += y(i)*sum;
+       }, result);
+    </code></pre>
+
+    <div style = "position: absolute; width: 40%;
+                  margin-left: 500px; margin-top: -150px; z-index: 2">
+    <img class = "plain" src = "./right.png" alt = "Rwo major picture">
+    </div>
+    </div>
+
+  </section>
+
+  <section>
+     <h4> Team policy </h4>
+
+    <pre class = "stretch"><code class = "cpp" data-trim>
+
+       /* A shorthand: */ 
+       typedef Kokkos::TeamPolicy::member_type member_type;
+
+       /* Create a team policy in default execution space... */
+
+       Kokkos::TeamPolicy &lt&gt teamPolicy(numberOfTeams, teamSize);
+
+       Kokkos::parallel_reduce(teamPolicy,
+         [=] (const member_type & teamMember, double & rSum) {
+
+           /* All threads in team are active and share memory */
+
+           int myTeam = teamMember.league_rank();
+           int myRank = teamMember.team_rank();
+
+           /* Need parallelism (a reduction) over columns ... 
+            * ... and compute contribution rSum ... */
+
+       }, result);
+    </code></pre>
+
+  </section>
+
+  <section>
+ 
+   <h4> Nested Parallelism </h4>
+
+   <pre class = "stretch" style = "font-size: 50%">
+   <code class = "cpp" data-trim>
+   /* < y^T Ax > */
+   Kokkos::TeamPolicy <> teamPolicy(M, Kokkos::AUTO);
+
+   Kokkos::parallel_reduce(teamPolicy,
+     [=] (const member_type & teamMember, double & rSum) {
+
+       double sum = 0.0;
+       int i = teamMember.league_rank();                         // ie., row
+
+       Kokkos::TeamThreadRange teamThreadPolicy(teamMember, N);  // columns
+
+       Kokkos::parallel_reduce(teamThreadPolicy, [=] (int j, double & cSum) {
+         cSum += A(i,j)*x(j);
+       }, sum);
+
+        /* Care .... */
+        if (teamMember.team_rank() == 0) rSum += y(i)*sum;
+    }, result);
+    </code></pre>
+  </section>
+ 
+  <section>
+    <h4> Including Vector Level Parallelism </h4>
+
+    <pre class = "stretch" style = "font-size: 50%">
+    <code class = "cpp" data-trim>
+    /* Schematically... */
+    /* Outer level is TeamPolicy */
+    TeamPolicy <> teamPolicy(numberOfTeams, threadsPerTeam, vectorLength);
+    Kokkos::parallel_for(teamPolicy, [=] (member_type & teamMember [,...]) {
+
+      /* Team level code ...*/
+
+      TeamThreadRange teamThreadRange(teamMember, rangeSize);
+      Kokkos::parallel_for(teamThreadRange, [=] (int index [,...]) {
+
+        /* Thread level code ... */
+
+        ThreadVectorRange threadVectorRange(teamMember, vectorRange);
+        Kokkos::parallel_for(threadVectorRange, [=] (int indexv [,...]) {
+          /* Vector level code ...*/
+        });
+      });
+    });
+
+    </code></pre>
+  
+  </section>
+
+  <section>
+    <h4> Summary </h4>
+
+    <dl style = "font-size: 100%">
+      <dt> Identify parallel patterns...</dt>
+        <ul class = "inner">
+          <li> for, reduce, scan, task graph, ... </li>
+        </ul>
+      <dt> Control memory space and execution space </dt>
+        <ul class = "inner">
+          <li> Host space, Cuda space, CudaUVM space, ... </li>
+        </ul>
+      <dt> Control memory layout </dt>
+        <ul class = "inner">
+          <li> LayoutLeft, LayoutRight </li>
+        </ul>
+      <dt> Specify execution configuration via policy </dt>
+        <ul class = "inner">
+          <li> Range policy, Team policy, ND Range, Loop tiling, DIY, ... </li>
+        </ul>
+    </dl>
+
+  </section>
+
+  <section>
+    <h4> Other Features</h4>
+
+    <dl style = "font-size: 80%">
+      <dt> Debugging / profiling tools </dt>
+        <ul class = "inner">
+          <li> Hooks for Intel VTUNE, nvprof, DIY, ... </li>
+        </ul>
+      <dt> Help for incremental refactoring of large exsiting code bases </dt>
+        <ul class = "inner">
+          <li> DualView, "memory coherency", ... </li>
+        </ul>
+      <dt> Support for AMD via ROCm </dt>
+        <ul class = "inner">
+          <li> Planned for Q4 2018 </li>
+        </ul>
+    </dl>
+
+  </section>
+
+</div>
+</div>
+
+<!-- End of presentation -->
+
+<script src="../lib/js/head.min.js"></script>
+<script src="../js/reveal.js"></script>
+
+<script>
+// More info about config & dependencies:
+// - https://github.com/hakimel/reveal.js#configuration
+// - https://github.com/hakimel/reveal.js#dependencies
+Reveal.initialize({
+  controls: false,
+  slideNumber: true,
+  center: false,
+  math: { mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js',
+          config: 'TeX-AMS_HTML-full'
+         // See http://docs.mathjax.org/en/latest/config-files.html
+        },
+  dependencies: [
+	{ src: '../plugin/markdown/marked.js' },
+	{ src: '../plugin/markdown/markdown.js' },
+	{ src: '../plugin/notes/notes.js', async: true },
+        { src: '../plugin/math/math.js', async: true},
+	{ src: '../plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+		]
+});
+</script>
+
+</body>
+</html>

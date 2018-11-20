@@ -1,0 +1,201 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Course Timetable</title>
+
+    <link rel="stylesheet" href="../css/reveal.css">
+    <link rel="stylesheet" href="../css/theme/white.css">
+    <link rel="stylesheet" href="../css/local.css">
+
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="../lib/css/vs.css">
+
+    <!-- Printing and PDF exports -->
+    <script>
+	var link = document.createElement( 'link' );
+	link.rel = 'stylesheet';
+	link.type = 'text/css';
+	link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+	document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+  </head>
+  <body>
+    <div class="reveal">
+    <div class="slides">
+
+    <!-- Start of presentation -->
+
+    <section>
+
+      <h1>GPU Programming</h1>
+      <p>Presenters: Kevin Stratford and Rupert Nash, EPCC<br/>
+      <a href="mailto:kevin@epcc.ed.ac.uk">kevin@epcc.ed.ac.uk, r.nash@epcc.ed.ac.uk</a></p>
+      <img class="plain" src = "../img/epcc_logo.png" alt = "EPCC Logo"/>
+
+      <p style="font-size: 0.7em">
+      <a href="https://epcced.github.io/archer-gpu-course/">
+               https://epcced.github.io/archer-gpu-course/</a></p>
+
+    </section>
+
+    <section>
+
+      <p style="font-size: 0.5em"> Clone/fork this presentation at:
+      <a href="https://github.com/EPCCed/archer-gpu-course">
+               https://github.com/EPCCed/archer-gpu-course</a></p>
+
+      <img class="plain" src="../img/cc_licence.png"
+           alt = "Creative Commons Licence"/>
+      <p>Slide content is available under under a
+      <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/deed.en_US">
+      Creative Commons Attribution-NonCommercial-ShareAlike 4.0
+      International License.</a></p>
+
+      <p style="font-size: 0.35em">
+      This means you are free to copy and redistribute the material and adapt
+      and build on the material under the following terms: You must give
+      appropriate credit, provide a link to the license and indicate if
+      changes were made. If you adapt or build on the material you must
+      distribute your work under the same license as the original.<br/>
+      Note that this presentation contains images owned by others.
+      Please seek their permission before reusing these images.</p>
+
+      <p> Built using
+          <a href="https://github.com/hakimel/reveal.js">reveal.js</a></p>
+      <p style="font-size: 0.35em">
+          reveal.js is available under the
+	  <a href="https://github.com/hakimel/reveal.js/blob/master/LICENSE">
+          MIT licence</a></p>
+
+    </section>
+
+    <!-- ARCHER Logos etc  -->
+    <section id="archer">
+      <img class="plain" src="../img/ARCHER_logo.png" alt = "ARCHER Logo"/>
+      <p><a href="http://www.archer.ac.uk">http://www.archer.ac.uk</a></p>
+    </section>
+
+    <section>
+    <h4>ARCHER is the UK National Supercomputer Service</h4>
+
+    <div class = "lblock">
+      <img width = "250" class = "plain" src = "../img/epsrc-highres.jpg"
+           alt = "EPSRC Logo" />
+      <img width="150" class = "plain" src = "../img/nerc-logo-large.jpg"
+           alt = "NERC Logo" />
+      <img width="250" class = "plain" src = "../img/epcc_logo.png"
+           alt = "EPCC Logo" />
+      <img width="250" class = "plain" src = "../img/cray-logo.png"
+           alt = "Cray Inc. Logo" />
+    </div>
+    <div class = "rblock">
+      <img class="plain" src="../img/archer_cabs.png"
+           alt = "Picture of ARCHER machine itself" />
+    </div>
+    </section>
+
+    <!-- ACTUAL COURSE TIMETABLE -->
+
+    <section>
+
+    <h4>Day One</h4>
+
+    <dl style = "font-size: 70%">
+      <dt>10:00 Introduction</dt>
+      <dt>10:20  <a href="./architectures.html">GPU Concepts/Architectures</a>
+      <dt>11:00 Break </dt>
+      <dt>11:20 <a href = "./cuda-programming.html">CUDA Programming</a> </dt>
+      <dt>12:00 <a href = "#/exercise-location">
+                A first CUDA exercise</a></dt>
+      <dt>13:00 Lunch </dt>
+      <dt><br> </dt>
+      <dt>14:00 <a href = "optimisation.html">CUDA Optimisations</a></dt>
+      <dt>14:20 <a href = "#/exercise-location">Optimisation Exercise</a> </dt>
+      <dt>15:00 Break</dt>
+      <dt>15:20 <a href = "./cuda-memory.html">Constant and Shared Memory</a></dt>
+      <dt>16:00 <a href = "#/exercise-location"> Guest Lecture Alan Gray
+                (NVIDiA) Overview of NVIDIA Volta </a>
+      <dt>17:00 Close
+    </dl>
+    </section>
+
+    <section>
+
+    <h4>Day Two</h4>
+
+    <dl style = "font-size: 70%">
+      <dt>10:00 <a href = "./cuda-memory.html">Constant and Shared Memory</a></dt>
+      <dt>10:10 <a href = "#/exercise-location"> Exercise </a>
+      <dt>10:30  <a href = "./opencl.html">OpenCL</a> and
+                 <a href = "./directives.html">Directives</a>
+      <dt>11:00 Break
+      <dt>11:30 OpenCL and / or Directives
+                 <a href = "#/exercise-location">Exercises</a>  </dt>
+      <dt>13:00 Lunch </dt>
+      <dt> <br> </dt>
+      <dt> 14:00 Performance portability and
+           <a href = "./kokkos.html">Kokkos</a>
+      <dt> 14:30 Exercise: Getting started with Kokkos patterns
+      <dt>15:00 Break</dt>
+      <dt>15:10 Kokkos memory management<</dt>
+      <dt>15:30 Memory management exercises</dt>
+      <dt>16:00 Close
+    </dl>
+    </section>
+
+    <!-- Local 'elf and Safety -->
+
+    <section>
+      <h4>Local Information</h4>
+      <ul style = "font-size: 80%">
+        <li> Please take care of your personal belongings.
+      </ul>
+    </section>
+
+    <!-- Do not commit details to the repository, please...
+         I suggest making appropriate local chnages on a per course
+         basis for exercise details -->
+
+    <section id = "exercise-location">
+      <h4> Exercises </h4>
+
+      <dl style = "font-size: 100%">
+      <dt>Details will appear here</dt>
+      <ul class = "inner">
+        <li> You will need a web browser
+        <li> <a href = "http://www.firefox.com/"> Firefox</a>,
+              <a href = "http://www.google.com/chrome/"> Chrome</a>
+             are known to work on most common platforms
+      </ul>
+
+    </section>
+
+    </div>
+    </div>
+
+    <!--- End of Timetable -->
+
+    <script src="../lib/js/head.min.js"></script>
+    <script src="../js/reveal.js"></script>
+
+    <script>
+      // More info about config & dependencies:
+      // - https://github.com/hakimel/reveal.js#configuration
+      // - https://github.com/hakimel/reveal.js#dependencies
+      Reveal.initialize({
+        controls: false,
+        center: false,
+        dependencies: [
+	  { src: '../plugin/markdown/marked.js' },
+	  { src: '../plugin/markdown/markdown.js' },
+	  { src: '../plugin/notes/notes.js', async: true },
+	  { src: '../plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+	]
+      });
+    </script>
+
+  </body>
+</html>
