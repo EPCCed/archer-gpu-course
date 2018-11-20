@@ -5,6 +5,7 @@ for the ARCHER Introdution to GPU Programming Course.
 
 The slides are available at:
 
+https://epcced.github.io/archer-gpu-course/
 
 The slides are built using [reveal.js](https://github.com/hakimel/reveal.js).
 
