@@ -172,7 +172,7 @@ end do
     </div>
 
     <dl style = "font-size; 80%">
-      <dt> Note <code>parallel</code> does little in itself </dt>
+      <dt> Note <code>parallel</code> may do little in itself </dt>
       <ul class = "inner">
         <li> Combined with <code>loop</code> to distribute work
       </ul>
@@ -210,7 +210,7 @@ end do
       <li> Sety number of threads per block
       <ul class = "inner">
         <li> <code>vector_length(nthreads)</code> clause
-        <li> <code>nthreads</code> one of 1, 64, 128 (the default), 256, 512, 1024
+        <li> <code>nthreads</code> one of 1, 32, 64, 128 (the default), 256, 512, 1024
       </ul>
       <li> May be used with <code>loop</code> or <code>parallel loop</code>
     </ul>
@@ -233,6 +233,7 @@ end do
   </section>
 
   <section>
+
     <h4> Data movement </h4>
 
     <dl>
@@ -246,12 +247,33 @@ end do
 !$acc end parallel loop
     </code></pre>
     <dl>
-      <dt> Compiler arranges necessary data transfers </dt>
+      <dt> Compiler may identify relevant data transfers </dt>
       <ul class = "inner">
         <li> On entry: <code>input()</code> copied to device </li>
         <li> On exit: <code>output()</code> copied back to host </li>
       </ul>
+      <dt> For C (especially) help may be required </dt>
     </dl>
+
+  </section>
+
+
+  <section>
+
+    <h4> From parallel loop </h4>
+
+
+    <pre><code class = "cpp">
+/* Declare shape of arrays [] */
+
+!$acc parallel loop copyin(input[0:NI]) copyout(output[0:NI])
+for (i = 1; i < NI; i++) {
+  output[i] = input[i];
+}
+
+/* copyin()  - copy to GPU at start */
+/* copyout() - copy to host at end  */
+    </code></pre>
 
   </section>
 
@@ -282,7 +304,7 @@ end do
   <section> <h4> Preventing unnecessary transfers </h4>
 
     <pre class = "stretch"><code class = "fortran" data-trim>
-!$acc data copyin(input) copyout(output)
+!$acc data copyin(input(1:NI)) copyout(output(1:NI))
 
 !$acc parallel loop
 do i = 1, NI
@@ -314,12 +336,10 @@ end do
       <dd> Do both (<code>copyin</code> and <code>copyout</code>) </dd>
       <dt> <code> create </code> </dt>
       <dd> No copy at all. Allocate temporary storage on  device </dd>
-      <dt> <code> present </code> </dt>
-      <dd> Indicate already present on device </dd>
     </dl>
   </section>
 
-  <section> <h4> Data <code>present</code> </h4>
+  <section> <h4> Reference counting</h4>
 
     <div class = "lblock" style = "width: 40%">
       <pre><code class = "fortran">
@@ -345,7 +365,7 @@ subroutine my_double(b)
   integer, intent(inout) :: b(:)
   integer :: i
 
-  !$acc parallel loop present(b)
+  !$acc parallel loop copy(b)
   do i = 1, size(b)
     b(i) = 2*b(i)
   end do
@@ -356,9 +376,35 @@ end subroutine my_double
     </div>
 
     <dl style = "font-size: 80%">
-    <dt> Prevents an additional (erroneous?) copy in subroutine </dt>
+    <dt> Runtime counts references to avoid unnecessary copies </dt>
     </dl>
   </section>
+
+
+  <section> <h4> Data for unstructured regions</h4>
+
+    <pre class = "stretch"><code class = "cpp" data-trim>
+
+    /* Consider */
+
+    void my_init(my_t * a) {
+
+      a->data = (double *) malloc(a->n*sizeof(double));
+      #pragma acc enter data copyin(a)
+      #pragma acc enter data copyin(a->data[a->n])
+    }
+
+    ...
+
+    void my_finalise(my_t * a) {
+
+      #pragma acc exit data delete(a->data)
+      #pragma acc exit data delete(a)
+      free(a->data);
+    }
+    </code></pre>
+  </section>
+
 
   <section> <h4> Summary </h4>
 
