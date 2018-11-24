@@ -1,6 +1,7 @@
 # 
 # Makefile for OpenCL compiled via nvcc
 # Note that the kernel source does not appear here
+# other than as a dependency.
 #
 
 MF= Makefile
