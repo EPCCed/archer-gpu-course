@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
     /* initialise OpenCL */
     err = initCLDevice(CL_DEVICE_TYPE_GPU, &ctxt, &queue);
     checkOpenCLError(err, "initCLDevice");
-    err = getCLKernel(ctxt, "kernels.cl", "reverse1d_col", &kernel);
+    err = getCLKernel(ctxt, "kernels.c", "reverse1d_col", &kernel);
     checkOpenCLError(err, "getCLKernel");
 
     /* allocate memory on device */

@@ -24,7 +24,7 @@ OBJ=	$(SRC:.c=.o)
 .c.o:
 	$(CC) $(CFLAGS) -dc -c $<
 
-$(EXE):	$(OBJ) kernels.cl
+$(EXE):	$(OBJ) kernels.c
 	$(CC) $(CFLAGS) -o $@ $(OBJ) $(LIB_OPENCL) 
 
 $(OBJ):	$(MF) 
