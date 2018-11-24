@@ -43,48 +43,44 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
   </section>
 
   <section>
-      <h4> The Nature of the Problem </h4>
 
-      <img class = "plain" src = "./node.png"  alt = "Node architecture">
+    <h4> The Challenge </h4> 
+
+    <dl style = "font-size: 80%">
+      <dt> What we want</dt>
+        <ul class = "inner">
+          <li> Maximum performance </li>
+          <li> To be able to run on differrent platforms </li>
+          <li> An intuitive expression of algorithm </li>
+          <li> A single version of the code base! </li>
+        </ul>
+      <dt> Parallel / Domain Specific Language (DSL)? </dt>
+        <ul class = "inner">
+           <li> You need compiler, libraries, tools... </li>
+           <li> Not much used in practice </il>
+           <li> Everyone needs to learn a new langauge</li>
+        </ul>
+       <dt> CUDA? </dt>
+        <ul class = "inner">
+           <li> Requires NVIDIA, nvcc </li>
+        </ul>
+    </dl>
  
   </section>
 
   <section>
-     <h4> The Scale of the Problem </h4>
-
-     <p> Consider Summit (IBM Power9 + NVIDIA Tesla V100) </p>
-
-     <table>
-       <thead>
-         <tr> <th> Level </th>  <th> Consisting... </th><th> Threads</th> </tr>
-       </thead>
-       <tbody>
-         <tr> <td> Warp    </td> <td> 32 SIMT    </td> <td> 32      </td> </tr>
-         <tr> <td> SM      </td> <td> 64 Warps   </td> <td> 2,048   </td> </tr>
-         <tr> <td> GPC     </td> <td> 80 SMs     </td> <td> 163,840 </td> </tr>
-         <tr> <td> Node    </td> <td> 2x3 GPCs   </td> <td> 983,040 </td> </tr>
-         <tr> <td> Machine </td> <td> 4600 Nodes </td> <td> 4,521,984,000 </td>
-         </tr>
-       </tbody>
-     </table>
-
-  </section>
-
-  <section>
-    <h4> Options for applications </h4> 
+    <h4> Options for real applications </h4> 
 
     <dl style = "font-size: 80%">
       <dt> Maintain a number of implementations of relevant kernels</dt>
         <ul class = "inner">
           <li> May be appropriate... </li>
-        </ul>
-      <dt> Domain Specific Language (DSL) </dt>
-        <ul class = "inner">
-           <li> Usually suggests some source-to-source translation </li>
+          <li> ...but you'd really rather not </li>
         </ul>
       <dt> Portability layer </dt>
         <ul class = "inner">
           <li> E.g., Intel Thread Bulding Blocks
+          <li> OpenACC (Fortran)
           <li> OpenCL / SYCL
           <li> Kokkos
         </ul>
