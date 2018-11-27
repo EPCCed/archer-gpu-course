@@ -256,9 +256,9 @@ cl_int ierr;
 ierr = clSetKernelArg(clKernel, 0, sizeof(cl_mem), &d_input);
 ierr = clSetKernelArg(clKernel, 1, sizeof(int), &size);
 
-ierr = clEnqueuNDRangeKernel(clQueue, clKernel, ndim, NULL,
-                             globalSize, localSize,
-                             0, NULL, NULL);
+ierr = clEnqueueNDRangeKernel(clQueue, clKernel, ndim, NULL,
+                              globalSize, localSize,
+                              0, NULL, NULL);
 
 /* Wait for all work groups to finish */
 ierr = clFinish(clQueue);
