@@ -189,6 +189,34 @@ for (i = 0; i < 512; i++) {
   </section>
 
   <section>
+    <h4> CPU Caching </h4>
+
+
+    <pre><code class = "cpp">
+/* C: recall right-most index runs fastest */
+for (i = 0; i < NI; i++) {
+  for (j = 0; j < NJ; j++) {
+    output[i][j] = input[i][j];
+  }
+}
+    </code></pre>
+
+    <pre><code class = "fortran" data-trim>
+! Fortran: recall left-most index runs fastest
+do j = 1, NJ
+  do i = 1, NI
+    output(i,j) = input(i,j)
+  end do
+end do
+    </code></pre>
+
+    <dl style = "font-size: 80%">
+      <dt> Individual thread has consecutive memory accesses </dt>
+    </dl>
+
+  </section>
+
+  <section>
     <h4> Memory coalescing </h4>
 
     <ul>
