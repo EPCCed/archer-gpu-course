@@ -20,6 +20,10 @@ void pgmwrite(char *filename, void *vx, int nx, int ny);
 #define N 2048
 
 /* Number of iterations to run */
+/* Note: while 100 iterations is enough for this exercise to
+ * provide reasonable results, it's not enough to do much to
+ * the image. Many more iterations are required. */
+
 #define ITERATIONS   100
 
 float old[N+2][N+2], new[N+2][N+2], edge[N+2][N+2];
@@ -70,16 +74,12 @@ int main (int argc, char **argv)
   start_time = get_current_time();
            
   /* main loop */
-#pragma acc data copyin(old) copyout(new)
+
   for (iter=1;iter<=ITERATIONS; iter++)
     {
       
-      
-	    
       /* perform stencil operation */
-      #pragma acc parallel num_gangs(N*N/TPB) vector_length(TPB)
-      {
-      #pragma acc loop collapse(2)
+
       for (i=1;i<N+1;i++)
 	{
 	  for (j=1;j<N+1;j++)
@@ -90,7 +90,7 @@ int main (int argc, char **argv)
 	}
       
       /* copy output back to input buffer */
-      #pragma acc loop collapse(2)
+
       for (i=1;i<N+1;i++)
 	{
 	  for (j=1;j<N+1;j++)
@@ -98,7 +98,7 @@ int main (int argc, char **argv)
 	      old[i][j]=new[i][j];
 	    }
 	}
-      }
+
     
     } /* end of main loop */
       
@@ -130,7 +130,7 @@ int main (int argc, char **argv)
   printf("\nWriting <%s>\n", filename);
   pgmwrite(filename, masterbuf, N, N);
   
-    
+  return 0;
 } 
 
 
