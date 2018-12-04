@@ -136,7 +136,7 @@ __global__ void someKernel(...) {
 ! Constant variable declared at e.g., module scope
 ! with constant attribute
 
-real, constant :: coeffs[3]
+real, constant :: coeffs(3)
 
 contains
 
@@ -160,7 +160,7 @@ end subroutine someHostRoutine
     <pre><code class = "fortran" data-trim>
 ! Still in the appropriate scope ...
 
-real, constant :: coeffs[3]
+real, constant :: coeffs(3)
 
 contains
 
@@ -168,7 +168,7 @@ attributes(global) subroutine someKernel(...)
 
   ! Reference constant data as usual ...
 
-  result = coeffs[1]*x + coeffs[2]*y + coeffs[3]*z
+  result = coeffs(1)*x + coeffs(2)*y + coeffs(3)*z
 
 end subroutine someKernel
 
