@@ -2,7 +2,7 @@
 
 ## Credits
 
-Lab created by EPCC, The University of Edinburgh. Documentation and
+Exercise created by EPCC, The University of Edinburgh. Documentation and
 source code copyright The University of Edinburgh 2016.
 
 Material by: Alan Gray, Rupert Nash, Kevin Stratford
@@ -26,7 +26,7 @@ You can get this from GitHub:
 
 ```
 git clone https://github.com/EPCCed/archer-gpu-course.git
-cd exercises/cuda-intro/
+cd archer-gpu-course/exercises/cuda-intro/
 ```
 
 The template source file is clearly marked with the sections to be
@@ -45,7 +45,7 @@ Reference Manual documents available from
 
 ## C Version
 
-Start from the intro.cu template. 
+Start from the `intro.cu` template. 
 
 * 1A)
 Allocate memory for the array on the device: use the existing pointer
@@ -63,12 +63,12 @@ Free `d_a`.
 
 ## Fortran Version
 
-Start from the intro.cuf template.
+Start from the `intro.cuf` template.
 
 * 1A:
 Allocate memory for the array on the device: use the existing pointer
 `d_a` and `ARRAY_SIZE` (which has already been assigned the size of the
-array in elements)
+array in elements).
 
 * 1B:
 Copy the array `h_a` on the host to `d_a` on the device, using an
@@ -85,13 +85,13 @@ Deallocate `d_a`.
 
 ## Compilation
 
-First, we need to load the following modules
+First, we need to load a number of modules to allow compilation.
 
-For C/C++
+For C/C++:
 ```shell
 module load gcc cuda
 ```
-Fortran also required the PGI compilers
+Fortran also requires the PGI compilers:
 ```shell
 module load gcc cuda pgi
 ```
@@ -104,7 +104,7 @@ for Fortran.
 ### Run in the batch system
 
 You can only run on the backend nodes, so you can submit the job to the
-batch system with `qsub submit.sh`
+batch system with `qsub submit.sh`.
 
 ---
 
@@ -214,11 +214,11 @@ g\_negate\_multiblock this time. With this version you can change
 long as they still multiply to give the array size.
 
 
-## Part 3: Handling any size array
+## Part 3: Handling any size of array
 
 Currently we are insisting that the array size be an exact multiple of the block
 size. In general we should handle any size that will fit in GPU
-memory!
+memory.
 
 ---
 
@@ -230,7 +230,7 @@ write:
 $$N = k * B + r$$
 
 i.e. $N$ can divided into $k$ (an integer) number of blocks, plus a
-remainder, $r$. If $r$ is zero, then we need $k$ blocks, else we
+remainder, $r$. If $r$ is zero, then we need $k$ blocks, or else we
 need $k + 1$.
 
 ---
@@ -238,7 +238,7 @@ need $k + 1$.
 This can be expressed in a simple formula:
 $$nBlocks = \frac{N-1}{B} + 1$$
 
-Convince yourself this is correct!
+Convince yourself this is correct.
 
 * 3A
 Update the kernel launch code to compute the number of blocks using this
@@ -247,8 +247,8 @@ formula.
 What will happen in the last block with the current kernel?
 
 * 3B
-Implement a condition in the kernel to protect against this.
+Implement a condition in the kernel to protect against any problem
+which may arise.
 
 Try changing `ARRAY_SIZE` to a non-multiple of 256 (e.g. 500).
-
 
