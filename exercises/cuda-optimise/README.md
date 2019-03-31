@@ -3,10 +3,9 @@
 
 ## Credits
 
-Lab content created by EPCC, The University of
+Exercise content created by EPCC, The University of
 Edinburgh. Documentation and source code copyright The University of
-Edinburgh 2016. Lab style and template created by NVIDIA, see
-<https://nvidia.qwiklab.com/>.
+Edinburgh 2019.
 
 Material: Alan Gray, Rupert Nash, Kevin Stratford
 
@@ -40,7 +39,7 @@ existing CUDA application.
 
 You start with an image that looks like this:
 
-![](images/input.jpg){ width=50% }
+![](images/input.jpeg){ width=50% }
 
 ---
 
@@ -142,7 +141,7 @@ please don't do this during the lab!
 If you were to run for 10 million iterations, the resulting image
 would look like this:
 
-![](images/output10M.jpg){ width=50% }
+![](images/output10M.jpeg){ width=50% }
 
 ## Optimising
 
