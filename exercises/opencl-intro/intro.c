@@ -7,6 +7,10 @@
 #include <sys/time.h>
 
 void checkOpenCLError(cl_int, char *);
+cl_int initCLDevice(cl_device_type devtype, cl_context *ctxt,
+                    cl_command_queue *queue);
+cl_int getCLKernel(cl_context ctxt, char *filename, char *funcname,
+                   cl_kernel *kernel);
 
 /* The number of integer elements in the array */
 #define ARRAY_SIZE 256
