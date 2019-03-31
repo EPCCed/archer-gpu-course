@@ -22,7 +22,8 @@ contains
     error_code = cudaGetLastError()
 
     if (error_code .NE. cudaSuccess) then
-       write (*,*) "Cuda error: ", error_code
+       write (*,*) "Cuda error:   ", error_code
+       write (*,*) "Error string: ", cudaGetErrorString(error_code)
        stop
     end if
   end subroutine checkCUDAError

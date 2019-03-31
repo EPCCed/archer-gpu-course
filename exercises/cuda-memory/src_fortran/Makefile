@@ -9,7 +9,7 @@ EXE= reverse
 
 SRC= reverse_kernel.cuf gpu_utils.cuf reverse.cuf  
 
-ARCH=cc35
+ARCH=cc70
 
 CC=	pgfortran
 CFLAGS= -Mcuda=$(ARCH) -O3 

@@ -15,7 +15,7 @@ program intro
 
   implicit none
 
-  integer, parameter      :: ARRAY_SIZE = 512 !65536
+  integer, parameter      :: ARRAY_SIZE = 65536
 
   type (dim3)             :: blocksPerGrid
   type (dim3)             :: threadsPerBlock
