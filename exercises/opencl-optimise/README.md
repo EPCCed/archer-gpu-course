@@ -216,29 +216,3 @@ that the total number of work items (threads) per work group
 
 If you wish to keep a copy of your work from this exercise remember to download both the driver source `reverse.c` and the file containing the kernels `kernels.cl`.
 
-
-<style>
-p.hint_trigger{
-  margin-bottom:7px;
-  margin-top:-5px;
-  background:#64E84D;
-}
-.toggle_container{
-  margin-bottom:0px;
-}
-.toggle_container p{
-  margin:2px;
-}
-.toggle_container{
-  background:#f0f0f0;
-  clear: both;
-  font-size:100%;
-}
-</style>
-<script>
-$("p.hint_trigger").click(function(){
-   $(this).toggleClass("active").next().slideToggle("normal");
-});
-   
-$(".toggle_container").hide();
-</script>
