@@ -29,8 +29,6 @@ git clone https://github.com/EPCCed/archer-gpu-course.git
 cd exercises/cuda-intro/
 ```
 
-## Note
-
 The template source file is clearly marked with the sections to be
 edited, e.g.
 
@@ -42,59 +40,52 @@ Reference Manual documents available from
 <http://developer.nvidia.com/nvidia-gpu-computing-documentation>.
 
 
-## Part 1
-
-### Copying Between Host and Device
+## Part 1: Copying Between Host and Device
 
 
-## C
+## C Version
 
 Start from the intro.cu template. 
 
-### 1A
-
+* 1A)
 Allocate memory for the array on the device: use the existing pointer
 `d_a` and the variable `sz` (which has already been assigned the size
 of the array in bytes).
 
-### 1B
-
+* 1B)
 Copy the array `h_a` on the host to `d_a` on the device.
 
-### 1C
-
+* 1C)
 Copy `d_a` on the device back to `h_out` on the host.
 
-### 1D
-
+* 1D)
 Free `d_a`.
 
-## Fortran
+## Fortran Version
 
 Start from the intro.cuf template.
 
-### 1A
-
+* 1A:
 Allocate memory for the array on the device: use the existing pointer
 `d_a` and `ARRAY_SIZE` (which has already been assigned the size of the
 array in elements)
 
-### 1B
-
+* 1B:
 Copy the array `h_a` on the host to `d_a` on the device, using an
 appropriate assignment operation.
 
-### 1C
-
+* 1C:
 Copy `d_a` on the device back to `h_out` on the host, using another
 assignment operation.
 
-### 1D
-
+* 1D:
 Deallocate `d_a`.
 
+
+
 ## Compilation
-### Load modules
+
+First, we need to load the following modules
 
 For C/C++
 ```shell
@@ -106,15 +97,11 @@ module load gcc cuda pgi
 ```
 
 
-### Use make
-
 Compile the code using `make`. Note that the compute capability of the
 CUDA device is specified with the `-arch` flag for C and with `-March=`
 for Fortran.
 
-### Running
-
-### On Cirrus
+### Run in the batch system
 
 You can only run on the backend nodes, so you can submit the job to the
 batch system with `qsub submit.sh`
@@ -132,19 +119,19 @@ will be printed. So far the code simply copies from `h_a` on the host to
 `d_a` on the device, then copies `d_a` back to `h_out`, so the output
 should be the initial content of `h_a` - the numbers 0 to 255.
 
-## Part 2
-### Launching Kernels
+
+## Part 2: Invoking a kernel
+
 Now we will actually run a kernel on the GPU device.
 
-## C
+## C Version
 
-### 2A
+* 2A:
 Configure and launch the kernel using a 1D grid and a single thread
 block (`NUM_BLOCKS` and `THREADS_PER_BLOCK` are already defined for this
 case).
 
-### 2B
-
+* 2B:
 Implement the actual kernel function to negate an array element as
 follows:
 
@@ -164,7 +151,7 @@ This kernel works, but since it only uses one thread block, it will only
 be utilising one of the multiple SMs available on the GPU. Multiple
 thread blocks are needed to fully utilize the available resources.
 
-### 2C
+* 2C:
 
 Implement the kernel again, this time allowing multiple thread blocks.
 It will be very similar to the previous kernel implementation except
@@ -180,16 +167,15 @@ negate\_multiblock this time. With this version you can change
 `NUM_BLOCKS` and `THREADS_PER_BLOCK` to have different values - so
 long as they still multiply to give the array size.
 
-## Fortran
 
-### 2A
+## Fortran Version
 
+* 2A:
 Configure and launch the kernel using a 1D grid and a single thread
 block (`NUM_BLOCKS` and `THREADS_PER_BLOCK` are already defined for
 this case).
 
-### 2B
-
+* 2B:
 Implement the actual kernel function to negate an array element as
 follows:
 
@@ -211,8 +197,7 @@ only be utilising one of the multiple SMs available on the
 GPU. Multiple thread blocks are needed to fully utilize the available
 resources.
 
-### 2C
-
+* 2C:
 Implement the kernel again, this time allowing multiple thread blocks.
 It will be very similar to the previous kernel implementation except
 that the array index will be computed differently:
@@ -228,8 +213,8 @@ g\_negate\_multiblock this time. With this version you can change
 `NUM_BLOCKS` and `THREADS_PER_BLOCK` to have different values - so
 long as they still multiply to give the array size.
 
-## Part 3
-### Handling any size array
+
+## Part 3: Handling any size array
 
 Currently we are insisting that the array size be an exact multiple of the block
 size. In general we should handle any size that will fit in GPU
@@ -255,15 +240,13 @@ $$nBlocks = \frac{N-1}{B} + 1$$
 
 Convince yourself this is correct!
 
-### 3A
-
+* 3A
 Update the kernel launch code to compute the number of blocks using this
 formula.
 
 What will happen in the last block with the current kernel?
 
-### 3B
-
+* 3B
 Implement a condition in the kernel to protect against this.
 
 Try changing `ARRAY_SIZE` to a non-multiple of 256 (e.g. 500).
