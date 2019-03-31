@@ -1,12 +1,13 @@
 # ARCHER Introduction to GPU Programming
 
 This repository contains both the slides and the exercise material
-for the ARCHER Introdution to GPU Programming Course.
+for the ARCHER Introdution to GPU Programming Course as deleivered
+at Imperial College in November 2018.
 
 ARCHER is the United Kingdom National Supercomputing service
 http://www.archer.ac.uk/
 
-The slides for the lecture content are available at:
+The latest slides for the lecture content are available at:
 
 https://epcced.github.io/archer-gpu-course/
 
