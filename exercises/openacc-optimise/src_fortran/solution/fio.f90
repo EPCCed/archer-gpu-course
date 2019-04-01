@@ -1,5 +1,5 @@
 !
-!  This file contains Fortran subroutines for the MPI Casestudy.
+!  This file contains Fortran subroutines for the OpenACC optimise exercise.
 !
 !  "datread" reads in an edges data file and can be called as follows:
 !
