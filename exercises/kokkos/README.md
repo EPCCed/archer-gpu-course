@@ -13,7 +13,7 @@ The full Kokkos programming guide can be found at https://github.com/kokkos/kokk
 Instructions are provided below (and within the templates) to allow you to
 complete each of the exercises.
 
-# (1) Initialise, Use, Finalise
+## (1) Initialise, Use, Finalise
 
 The first exercise asks you to initialise and finalise Kokkos, and use the
 patterns `parallel_for` and `parallel_reduce` in the computation of an
@@ -65,7 +65,7 @@ range of values in the supplied script.
 $ qsub submit.sh
 ```
 
-# (2) Use Views
+## (2) Use Views
 
 The goal of this exercise will be to replace the raw memory allocations
 with Kokkos Views, and corrresponding memory accesses
@@ -98,7 +98,7 @@ $ submit submit.sh
 ```
 
 
-# (3) Use Mirror Views
+## (3) Use Mirror Views
 
 Now, we will replace use of managed GPU memory with explicit
 data management via Kokkos mirror views and and copies.
@@ -125,7 +125,7 @@ $ qsub submit.sh
 ```
 
 
-# (4) Control the Layout
+## (4) Control the Layout
 
 The final exercise provides some wide-ranging options to investigate memory
 layouts. memory and execution spaces; using a
