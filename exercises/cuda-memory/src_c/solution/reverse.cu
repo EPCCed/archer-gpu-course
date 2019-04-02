@@ -24,7 +24,7 @@ static __constant__ int deviceArraySize_;
 
 #define THREADS_PER_BLOCK 128
 
-/* The actual array negation kernel (basic single block version) */
+/* The actual array reverse kernel */
 
 __global__ void reverseArray(int * d_a, int * d_b)
 {

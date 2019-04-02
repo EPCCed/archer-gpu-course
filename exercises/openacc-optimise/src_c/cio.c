@@ -1,5 +1,5 @@
 /*
- * This file contains C routines for the MPI Casestudy.
+ * This file contains C routines for the OpenACC Optimise exercise.
  *
  * "datread" reads in an edges data file and can be called as follows:
  *

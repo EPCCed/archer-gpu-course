@@ -22,7 +22,6 @@ __kernel void reverse1d_col(__global float *d_output,
          * For the neighbouring points you need to add/subtract 1  
          * to/from the row or col indices.
          */
-	idx = row * numcols + col;
 	
 	idx = row * numcols + col;
 	idx_south = (row - 1) * numcols + col;
@@ -61,7 +60,6 @@ __kernel void reverse1d_row(__global float *d_output, __global float *d_input,
          * For the neighbouring points you need to add/subtract 1  
          * to/from the row or col indices.
          */      
-	idx = row * numcols + col;
 	
 	idx = row * numcols + col;
 	idx_south = (row - 1) * numcols + col;
