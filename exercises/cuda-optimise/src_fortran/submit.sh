@@ -10,7 +10,7 @@
 #PBS -l walltime=0:01:00
 
 # Budget: use either your default or the reservation
-#PBS -A d167
+#PBS -A y15
 
 # Load the required modules
 module load gcc

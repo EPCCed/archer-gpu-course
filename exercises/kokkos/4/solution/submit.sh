@@ -1,10 +1,5 @@
 #!/bin/bash
 #
-# cuda-memory
-#
-# Join stdout and sterr in submit.o{job_id}
-# Set the queue and the resources
-#
 #PBS -N submit
 #PBS -j oe
 #PBS -q gpu-teach
@@ -15,15 +10,19 @@
 #PBS -A y15
 
 # Load the required modules
-module load gcc
-module load cuda
+module load gcc cuda kokkos
+
+cd $PBS_O_WORKDIR
+
+
+
+export OMP_PLACES=cores
+export OMP_PROC_BIND=close
+export OMP_NUM_THREADS=10
 
 # Pick a random device as PBS on Cirrus not yet configured to control
 # GPU visibility
 r=$RANDOM; let "r %= 4";
 export CUDA_VISIBLE_DEVICES=$r
-echo "CUDA_VISIBLE_DEVICES set to ${CUDA_VISIBLE_DEVICES}"
 
-cd $PBS_O_WORKDIR
-
-./reverse
+./04_Exercise.Any
