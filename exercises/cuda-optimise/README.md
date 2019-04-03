@@ -60,7 +60,7 @@ iterative, requiring many successive _stencil_ operations.
 
 ---
 
-Each pixel of the new image $M$ is generated based on it's neighboring
+Each pixel of the new image $M$ is generated based on its neighboring
 pixel values and the original edge data $E$ by repeatedly performing
 the following update:
 
@@ -78,7 +78,7 @@ simplicity we work in greyscale rather than colour).
 You are provided with a working but slow CUDA implementation of the
 reconstruction algorithm.
 
-First of all, let’s compile and run the code. The code is set up to
+First of all, let's compile and run the code. The code is set up to
 run the algorithm on both the GPU and the CPU. It compares the outputs
 from the two runs to verify correctness, and then displays timings for
 each run.
