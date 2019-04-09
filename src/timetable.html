@@ -18,7 +18,7 @@
 	var link = document.createElement( 'link' );
 	link.rel = 'stylesheet';
 	link.type = 'text/css';
-	link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+	link.href = window.location.search.match( /print-pdf/gi ) ? '../css/print/pdf.css' : '../css/print/paper.css';
 	document.getElementsByTagName( 'head' )[0].appendChild( link );
     </script>
   </head>
@@ -167,9 +167,6 @@
       <p style = "font-size: 80%" align = "left">
       You will need an ssh client
       <p>
-      <pre><code class = "bash" data-trim>
-ssh ...
-      </code></pre>
       </p>
       <br>
 
