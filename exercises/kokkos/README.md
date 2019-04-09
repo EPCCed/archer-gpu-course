@@ -4,7 +4,7 @@
 This series of exercises will introduce the Kokkos framework for portable
 performance using both OpenMP and CUDA as a backend.
 
-The exmaples follow the first few of a longer sequence of tutorial examples
+The examples follow the first few of a longer sequence of tutorial examples
 appearing in the SANDIA Kokkos tutorial found at 
 https://github.com/kokkos/kokkos-tutorials
 
