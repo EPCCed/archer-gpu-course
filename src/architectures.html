@@ -373,6 +373,60 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
   </section>
 
   <section>
+    <h4> Scientific Applications</h4>
+ 
+    <ul>
+      <li> What are GPUs good for...?
+
+      <ul class = "inner">
+        <li> Problems with many independent tasks
+        <li> Problems with significant (data-) parallelism
+        <li> Favours structured code with identifable kernels
+      </ul>
+      <li> ...and not so good for?
+      <ul class = "inner">
+        <li> Highly coupled problems with little parallelism
+        <li> IO-dominated problems
+        <li> Poorly structured core with diffuse computational intensity
+      </ul>
+      <li> Some growth areas
+      <ul class = "inner">
+        <li> Reduced (half-, quarter-) precision arithmetic
+        <li> Work based on task graphs
+      </ul>
+    </ul>
+
+  </section>
+
+  <section>
+    <h4> Some examples</h4>
+ 
+    <ul>
+
+      <li> Linear algebra
+      <ul class = "inner">
+        <li> BLAS (e.g., cuBLAS)
+        <li> Petsc (CUDA/OpenCL)
+        <li> Trilinos (Kokkos?)
+      </ul>
+
+      <li> Quantum chemistry / Molecular dynamics
+      <ul class = "inner">
+        <li> VASP (no GPU implementation)
+        <li> CP2K (some CUDA)
+        <li> Gromacs (some CUDA), LAMMPS (Kokkos)
+      </ul>
+
+      <li> Lattice based / CFD
+      <ul class = "inner">
+        <li> Fluent (CUDA)
+        <li> OpenFOAM (none)
+      </ul>
+    </ul>
+
+  </section>
+
+  <section>
     <h4> Big Data / Machine Learning </h4>
 
 
