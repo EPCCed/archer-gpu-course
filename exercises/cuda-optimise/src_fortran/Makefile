@@ -9,10 +9,7 @@ EXE= reconstruct
 SRC= reconstruct_kernels.cuf  reconstruct.cuf 
 
 
-ARCH=cc20
-ifeq ($(HOSTNAME),gpulab2.hydra)
-ARCH=cc35
-endif
+ARCH=cc70
 
 
 CC=	pgfortran
