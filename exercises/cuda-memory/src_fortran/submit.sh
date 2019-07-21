@@ -7,7 +7,7 @@
 #
 #PBS -N submit
 #PBS -j oe
-#PBS -q gpu-train
+#PBS -q gpu-teach
 #PBS -l select=1:ncpus=10:ngpus=1
 #PBS -l walltime=0:01:00
 
