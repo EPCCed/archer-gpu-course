@@ -22,7 +22,7 @@ parallel decomposition.
 As before the code can be cloned from GitHub:
 ```sh
 git clone https://github.com/EPCCed/archer-gpu-course.git
-cd archer-gpu-course/exercises/cuda-reconstruct
+cd archer-gpu-course/exercises/cuda-optimise
 ```
 
 Or you can use your existing repo (update with `git pull`)

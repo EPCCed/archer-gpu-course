@@ -101,35 +101,14 @@
 
     <section>
 
-    <h4>Timetable</h4>
-
-    <dl style = "font-size: 70%">
-      <dt>09:00 Introduction</dt>
-      <dt>09:10  <a href="./architectures.html">GPU Concepts/Architectures</a>
-      <dt>10:00 <a href = "./cuda-programming.html">CUDA Programming</a> </dt>
-      <dt>10:30 Break </dt>
-      <dt>11:00 <a href = "#/exercise-location">
-                A first CUDA exercise</a></dt>
-      <dt>12:30 Lunch </dt>
-      <dt><br> </dt>
-      <dt>13:30 <a href = "optimisation.html">CUDA Optimisations</a></dt>
-      <dt>14:10 <a href = "#/exercise-location">
-                          Optimisation Exercise</a> </dt>
-      <dt>15:00 <a href = "./cuda-memory.html">Constant and Shared Memory</a></dt>
-      <dt>15:30 Finish
-    </dl>
-    </section>
-
-    <!---
-
-    <h4>Day One</h4>
+    <h4>Timetable Day One</h4>
 
     <dl style = "font-size: 70%">
       <dt>10:00 Introduction</dt>
       <dt>10:20  <a href="./architectures.html">GPU Concepts/Architectures</a>
       <dt>11:00 Break </dt>
       <dt>11:20 <a href = "./cuda-programming.html">CUDA Programming</a> </dt>
-      <dt>12:00 <a href = "#/exercise-location">
+      <dt>12:00 <a href = "#exercise-location">
                 A first CUDA exercise</a></dt>
       <dt>13:00 Lunch </dt>
       <dt><br> </dt>
@@ -138,14 +117,14 @@
                           Optimisation Exercise</a> </dt>
       <dt>15:00 Break</dt>
       <dt>15:20 <a href = "./cuda-memory.html">Constant and Shared Memory</a></dt>
-      <dt>16:00 <a href = "#/exercise-location"> Exercises </a>
+      <dt>16:00 <a href = "#exercise-location">Exercises</a>
       <dt>17:00 Close
     </dl>
     </section>
 
     <section>
 
-    <h4>Day Two</h4>
+    <h4>Timetable Day Two</h4>
 
     <dl style = "font-size: 70%">
       <dt>10:00 Recap</a></dt>
@@ -154,6 +133,8 @@
       <dt>11:00 Break
       <dt>11:30 OpenCL and / or Directives
                 <a href = "#/exercise-location"> Exercises</a>  </dt>
+      <dt>12:00 Guest Lecture by Alan Gray (NVIDIA)
+
       <dt>13:00 Lunch </dt>
       <dt> <br> </dt>
       <dt> 14:00 Performance portability and
@@ -162,12 +143,10 @@
       <dt> 15:00 Break</dt>
       <dt> 15:10 Kokkos memory management</dt>
       <dt> 15:30 Memory management
-                <a href = "#/exercise-location">exercises</a></dt>
+                <a href = "#exercise-location">exercises</a></dt>
       <dt> 16:00 Close
     </dl>
     </section>
-
-    --->
 
     <!-- Local 'elf and Safety -->
 
@@ -175,6 +154,7 @@
       <h4>Local Information</h4>
       <ul style = "font-size: 80%">
         <li> Please take care of your personal belongings.
+        <li> Bayes Centre Fire alarm test is 11:30 Thursdays.
       </ul>
     </section>
 
@@ -188,6 +168,7 @@
       <p style = "font-size: 80%" align = "left">
       You will need an ssh client
       <p style = "font-size: 60%" align = "left">
+      <code>$ ssh -l <your-account-name> [-X|-Y] login.cirrus.ac.uk</code></p>
       </p>
 
       <p style = "font-size: 80%" align = "left">
@@ -198,13 +179,25 @@
       You need a copy of the exercises:
       <p style = "font-size: 60%" align = "left">
       <code>$ git clone https://github.com/EPCCed/archer-gpu-course/</code></p>
+
+      <p style = "font-size: 80%" align = "left">
+      Once:
+      <p style = "font-size: 60%" align = "left">
+      <code>$ module load gcc cuda</code><br>
+      <code>$ cd archer-gpu-course/exercises/cuda-intro/src_c</code></p>
+
+      <p style = "font-size: 80%" align = "left">
+      Edit the file (method of your choice):
+      <p style = "font-size: 60%" align = "left">
+      <code>$ qsub submit.sh</code></p>
       <br>
 
+      <!---
       <p style = "font-size: 80%" align = "left">
       If you want a copy of <i>your </i> solutions
        you will need to copy the relevant files to a safe location.
       </p>
-
+      --->
     </section>
 
     </div>
