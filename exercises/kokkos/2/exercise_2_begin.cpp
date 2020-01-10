@@ -97,6 +97,7 @@ int main( int argc, char* argv[] )
   checkSizes( N, M, S, nrepeat );
 
   Kokkos::initialize( argc, argv );
+  // { // Scope block to manange deallocation of the views. Hint: needs a matching closure of the scope
 
   // EXERCISE: Create views of the right size.
 
@@ -187,6 +188,7 @@ int main( int argc, char* argv[] )
   delete [] x;  //EXERCISE hint: ...
   delete [] A;  //EXERCISE hint: ...
 
+  // } // End of the Views scope block.
   Kokkos::finalize();
 
   return 0;
