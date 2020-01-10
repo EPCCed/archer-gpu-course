@@ -101,6 +101,7 @@ int main( int argc, char* argv[] )
   // EXERCISE: Create views of the right size.
 
   // 1. Device Views
+  // { // Scope block to manange deallocation of the views. Hint: needs a matching closure of the scope
   // typedef Kokkos::View<double*>   ViewVectorType;
   // typedef Kokkos::View<double**>  ViewMatrixType;
   // ViewVectorType y( "y", N );
@@ -187,6 +188,7 @@ int main( int argc, char* argv[] )
   delete [] x;  //EXERCISE hint: ...
   delete [] A;  //EXERCISE hint: ...
 
+  // } // End of the Views scope block.
   Kokkos::finalize();
 
   return 0;
