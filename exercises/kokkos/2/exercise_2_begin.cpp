@@ -97,11 +97,11 @@ int main( int argc, char* argv[] )
   checkSizes( N, M, S, nrepeat );
 
   Kokkos::initialize( argc, argv );
+  // { // Scope block to manange deallocation of the views. Hint: needs a matching closure of the scope
 
   // EXERCISE: Create views of the right size.
 
   // 1. Device Views
-  // { // Scope block to manange deallocation of the views. Hint: needs a matching closure of the scope
   // typedef Kokkos::View<double*>   ViewVectorType;
   // typedef Kokkos::View<double**>  ViewMatrixType;
   // ViewVectorType y( "y", N );
