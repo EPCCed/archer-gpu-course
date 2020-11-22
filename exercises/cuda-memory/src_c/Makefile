@@ -9,7 +9,7 @@ EXE= reverse
 
 SRC= reverse.cu
 
-ARCH=sm_35
+ARCH=sm_60
 
 CC=	nvcc
 CFLAGS= -O3 -arch=$(ARCH)
