@@ -133,7 +133,7 @@ if ( N%THREADSPERBLOCK != 0 ){
     inverseEdgeDetect<<< blocksPerGrid, threadsPerBlock >>>((float (*)[N+2]) d_output, (float (*)[N+2]) d_input, (float (*)[N+2]) d_edge);
 #endif 
  
-    cudaThreadSynchronize();
+    cudaDeviceSynchronize();
 
 #ifdef SOLUTION 
     /* copy the output to the input on the device, */ 
