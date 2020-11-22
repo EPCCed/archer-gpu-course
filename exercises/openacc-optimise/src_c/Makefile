@@ -1,6 +1,6 @@
 MF=	Makefile
 
-CC=	pgcc
+CC=	nvc
 CFLAGS=  -O3 -ta=nvidia -Minfo=all 
 #CC= gcc
 #CFLAGS= -g
