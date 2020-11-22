@@ -79,7 +79,7 @@ program casestudy
      ! perform stencil operation
 
      !$acc parallel vector_length(256) 
-     !$acc loop 
+     !$acc loop collapse(2)
      do j = 1, N
         do i = 1, N
            
