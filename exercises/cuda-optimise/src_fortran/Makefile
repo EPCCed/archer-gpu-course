@@ -8,7 +8,7 @@ EXE= reconstruct
 
 SRC= reconstruct_kernels.cuf  reconstruct.cuf 
 
-CC=	pgfortran
+CC=	nvfortran
 CFLAGS= -Mcuda -O3 
 
 
@@ -29,4 +29,4 @@ $(EXE):	$(OBJ)
 $(OBJ):	$(MF) 
 
 clean:
-	rm -f $(OBJ) $(EXE) *.mod core
+	rm -f $(OBJ) $(EXE) *.mod core output.pgm

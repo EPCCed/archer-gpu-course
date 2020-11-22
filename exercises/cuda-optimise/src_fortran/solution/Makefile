@@ -8,15 +8,8 @@ EXE= reconstruct
 
 SRC= reconstruct_kernels.cuf  reconstruct.cuf 
 
-
-ARCH=cc20
-ifeq ($(HOSTNAME),gpulab2.hydra)
-ARCH=cc35
-endif
-
-
-CC=	pgfortran
-CFLAGS= -Mcuda=$(ARCH) -O3 
+CC=	nvfortran
+CFLAGS= -Mcuda -O3 
 
 
 .SUFFIXES:
@@ -36,4 +29,4 @@ $(EXE):	$(OBJ)
 $(OBJ):	$(MF) 
 
 clean:
-	rm -f $(OBJ) $(EXE) *.mod core
+	rm -f $(OBJ) $(EXE) *.mod core output.pgm
