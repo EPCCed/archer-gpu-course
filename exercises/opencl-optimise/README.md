@@ -141,7 +141,7 @@ $ make
 
 ```bash
 # To submit a batch job
-$ qsub submit.sh
+$ sbatch submit.sh
 ```
 
 
