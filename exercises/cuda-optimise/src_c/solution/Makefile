@@ -7,7 +7,7 @@ MF= Makefile
 EXE= reconstruct
 SRC= reconstruct.cu reconstruct_kernels.cu utilities.cu
 
-ARCH=sm_35
+ARCH=sm_60
 CC=	nvcc
 CFLAGS= -O3 -arch=$(ARCH)
 
@@ -28,4 +28,4 @@ $(EXE):	$(OBJ)
 $(OBJ):	$(MF) *.h
 
 clean:
-	rm -f $(OBJ) $(EXE) core
+	rm -f $(OBJ) $(EXE) core output.pgm
