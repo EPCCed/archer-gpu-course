@@ -31,7 +31,7 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
   <section>
 
     <h1 style = "text-transform: none !important">
-        Constant Memory Shared Memory </h1>
+        Managed, Constant, and Shared Memory </h1>
     <!-- That replies on getting the line break right! -->
     <!-- 
     <p>Kevin Stratford</p>
@@ -64,6 +64,13 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
     <h4> Other types of memory </h4>
 
     <ul>
+    <li> Managed memory </li>
+    <ul class = "inner">
+       <li> Unified address space: available on host and device </li>
+       <li> No explicit copies required </li>
+       <li> Very useful for development / more complex code </li>
+    </ul>
+
     <li> Constant cache memory </li>
     <ul class = "inner">
        <li> Read only in kernel</li>
@@ -81,7 +88,120 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
 
 
   <section>
-    <h4> Schematic: C </h4>
+    <h4> Host and device memory </h4>
+
+
+    <p>
+    <pre class = "stretch"><code class = "cpp" data-trim>
+
+    /* Schematically */
+
+    /* Allocate and initialise host memory ... */
+
+    h_ptr = malloc(nbytes);
+    ...
+
+    /* Allocate device memory and copy */
+
+    cudaMalloc(&d_ptr, nbytes)
+    cudaMemcpy(d_ptr, h_ptr, nbytes, cudaMemCpyHostToDevice);
+    ...
+
+    /* Use device memory in kernel */
+    kernel<<<...>>> (d_ptr, ...)
+
+    </code></pre>
+
+  </section>
+
+
+  <section>
+    <h4> Unified memory </h4>
+
+
+    <p>
+    <pre class = "stretch"><code class = "cpp" data-trim data-noescape>
+
+  /* Can we do both? */
+
+<p class = "fragment" style = "margin: 0em">  cudaMallocManaged(&ptr, nbytes);</p>
+
+  /* Initialise data on host */
+  for (i = 0; i < NDATA; i++) {
+    ptr[i] = value;
+  }
+
+  /* Use data in kernel */
+  kernel<<<...>>> (ptr, ...)
+
+  /* ... and get results back */
+
+    </code></pre>
+
+  </section>
+
+
+  <section>
+    <h4> Managed memory</h4>
+
+    <p style = "font-size:60%">
+    <code class = "cpp">
+    __host__ cudaErr_t cudaMallocManaged(void ** dptr, int sz);
+    </code>
+    </p>
+
+    <p>
+    <ul style = "font-size:60% align = left">
+    <li> Allocated on the host </li>
+    <ul class = "inner">
+       <li> ...but single address space for host and device </li>
+       <li> Management of copies performed by CUDA runtime </li>
+       <li> Release with <code>cudaFree()</code> </li>
+    </ul>
+    <li> Page migration </li>
+    <ul class = "inner">
+       <li> Access to memory not present generates <i>page fault</i></li>
+       <li>  Pages are then copied; page size may be e.g., 64KB </li>
+       <li>  Costs time, so can be slow relative to <code>cudaMemcpy()</code> </li>
+       <li> Can specify prefetches, or provide hints </li>
+    </ul>
+
+    </ul>
+    </p>
+
+  </section>
+
+
+  <section>
+    <h4> Managed memory (cont..)</h4>
+
+    <p>
+    <pre class = "stretch"><code class = "cpp" data-trim data-noescape>
+
+    /* Prefetch to destination device */
+
+    cudaGetDevice(&device)
+    cudaMallocManaged(&ptr, nbytes);
+    ...
+    cudaMemPrefetchAsync(ptr, nbytes, device, NULL);
+    ...
+
+    /* Hints */
+
+    cudaMemAdvise(ptr, nbytes, advice, device);
+
+    /* advice: cudaMemAdviseSetReadMostly */
+    /*         cudaMemAdviseSetPreferredLocation */
+    /*         cudaMemAdviseSetAccessedBy */
+
+    </code></pre>
+    </p>
+
+  </section>
+
+
+  <section>
+    <h4> Constant Memory: C </h4>
 
     <p>
     <pre class = "stretch"><code class = "cpp" data-trim>
