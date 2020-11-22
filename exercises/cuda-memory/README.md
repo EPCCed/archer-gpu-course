@@ -90,7 +90,7 @@ $ make
 
 while submission to be queue system is via
 ```shell
-$ qsub submit.sh
+$ sbatch submit.sh
 ```
 
 

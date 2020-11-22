@@ -50,7 +50,7 @@ $ make
 ```
 
 ```bash
-$ qsub submit.sh
+$ sbatch submit.sh
 ```
 
 

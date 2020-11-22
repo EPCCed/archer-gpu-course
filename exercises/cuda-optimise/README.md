@@ -89,24 +89,24 @@ Choose to work with either C or Fortran
 C:
 ```sh
 cd src_c
-module load gcc cuda
+module load gcc nvidia/cuda-10.2
 make
 ```
 Fortran:
 ```sh
 cd src_fortran
-module load gcc cuda pgi
+module load gcc nvidia/compilers-20.9
 make
 ```
 
 ### Run in the batch system
 
 ```sh
-qsub submit.sh
+sbatch submit.sh
 ```
-Query PBS for your jobs:
+Query SLURM for your jobs:
 ```sh
-qstat -u $(USER)
+squeue -u $(USER)
 ```
 
 ### View the resulting image

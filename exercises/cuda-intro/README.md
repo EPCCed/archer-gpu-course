@@ -89,11 +89,11 @@ First, we need to load a number of modules to allow compilation.
 
 For C/C++:
 ```shell
-module load gcc cuda
+module load gcc nvidia/cuda-10.2
 ```
-Fortran also requires the PGI compilers:
+Fortran also requires the Nvidia compilers ("nvfortran"):
 ```shell
-module load gcc cuda pgi
+module load gcc nvidia/compilers-20.9
 ```
 
 
@@ -104,12 +104,13 @@ for Fortran.
 ### Run in the batch system
 
 You can only run on the backend nodes, so you can submit the job to the
-batch system with `qsub submit.sh`.
+batch system with `sbatch submit.sh`.
 
 ---
 
-During tutorials we have reserved one node (4 GPUs) for the use of the
-class. You can access this by editing the PBS script to use the reserved
+During tutorials we have reserved a number of nodes (each 4 GPUs) for the use
+of the
+class. You can access this by editing the SLURM script to use the reserved
 queue. This will be given in the class.
 
 ---
