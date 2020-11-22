@@ -6,9 +6,9 @@ MF=  Makefile
 EXE= intro
 SRC= array_negate.cuf  gpu_utils.cuf  intro.cuf  
 
-ARCH=cc35
+ARCH=cc70
 
-CC=	pgfortran
+CC=	nvfortran
 CFLAGS= -Mcuda=$(ARCH) -O3 
 
 default: $(EXE)
