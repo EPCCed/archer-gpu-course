@@ -1,6 +1,6 @@
 MF=	Makefile
 
-FC=pgf90
+FC=nvfortran
 FFLAGS=-O3 -ta=nvidia -Minfo=accel 
 
 LFLAGS=	
