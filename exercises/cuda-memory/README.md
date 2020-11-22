@@ -19,8 +19,12 @@ Reference Manual documents available from
 http://developer.nvidia.com/nvidia-gpu-computing-documentation
  
 
+## 1) Managed memory
 
-## 1) Using constant memory
+For one of the previous exercises, try to adapt your working version
+to use managed memory. Check you get the correct answer.
+
+## 2) Using constant memory
 
 Have a look at the code to see what it does. The kernel <code>reverse()</code>
 takes the elements of an array $a_1, a_2, a_3, \ldots$ and reverses their
@@ -58,7 +62,7 @@ Assign the appropriate value before the kernel is invoked. Check the
 program still reports the correct answer.
 
 
-## 2) Using Shared Memory
+## 3) Using Shared Memory
 
 ### C and Fortran:
 
@@ -92,6 +96,21 @@ while submission to be queue system is via
 ```shell
 $ sbatch submit.sh
 ```
+
+### Additional Exercises
+
+1) Can you use shared memory and synchronisation for perform a *reduction*
+within a block? For example, if each thread within a block has computed a
+single contribution to a sum, can you add up all the contributions in such
+a way that thread 0 in the block has the grand total? Hint: limit yourself
+to the case where the number of threads is a power of two.
+
+2) Can you now work out how to extend the process so that a total could
+be computed between all blocks? The final total should be available only
+to one thread at the end.
+
+3) Investigate how CUDA cooperative groups would allow you to perform
+these tasks more easily.
 
 
 ### Keeping a copy of your work
