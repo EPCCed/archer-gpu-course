@@ -11,7 +11,7 @@ SRC= reverse_kernel.cuf gpu_utils.cuf reverse.cuf
 
 ARCH=cc70
 
-CC=	pgfortran
+CC=	nvfortran
 CFLAGS= -Mcuda=$(ARCH) -O3 
 
 
