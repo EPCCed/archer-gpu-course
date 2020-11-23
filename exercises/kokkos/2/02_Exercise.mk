@@ -12,11 +12,11 @@ DEPFLAGS = -M
 
 OBJ = $(SRC:.cpp=.$(KOKKOS_DEVICES).o)
 LIB =
-include $(KOKKOS_PATH)/Makefile.kokkos
+
 KOKKOS_CUDA_OPTIONS=force_uvm,enable_lambda
 
 
-$(EXE): $(OBJ) $(KOKKOS_LINK_DEPENDS)
+$(EXE): $(OBJ)
 	$(LINK) $(KOKKOS_LDFLAGS) $(LINKFLAGS) $(EXTRA_PATH) $(OBJ) $(KOKKOS_LIBS) $(LIB) -o $(EXE)
 
 clean: 
@@ -24,7 +24,7 @@ clean:
 
 # Compilation rules
 
-%.$(KOKKOS_DEVICES).o:%.cpp $(KOKKOS_CPP_DEPENDS)
+%.$(KOKKOS_DEVICES).o:%.cpp
 	$(CXX) $(KOKKOS_CPPFLAGS) $(KOKKOS_CXXFLAGS) $(CXXFLAGS) $(EXTRA_INC) -c $< -o $@
 
 test: $(EXE)

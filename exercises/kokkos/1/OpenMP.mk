@@ -1,4 +1,3 @@
-
-KOKKOS_PATH = ${KOKKOS_DIR}/OpenMP
+include ${KOKKOS_DIR}/OpenMP/kokkos.mk
 EXE = ${EXE_NAME}.OpenMP
 include 01_Exercise.mk
