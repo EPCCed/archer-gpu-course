@@ -63,7 +63,7 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                            http://www.openacc.org/</a>
            <li> Many relevant industry bodies involved
            <li> C/C++ or Fortran
-           <li> Support from e.g., Cray, PGI (Gnu gcc 7) compilers
+           <li> Support from e.g., Cray, NVIDIA, (Gnu since gcc 7) compilers
          </ul>
      </dl>
   </section>
@@ -256,6 +256,7 @@ for (i = 0; i < NI; i++) {
 
   </section>
 
+
   <section>
 
     <h4> Data movement </h4>
@@ -290,9 +291,9 @@ end do
     <pre><code class = "cpp">
 /* Declare shape of arrays [] */
 
-!$acc parallel loop copyin(input[0:NI]) copyout(output[0:NI])
+#pragma acc parallel loop copyin(in[0:NI]) copyout(out[0:NI])
 for (i = 1; i < NI; i++) {
-  output[i] = input[i];
+  out[i] = in[i];
 }
 
 /* copyin()  - copy to GPU at start */
