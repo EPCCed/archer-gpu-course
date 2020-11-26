@@ -13,6 +13,7 @@ ARCH=cc70
 
 CC=	nvfortran
 CFLAGS= -Mcuda=$(ARCH) -O3 
+LIBS=${MATHLIB}
 
 
 .SUFFIXES:
@@ -27,7 +28,7 @@ OBJ=	$(SRC:.cuf=.o)
 default: $(EXE)
 
 $(EXE):	$(OBJ) 
-	$(CC) $(CFLAGS) -o $@ $(OBJ) 
+	$(CC) $(CFLAGS) -o $@ $(OBJ) -L$(LIBS)
 
 $(OBJ):	$(MF) 
 
