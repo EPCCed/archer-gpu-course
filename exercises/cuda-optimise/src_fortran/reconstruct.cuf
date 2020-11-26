@@ -46,7 +46,7 @@ program reverse
 
   ! Other variables
   integer        :: x, y
-  integer        :: iter, istat, i, j
+  integer        :: iter, i, j
   integer        :: errors
   real (kind=rp) :: diff
 
@@ -297,8 +297,8 @@ subroutine pgmwrite(width, height, image, filename)
   real (kind=rp)               :: imgmax, imgmin
   integer, dimension(height, width) :: grey
 
-!  imgmax = maxval(image(:,:))
-!  imgmin = minval(image(:,:))
+  imgmax = maxval(image(:,:))
+  imgmin = minval(image(:,:))
 
   do i=1, width
      do j=1, height
