@@ -4,23 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-<title>reveal.js</title>
+<title>Architecture</title>
 
-<link rel="stylesheet" href="../css/reveal.css">
-<link rel="stylesheet" href="../css/theme/white.css">
-<link rel="stylesheet" href="../css/local.css">
+  <link rel="stylesheet" href="../dist/reset.css">
+  <link rel="stylesheet" href="../dist/reveal.css">
+  <link rel="stylesheet" href="../dist/theme/white.css">
+  <link rel="stylesheet" href="../css/local.css">
 
-<!-- Theme used for syntax highlighting of code -->
-<link rel="stylesheet" href="../lib/css/zenburn.css">
+  <!--- Theme used for syntax highlighted code --->
+  <link rel="stylesheet" href="../plugin/highlight/vs.css">
 
-<!-- Printing and PDF exports -->
-<script>
-var link = document.createElement( 'link' );
-link.rel = 'stylesheet';
-link.type = 'text/css';
-link.href = window.location.search.match( /print-pdf/gi ) ? '../css/print/pdf.css' : '../css/print/paper.css';
-document.getElementsByTagName( 'head' )[0].appendChild( link );
-</script>
 </head>
 
 <!-- Start of presentation --> 
@@ -45,7 +38,6 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
     <ul>
     <li> Factors influencing performance </li>
     <li> How do CPU / GPU architectures differ? </li>
-    <li> Some trends in architecture </li>
     <li> Programming scientific applications? </li>
 
   </section>
@@ -314,25 +306,6 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                 https://devblogs.nvidia.com/parallelforall/inside-pascal/</a>
   </section>
 
-
-  <section>
-    <h4> Trends in Architecture </h4>
-
- 
-    <ul>
-      <li> Certain convergence in architectures
-      <ul class = "inner">
-        <li> CPUs / GPUs will probably become more integrated
-        <li> Memory space may become more uniform
-      </ul>
-      <li> No doubt in need for parallelism
-      <ul class = "inner">
-        <li> More cores / threads
-      </ul>
-    </ul>
-
-  </section>
-
   <section>
      <h4> Programming </h4>
  
@@ -399,34 +372,6 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
   </section>
 
   <section>
-    <h4> Some examples</h4>
- 
-    <ul>
-
-      <li> Linear algebra
-      <ul class = "inner">
-        <li> BLAS (e.g., cuBLAS)
-        <li> Petsc (CUDA/OpenCL)
-        <li> Trilinos (Kokkos?)
-      </ul>
-
-      <li> Quantum chemistry / Molecular dynamics
-      <ul class = "inner">
-        <li> VASP (no GPU implementation)
-        <li> CP2K (some CUDA)
-        <li> Gromacs (some CUDA), LAMMPS (Kokkos)
-      </ul>
-
-      <li> Lattice based / CFD
-      <ul class = "inner">
-        <li> Fluent (CUDA)
-        <li> OpenFOAM (none)
-      </ul>
-    </ul>
-
-  </section>
-
-  <section>
     <h4> Big Data / Machine Learning </h4>
 
 
@@ -455,30 +400,29 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
 
 <!-- End of presentation -->
 
-<script src="../lib/js/head.min.js"></script>
-<script src="../js/reveal.js"></script>
+  <script src="../dist/reveal.js"></script>
+  <script src="../plugin/notes/notes.js"></script>
+  <script src="../plugin/markdown/markdown.js"></script>
+  <script src="../plugin/highlight/highlight.js"></script>
+  <script src="../plugin/math/math.js"></script>
 
-<script>
-// More info about config & dependencies:
-// - https://github.com/hakimel/reveal.js#configuration
-// - https://github.com/hakimel/reveal.js#dependencies
-Reveal.initialize({
-  controls: false,
-  slideNumber: true,
-  center: false,
-  math: { mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js',
-          config: 'TeX-AMS_HTML-full'
-         // See http://docs.mathjax.org/en/latest/config-files.html
-        },
-  dependencies: [
-	{ src: '../plugin/markdown/marked.js' },
-	{ src: '../plugin/markdown/markdown.js' },
-	{ src: '../plugin/notes/notes.js', async: true },
-        { src: '../plugin/math/math.js', async: true},
-	{ src: '../plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
-		]
-});
-</script>
+  <script>
+    // More info about initialization & config:
+    // - https://revealjs.com/initialization/
+    // - https://revealjs.com/config/
+    Reveal.initialize({
+        hash: true,
+        controls: false,
+        center: false,
+        slideNumber: 'c/t',
+        mathjax2: {
+            mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js',
+            config: 'TeX-AMS_HTML-full'},
+        // Learn about plugins: https://revealjs.com/plugins/
+        plugins: [ RevealMarkdown, RevealHighlight, RevealNotes,
+                   RevealMath.MathJax2],
+    });
+  </script>
 
 </body>
 </html>

@@ -4,23 +4,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    <title>Course Timetable</title>
 
-    <link rel="stylesheet" href="../css/reveal.css">
-    <link rel="stylesheet" href="../css/theme/white.css">
+    <title>Course Timetable</title>
+    <link rel="stylesheet" href="../dist/reset.css">
+    <link rel="stylesheet" href="../dist/reveal.css">
+    <link rel="stylesheet" href="../dist/theme/white.css">
     <link rel="stylesheet" href="../css/local.css">
 
-    <!-- Theme used for syntax highlighting of code -->
-    <link rel="stylesheet" href="../lib/css/vs.css">
+    <!--- Theme used for syntax highlighted code --->
+    <link rel="stylesheet" href="../plugin/highlight/vs.css">
 
-    <!-- Printing and PDF exports -->
-    <script>
-	var link = document.createElement( 'link' );
-	link.rel = 'stylesheet';
-	link.type = 'text/css';
-	link.href = window.location.search.match( /print-pdf/gi ) ? '../css/print/pdf.css' : '../css/print/paper.css';
-	document.getElementsByTagName( 'head' )[0].appendChild( link );
-    </script>
   </head>
   <body>
     <div class="reveal">
@@ -31,9 +24,8 @@
     <section>
 
       <h1>GPU Programming</h1>
-      <p>Presenters:  Kevin Stratford, Rupert Nash<br/>
-      <a href="mailto:kevin@epcc.ed.ac.uk"> kevin@epcc.ed.ac.uk</a>,
-      <a href="mailto:r.nash@epcc.ed.ac.uk"</a> r.nash@epcc.ed.ac.uk</p>
+      <p>Presenters:  Kevin Stratford </p>
+
       <img class="plain" src = "../img/epcc_logo.png" alt = "EPCC Logo"/>
 
       <p style="font-size: 0.7em">
@@ -148,14 +140,14 @@
     </dl>
     </section>
 
+    <!--
     <section>
-
     <h4>Timetable Day Three</h4>
 
     <dl style = "font-size: 70%">
       <dt>10:00 Hackathon introduction </a></dt>
-      <dt>10:10 Guest lecture from Alan Gray (NVIDIA) <br>
-          "CUDA 11: New Features and Beyond" </dt>
+      <dt>10:10 Guest lecture from Alan Gray (NVIDIA)
+          "CUDA 11: New Features and Beyond </dt>
       <dt>11:00 Break </dt>
       <dt>11:30 Hackathon </dt>
 
@@ -166,9 +158,10 @@
       <dt> 17:00 Close </dt>
     </dl>
     </section>
+    -->
 
     <!-- Local 'elf and Safety -->
-
+    <!--
     <section>
       <h4>Local Information</h4>
       <ul style = "font-size: 80%">
@@ -176,7 +169,7 @@
         <li> Bayes Centre Fire alarm test is 11:30 Thursdays.
       </ul>
     </section>
-
+    -->
     <!-- Do not commit details to the repository, please...
          I suggest making appropriate local chnages on a per course
          basis for exercise details -->
@@ -190,28 +183,27 @@
       <code>$ ssh -l ACCOUNT-NAME [-X|-Y] login.cirrus.ac.uk</code></p>
       </p>
 
+      <p style = "font-size: 80%" align = "left">
+      Please take care with password (e.g., case sensitive)
       <br>
 
       <p style = "font-size: 80%" align = "left">
       You need a copy of the exercises:
       <p style = "font-size: 60%" align = "left">
+      <code>$ cd /work/tc032/tc032/userid </code></p>
+      <p style = "font-size: 60%" align = "left">
       <code>$ git clone https://github.com/EPCCed/archer-gpu-course/</code></p>
 
       <p style = "font-size: 80%" align = "left">
-      Once:
+      Load NVIDIA HPC SDK:
       <p style = "font-size: 60%" align = "left">
-      <code>$ module load gcc cuda </code><br>
+      <code>$ module load nvidia/nvhpc-nompi/22.2</code><br>
       <code>$ cd archer-gpu-course/exercises/cuda-intro/src_c</code></p>
-
-      <p style = "font-size: 80%" align = "left">
-      Or (CUDA Fortran):
-      <p style = "font-size: 60%" align = "left">
-      <code>$ module load gcc nvidia/compilers-20.5 </code><br>
 
       <p style = "font-size: 80%" align = "left">
       Edit the file (method of your choice):
       <p style = "font-size: 60%" align = "left">
-      <code>$ sbatch submit.sh</code></p>
+
       <br>
 
       <!---
@@ -226,25 +218,29 @@
     </div>
 
     <!--- End of Timetable -->
-
-    <script src="../lib/js/head.min.js"></script>
-    <script src="../js/reveal.js"></script>
+    <script src="../dist/reveal.js"></script>
+    <script src="../plugin/notes/notes.js"></script>
+    <script src="../plugin/markdown/markdown.js"></script>
+    <script src="../plugin/highlight/highlight.js"></script>
+    <script src="../plugin/math/math.js"></script>
 
     <script>
-      // More info about config & dependencies:
-      // - https://github.com/hakimel/reveal.js#configuration
-      // - https://github.com/hakimel/reveal.js#dependencies
-      Reveal.initialize({
+    // More info about initialization & config:
+    // - https://revealjs.com/initialization/
+    // - https://revealjs.com/config/
+    Reveal.initialize({
+        hash: true,
         controls: false,
         center: false,
-        dependencies: [
-	  { src: '../plugin/markdown/marked.js' },
-	  { src: '../plugin/markdown/markdown.js' },
-	  { src: '../plugin/notes/notes.js', async: true },
-	  { src: '../plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
-	]
-      });
-    </script>
+        slideNumber: 'c/t',
+        mathjax2: {
+            mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js',
+            config: 'TeX-AMS_HTML-full'},
+        // Learn about plugins: https://revealjs.com/plugins/
+        plugins: [ RevealMarkdown, RevealHighlight, RevealNotes,
+                   RevealMath.MathJax2],
+    });
+  </script>
 
   </body>
 </html>

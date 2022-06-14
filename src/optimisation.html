@@ -4,23 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-<title>reveal.js</title>
+<title>Performance</title>
 
-<link rel="stylesheet" href="../css/reveal.css">
-<link rel="stylesheet" href="../css/theme/white.css">
-<link rel="stylesheet" href="../css/local.css">
+  <link rel="stylesheet" href="../dist/reset.css">
+  <link rel="stylesheet" href="../dist/reveal.css">
+  <link rel="stylesheet" href="../dist/theme/white.css">
+  <link rel="stylesheet" href="../css/local.css">
 
-<!-- Theme used for syntax highlighting of code -->
-<link rel="stylesheet" href="../lib/css/vs.css">
+  <!--- Theme used for syntax highlighted code --->
+  <link rel="stylesheet" href="../plugin/highlight/vs.css">
 
-<!-- Printing and PDF exports -->
-<script>
-var link = document.createElement( 'link' );
-link.rel = 'stylesheet';
-link.type = 'text/css';
-link.href = window.location.search.match( /print-pdf/gi ) ? '../css/print/pdf.css' : '../css/print/paper.css';
-document.getElementsByTagName( 'head' )[0].appendChild( link );
-</script>
+
 </head>
 
 <!-- Start of presentation --> 
@@ -469,7 +463,6 @@ $ nvprof ./cudaExecutable
     </dl>
 
 
-
   </section>
 
 </div>
@@ -477,30 +470,29 @@ $ nvprof ./cudaExecutable
 
 <!-- End of presentation -->
 
-<script src="../lib/js/head.min.js"></script>
-<script src="../js/reveal.js"></script>
+  <script src="../dist/reveal.js"></script>
+  <script src="../plugin/notes/notes.js"></script>
+  <script src="../plugin/markdown/markdown.js"></script>
+  <script src="../plugin/highlight/highlight.js"></script>
+  <script src="../plugin/math/math.js"></script>
 
-<script>
-// More info about config & dependencies:
-// - https://github.com/hakimel/reveal.js#configuration
-// - https://github.com/hakimel/reveal.js#dependencies
-Reveal.initialize({
-  controls: false,
-  slideNumber: true,
-  center: false,
-  math: { mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js',
-          config: 'TeX-AMS_HTML-full'
-         // See http://docs.mathjax.org/en/latest/config-files.html
-        },
-  dependencies: [
-	{ src: '../plugin/markdown/marked.js' },
-	{ src: '../plugin/markdown/markdown.js' },
-	{ src: '../plugin/notes/notes.js', async: true },
-        { src: '../plugin/math/math.js', async: true},
-	{ src: '../plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
-		]
-});
-</script>
+  <script>
+    // More info about initialization & config:
+    // - https://revealjs.com/initialization/
+    // - https://revealjs.com/config/
+    Reveal.initialize({
+        hash: true,
+        controls: false,
+        center: false,
+        slideNumber: 'c/t',
+        mathjax2: {
+            mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js',
+            config: 'TeX-AMS_HTML-full'},
+        // Learn about plugins: https://revealjs.com/plugins/
+        plugins: [ RevealMarkdown, RevealHighlight, RevealNotes,
+                   RevealMath.MathJax2],
+    });
+  </script>
 
 </body>
 </html>
