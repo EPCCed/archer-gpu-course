@@ -4,7 +4,7 @@
  * kernel invocation.
  *
  * Training material developed by James Perry and Alan Gray
- * Copyright EPCC, The University of Edinburgh, 2010 
+ * Copyright EPCC, The University of Edinburgh, 2010-2022
  */
 
 #include <stdio.h>
@@ -26,19 +26,20 @@ void checkCUDAError(const char*);
 #define NUM_BLOCKS  1
 #define THREADS_PER_BLOCK 256
 
-/* The actual array negation kernel (basic single block version) */
+/* The actual kernel (basic single block version) */
+/* Multiply all elements of the vector d_x by scalar a */
 
-__global__ void negate(int * d_a) {
+__global__ void scale_vector_1block(double a, double * d_x) {
 
-  /* Part 2B: negate an element of d_a */
+  /* Part 2B: implement the operation for elements of d_x */
 
 }
 
 /* Multi-block version of kernel for part 2C */
 
-__global__ void negate_multiblock(int *d_a) {
+__global__ void scale_vector(double a, double * d_x) {
 
-  /* Part 2C: negate an element of d_a, using multiple blocks this time */
+  /* Part 2C: ... use more than one block ... */
 
 }
 
@@ -46,11 +47,11 @@ __global__ void negate_multiblock(int *d_a) {
 
 int main(int argc, char *argv[]) {
 
-  int *h_a, *h_out;
-  int *d_a;
+  size_t sz = ARRAY_SIZE * sizeof(double);
 
-  int i;
-  size_t sz = ARRAY_SIZE * sizeof(int);
+  double * h_x = NULL;
+  double * d_x = NULL;
+  double * h_out = NULL;
 
   /* Print device details */
 
@@ -65,8 +66,8 @@ int main(int argc, char *argv[]) {
    * h_a holds the input array, h_out holds the result
    */
 
-  h_a = (int *) malloc(sz);
-  h_out = (int *) malloc(sz);
+  h_x   = (double *) malloc(sz);
+  h_out = (double *) malloc(sz);
 
   /*
    * allocate memory on device
@@ -75,8 +76,9 @@ int main(int argc, char *argv[]) {
 
 
   /* initialise host arrays */
-  for (i = 0; i < ARRAY_SIZE; i++) {
-    h_a[i] = i;
+
+  for (int i = 0; i < ARRAY_SIZE; i++) {
+    h_x[i] = 1.0*i;
     h_out[i] = 0;
   }
 
@@ -88,7 +90,7 @@ int main(int argc, char *argv[]) {
   /* Part 2A: configure and launch kernel (un-comment and complete) */
   /* dim3 blocksPerGrid( ); */
   /* dim3 threadsPerBlock( ); */
-  /* negate<<< , >>>( ); */
+  /* scale_vector_1block<<< , >>>( ); */
 
 
   /* wait for all threads to complete and check for errors */
@@ -103,7 +105,7 @@ int main(int argc, char *argv[]) {
 
   /* print out the result */
   printf("Results: ");
-  for (i = 0; i < ARRAY_SIZE; i++) {
+  for (int i = 0; i < ARRAY_SIZE; i++) {
     printf("%d, ", h_out[i]);
   }
   printf("\n\n");
