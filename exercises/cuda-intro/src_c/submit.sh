@@ -2,7 +2,7 @@
 
 #SBATCH --time=00:01:00
 #SBATCH --partition=gpu-skylake
-#SBATCH --qos=gpu
+#SBATCH --qos=short
 #SBATCH --gres=gpu:1
 
 
