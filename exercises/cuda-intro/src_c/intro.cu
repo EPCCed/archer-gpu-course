@@ -63,7 +63,7 @@ int main(int argc, char *argv[]) {
 
   /*
    * allocate memory on host
-   * h_a holds the input array, h_out holds the result
+   * h_x holds the input array, h_out holds the result
    */
 
   h_x   = (double *) malloc(sz);
@@ -83,7 +83,7 @@ int main(int argc, char *argv[]) {
   }
 
   /* copy input array from host to GPU */
-  /* Part 1B: copy host array h_a to device array d_a */
+  /* Part 1B: copy host array h_x to device array d_x */
 
 
   /* run the kernel on the GPU */
@@ -99,7 +99,7 @@ int main(int argc, char *argv[]) {
   checkCUDAError("kernel invocation");
 
   /* copy the result array back to the host */
-  /* Part 1C: copy device array d_a to host array h_out */
+  /* Part 1C: copy device array d_x to host array h_out */
 
   checkCUDAError("memcpy");
 
@@ -111,10 +111,10 @@ int main(int argc, char *argv[]) {
   printf("\n\n");
 
   /* free device buffer */
-  /* Part 1D: free d_a */
+  /* Part 1D: free d_x */
 
   /* free host buffers */
-  free(h_a);
+  free(h_x);
   free(h_out);
 
   return 0;
