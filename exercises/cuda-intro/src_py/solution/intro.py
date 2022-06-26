@@ -16,9 +16,9 @@ from pycuda.compiler import SourceModule
 
 # Define the problem size, and the number of blocks/threads
 
-int ARRAY_SIZE        = 256
-int NUM_BLOCKS        = 1
-int THREADS_PER_BLOCK = 256
+ARRAY_SIZE        = 256
+NUM_BLOCKS        = 1
+THREADS_PER_BLOCK = 256
 
 # Define the kernel here
 # On exit, we require each element of x[] by replaced by ax[]. 
@@ -26,6 +26,8 @@ int THREADS_PER_BLOCK = 256
 kernel_code = SourceModule("""
   __global__ void scale_vector(double a, double * x) {
 
+    int tid = threadIdx.x;
+    x[tid] = a*x[tid];
   }
 """)
 
@@ -33,17 +35,17 @@ kernel_code = SourceModule("""
 # Establish some values on the host
 # Also establist results array ax
 
-x = numpy.ones(ARRAY_SIZE, dtype = double)
-a = 2.0
+x = numpy.ones(ARRAY_SIZE, dtype = numpy.double)
+a = numpy.double(2.0) # must be a numpy object; not intrinsic
 
-ax = numpy.zeros(ARRAY_SIZE, dtype = double)
+ax = numpy.zeros(ARRAY_SIZE, dtype = numpy.double)
 
 # Allocate memory on the device
 # and copy initial data to device
 
 x_d = cuda.mem_alloc(x.nbytes)
 
-cuda_memcpy_htod(x_d, x)
+cuda.memcpy_htod(x_d, x)
 
 # Obtain the kernel function
 # This may generate compilation errors
@@ -53,13 +55,13 @@ threads_per_block = (THREADS_PER_BLOCK, 1, 1)
 
 kernel = kernel_code.get_function("scale_vector")
 
-kernel(a, x_d, blocks, threads_per_block)
+kernel(a, x_d, block = threads_per_block, grid = blocks)
 
 # Copy back the results, and check
 
 cuda.memcpy_dtoh(ax, x_d)
 
-check = numpy.allclose(a*x, ax, atol = numpy.finfo(double).eps)
+check = numpy.allclose(a*x, ax, atol = numpy.finfo(numpy.double).eps)
 
 if (check):
     print("Values are correct")

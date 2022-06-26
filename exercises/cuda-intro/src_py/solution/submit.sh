@@ -10,4 +10,11 @@ echo "CUDA_VISIBLE_DEVICES set to ${CUDA_VISIBLE_DEVICES}"
 
 source /work/tc032/tc032/shared/activate-base.sh
 
+export PYCUDA_CACHE_DIR=/work/tc032/tc032/${USER}/tmp
+
+if [ ! -d ${PYCUDA_CACHE_DIR} ]; then
+  mkdir ${PYCUDA_CACHE_DIR}
+fi
+
+
 python3 intro.py
