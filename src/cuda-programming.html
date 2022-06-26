@@ -36,13 +36,14 @@
     <h4> Overview </h4>
 
     <ul>
-      <li> Compute Unified Device Architecture</li>
-      <li> Background </li>
+      <li> The model </li>
       <li> CUDA blocks and threads </li>
+      <li> Kernels </li>
       <li> Data management </li>
     </ul>
   </section>
 
+  <!--
   <section>
     <h4> Development </h4>
 
@@ -60,6 +61,7 @@
       <li> Extended to CUDA Fortran with appropriate compiler
     </ul>
   </section>
+  -->
 
   <section>
      <h4> Host and Device </h4>
@@ -74,6 +76,47 @@
                   with separate address spaces connected via (PCIe) bus">
   </section>
 
+  <section>
+    <h4> The model </h4>
+
+    <p>
+    Map the problem space onto a Cartesian grid, e.g., in one dimension
+    </p>
+
+    <img width = "80%" src = "./ks-schematic-grid.svg"
+           alt = "Schemetic of a one-dimensional grid"
+           class = "plain">
+
+    <p style = "text-align: left;">
+    Each element of the grid has one thread associated with it
+    </p>
+
+  </section>
+
+  <section>
+    <h4>Blocks</h4>
+
+    <p style = "text-align: left;">
+      The grid is further decomposed into blocks
+    </p>
+
+    <ul style = "display: block; float: left; width: 100%; font-size: 70%;">
+      <li> All blocks have same number of threads </li>
+    </ul>
+
+
+    <img width = "80%" src = "./ks-schematic-block.svg"
+           alt = "Schemetic of a one-dimensional set of blocks"
+           class = "plain">
+
+    <p style = "text-align: left;">
+      There is a maximum number of threads per block (often 1024)
+    </p>
+    
+
+  </section>
+
+  <!--
   <section>
      <h4> Streaming Multiprocessors </h4>
 
@@ -109,6 +152,7 @@
        </dl>
 
   </section>
+  -->
 
   <section>
      <h4><code>dim3</code> structure </h4>
@@ -171,8 +215,8 @@ __global__ void myKernel(int * result) {
 dim3 blocks;
 dim3 threadsPerBlock;
 
-blocks.x = 1;
 threadsPerBlock.x = LOOP_LENGTH;
+blocks.x          = 1;
 
 myKernel &lt&lt&lt blocks, threadsPerBlock &gt&gt&gt (result);
     </code></pre>
@@ -197,8 +241,8 @@ end subroutine myKernel
 
 ! ... with execution ...
 
-blocks%x = 1
 threadsPerBlock%x = LOOP_LENGTH
+blocks%x          = 1
 call myKernel &lt&lt&lt blocks, threadsPerBlock &gt&gt&gt (result)
     </code></pre>
 
@@ -220,8 +264,9 @@ __global__ void myKernel(int * result) {
 
 /* ... with execution ... */
 
-block.x = NBLOCKS;
-threadsPerBlock.x = LOOP_LENGTH/NBLOCKS;
+threadsPerBlock.x = THREADS_PER_BLOCK;
+block.x           = LOOP_LENGTH/THREADS_PER_BLOCK;
+
 myKernel &lt&lt&lt blocks, threadsPerBlock &gt&gt&gt (result);
      </code></pre>
 
@@ -241,8 +286,9 @@ end subroutine myKernel
 
 ! ... with execution ...
 
-blocks%x = NBLOCKS
-threadsPerBlock%x = LOOP_LENGTH/NBLOCKS
+threadsPerBlock%x = THREADS_PER_BLOCK
+blocks%x          = LOOP_LENGTH/THREADS_PER_BLOCK
+
 call myKernel &lt&lt&lt blocks, threadsPerBlock &gt&gt&gt (result)
     </code></pre>
 
@@ -377,6 +423,34 @@ err = cudaDeviceSynchronize();
   </section>
 
   <section>
+
+    <h4> Kernels: general </h4>
+
+    <p style = "text-align: left;">
+      Choose a suitable dimension for grid
+    </p>
+      <ul style = "display: block; float: left; width: 100%; font-size: 70%;">
+	<li> One, two or three dimensions </li>
+      </ul>
+
+    <p style = "text-align: left; padding-top: 70px;">
+      Fix a number of threads per block
+    </p>
+      <ul style = "display: block; float: left; width: 100%; font-size: 70%;">
+	<li> Often 128, 256, 512, or 1024 </li>
+      </ul>
+
+    <p style = "text-align: left; padding-top: 70px;">
+      Work out the number of blocks needed
+    </p>
+      <ul style = "display: block; float: left; width: 100%; font-size: 70%;">
+	<li> Must cover the problem space </li>
+	<li> May need to handle additional threads in kernel </li>
+      </ul>
+
+  </section>
+  <!---
+  <section>
     <h4> Synchronisation on the device </h4>
 
     <dl style = "font-size: 70%">
@@ -393,6 +467,7 @@ err = cudaDeviceSynchronize();
     </dl>
 
   </section>
+  -->
 
   <section>
     <h4> Memory Management </h4>
