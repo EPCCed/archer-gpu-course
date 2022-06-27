@@ -106,7 +106,7 @@ int main(int argc, char *argv[]) {
   /* print out the result */
   printf("Results: ");
   for (int i = 0; i < ARRAY_SIZE; i++) {
-    printf("%d, ", h_out[i]);
+    printf("%f, ", h_out[i]);
   }
   printf("\n\n");
 
