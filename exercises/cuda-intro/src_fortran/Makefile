@@ -1,9 +1,9 @@
 # 
-# Makefile cuda-intro Frrotran
+# Makefile cuda-intro Fortran
 
 MF=  Makefile
 EXE= intro
-SRC= array_negate.cuf  gpu_utils.cuf  intro.cuf  
+SRC= scale_vector.cuf  gpu_utils.cuf  intro.cuf  
 
 CC=     nvfortran
 CFLAGS= -Mcuda -O3 
