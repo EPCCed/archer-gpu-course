@@ -3,7 +3,7 @@
 ## Credits
 
 Exercise created by EPCC, The University of Edinburgh. Documentation and
-source code copyright The University of Edinburgh 2016.
+source code copyright The University of Edinburgh 2016-2022.
 
 Material by: Alan Gray, Rupert Nash, Kevin Stratford
 
@@ -15,10 +15,10 @@ uses the GPU.
 The exercise has the purpose of performing a simple operation on an
 array of integers.  We introduce the important concepts of device memory
 management and kernel invocation. The final version should copy an
-array of integers from the host to device, multiply each element by -1
-on the device, and then copy the array back to the host.
+array of integers from the host to device, multiply each element by a
+constant on the device, and then copy the array back to the host.
 
-Choose the C or Fortran version.
+Choose the C, python, or Fortran version.
 
 ## Source code
 
@@ -85,35 +85,24 @@ Deallocate `d_a`.
 
 ## Compilation
 
-First, we need to load a number of modules to allow compilation.
+If you are using C or Fortran, you need to load the NVIDIA HPCSDK module
+to allow compilation:
 
-For C/C++:
 ```shell
-module load gcc nvidia/cuda-10.2
+module load nvidia/nvhpc
 ```
-Fortran also requires the Nvidia compilers ("nvfortran"):
-```shell
-module load gcc nvidia/compilers-20.9
-```
-
 
 Compile the code using `make`. Note that the compute capability of the
 CUDA device is specified with the `-arch` flag for C and with `-March=`
 for Fortran.
 
+If you are using pycuda, the relevant module commands are in the
+batch submission script (used at run time)
+
 ### Run in the batch system
 
 You can only run on the backend nodes, so you can submit the job to the
 batch system with `sbatch submit.sh`.
-
----
-
-During tutorials we have reserved a number of nodes (each 4 GPUs) for the use
-of the
-class. You can access this by editing the SLURM script to use the reserved
-queue. This will be given in the class.
-
----
 
 The output (the contents of the `h_out` array) or any error messages
 will be printed. So far the code simply copies from `h_a` on the host to
@@ -217,28 +206,25 @@ long as they still multiply to give the array size.
 
 ## Part 3: Handling any size of array
 
-Currently we are insisting that the array size be an exact multiple of the block
-size. In general we should handle any size that will fit in GPU
+Currently we are insisting that the array size be an exact multiple of the
+block size. In general we should handle any size that will fit in GPU
 memory.
-
----
 
 Let the total number of elements be $N$ and the block size be $B$.
 
 Recall that in integer division we discard the fractional part so we can
 write:
-
-$$N = k * B + r$$
-
-i.e. $N$ can divided into $k$ (an integer) number of blocks, plus a
-remainder, $r$. If $r$ is zero, then we need $k$ blocks, or else we
-need $k + 1$.
-
----
+```
+N = k*B + r
+```
+i.e. `N` can divided into `k` (an integer) number of blocks, plus a
+remainder, `r`. If `r` is zero, then we need `k` blocks, or else we
+need `k + 1` blocks.
 
 This can be expressed in a simple formula:
-$$nBlocks = \frac{N-1}{B} + 1$$
-
+```
+nBlocks = 1 + (N-1)/B
+```
 Convince yourself this is correct.
 
 * 3A

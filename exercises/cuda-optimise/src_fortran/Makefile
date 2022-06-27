@@ -10,7 +10,7 @@ SRC= reconstruct_kernels.cuf  reconstruct.cuf
 
 CC=	nvfortran
 CFLAGS= -Mcuda -O3 
-LIBS=${MATHLIB}
+LIBS= #-L${MATHLIB}
 
 
 .SUFFIXES:
@@ -25,7 +25,7 @@ OBJ=	$(SRC:.cuf=.o)
 default: $(EXE)
 
 $(EXE):	$(OBJ) 
-	$(CC) $(CFLAGS) -o $@ $(OBJ) -L$(LIBS)
+	$(CC) $(CFLAGS) -o $@ $(OBJ)
 
 $(OBJ):	$(MF) 
 

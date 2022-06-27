@@ -137,7 +137,6 @@
       <li> CPUs generally use commodity DDR RAM
       <ul class = "inner">
         <li> "Double Data Rate"
-        <li> Manufacturers may (or may not)  publish bandwidth data
         <li> A standard benchmark might give $O(100)$ GB / s
       </ul>
       <li> In practice, memory bandwidth can be important
@@ -155,12 +154,13 @@
 
     <ul>
       <li> Source of increased performance now to use more cores
-      <li> Almost all commodity processors are now "many-core" or "multi-core"
-      <li> Limited clock speed keeps power consumption per core managable
+      <li> Commodity processors are now "many-core" or "multi-core"
+      <li> Keeps power consumption per core managable
     </ul>
 
   </section>
 
+  <!--
   <section>
 
     <dl style = "font-size: 80%">
@@ -173,6 +173,7 @@
     <p style = "font-size: 50%"> Image: http://www.hardwareluxx.de/
                                  (Source: Intel)
   </section>
+  -->
 
   <section>
     <h4> CPUs: Summary </h4>
@@ -226,53 +227,23 @@
 
 
   <section>
-    <h4> GPUs: Clock speed </h4>
- 
-    <ul>
-      <li> Underlying clock frequency relatively modest
-      <ul class = "inner">
-        <li> Perhaps in high 100s MHz
-      </ul>
-      <li> Performance based on parallelism...
-    </ul>
+    <h4> GPUs </h4>
 
-  </section>
-
-  <section>
-    <h4> GPUs: Memory latency </h4>
- 
     <ul>
-      <li> Problem has not gone away
+      <li> Underlying clock frequency similar to CPUs
+      <li> Memory latency issue still present
       <ul class = "inner">
         <li> Strategy to hide it again related to  parallelism
+	<li> Schedule (over-schedule) many independent tasks
+	<li> If one task stalls, swap it out for another to make progress
       </ul>
-      <li> Schedule very many independent tasks
+      <li> High bandwidth memory (HBM)
       <ul class = "inner">
-        <li> More than can be accommodated on hardware at one time
+        <li> Relatively small amount (expensive)
+	<li> O(1000) GB/s
       </ul>
-      <li> If one task encounters a long-latency operation
-      <ul class = "inner">
-        <li> ... swapped out and schedule another task
-        <li> Done in hardware, so fast
-        <li> Multithreading "writ large"
-      </ul>
-    
+	
     </ul>
-
-  </section>
-
-
-  <section>
-    <h4> GPUs: Memory Bandwidth </h4>
-
-    <img src = "./nvidia-x86-performance.png"
-         alt = "Graphs comparing the performance of x86 and NVIDIA harware.
-                On the left is Peak floating point operations per second
-                against year of manufacture, and on the right is peak memory
-                bandwidth against year of manufactor.
-                The Figure is from NVIDIA">
-
-    <p style = "font-size: 50%"> Source: NVIDIA
 
   </section>
 
@@ -308,7 +279,7 @@
 
   <section>
      <h4> Programming </h4>
- 
+
     <ul>
       <li> Graphics processing languages were / are used
       <ul class = "inner">
@@ -321,13 +292,14 @@
         <li> Primarily to make graphics programming easier
         <li> As a by-product, scientific applications become more tractable
       </ul>
+      <li> AMD has an analogue HIP
     </ul>
 
   </section>
 
   <section>
      <h4> Programming </h4>
- 
+
     <ul>
       <li> At the same time, OpenCL was developed
 
@@ -340,6 +312,12 @@
         <li> Standards situation was relatively slow to become clear
         <li> Relatively pain-free
         <li> Sources of poor performance can be obscured
+      </ul>
+      <li> C++ template approaches
+	<ul class = "inner">
+        <li> SYCL
+	<li> C++ standard library
+	<li> Other libraries (e.g., Kokkos)
       </ul>
     </ul>
 
@@ -361,11 +339,6 @@
         <li> Highly coupled problems with little parallelism
         <li> IO-dominated problems
         <li> Poorly structured core with diffuse computational intensity
-      </ul>
-      <li> Some growth areas
-      <ul class = "inner">
-        <li> Reduced (half-, quarter-) precision arithmetic
-        <li> Work based on task graphs
       </ul>
     </ul>
 

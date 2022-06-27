@@ -8,4 +8,4 @@
 
 echo "CUDA_VISIBLE_DEVICES set to ${CUDA_VISIBLE_DEVICES}"
 
-./intro
+./vector-product

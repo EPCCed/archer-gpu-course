@@ -23,12 +23,8 @@
 
   <section>
 
-    <h1 style = "text-transform: none !important">
-        Constant Memory Shared Memory </h1>
-    <!-- That replies on getting the line break right! -->
-    <!-- 
-    <p>Kevin Stratford</p>
-    <p> kevin@epcc.ed.ac.uk </p> -->
+    <h1 style = "text-transform: none !important"> More on Memory </h1>
+
     <br>
     <p>Material by: Kevin Stratford </p>
     <img class = "plain" src ="../img/epcc_logo.png" alt = "EPCC Logo" />
@@ -39,14 +35,18 @@
 
     <h4> CUDA Memory so far...</h4>
 
-    <ul>
-    <li> Global memory </li>
-    <ul class = "inner">
-        <li> Allocated on host</li>
-        <li> Available to both host and device read/write </li>
+    <p style = "text-align: left;">
+      Global memory:
+    </p> 
+    <ul style = "display: block; float: left; width: 100%; padding-left: 20px; padding-bottom: 20px; font-size: 60%;">
+      <li> Allocated on host</li>
+      <li> Available to both host and device read/write </li>
     </ul>
-    <li> Local variables in kernels </li>
-    <ul class = "inner">
+
+    <p style = "text-align: left; padding-top: 10px;">
+    Local variables in kernels
+    </p>
+    <ul style = "display: block; float: left; width: 100%; padding-left: 20px; padding-bottom: 20px; font-size: 60%;">
        <li> Private on a per thread basis
        <li> Usually expected to be held in registers </li>
     </ul>
@@ -54,203 +54,363 @@
   </section>
 
   <section>
+
     <h4> Other types of memory </h4>
 
-    <ul>
-    <li> Constant cache memory </li>
-    <ul class = "inner">
-       <li> Read only in kernel</li>
-       <li> No cache coherency mechanism required to support writes
-       <li> Fast and effectively very high bandwidth 
+    <p style = "text-align: left;">
+      Managed memory:
+    </p> 
+    <ul style = "display: block; float: left; width: 100%; padding-left: 20px; padding-bottom: 20px; font-size: 60%;">
+       <li> Unified address space: available on host and device </li>
+       <li> No explicit copies required </li>
+       <li> Very useful for development / more complex code </li>
     </ul>
-    <li> Shared memory
-    <ul class = "inner">
+
+    <p style = "text-align: left;">
+      Shared memory:
+    </p> 
+    <ul style = "display: block; float: left; width: 100%; padding-left: 20px; padding-bottom: 20px; font-size: 60%;">
        <li> Shared between threads in the same block</li>
        <li> Often declared statically in the kernel (can be dynamic)
        <li> Lifetime of the kernel
     </ul>
+
+    <p style = "text-align: left;">
+    Constant cache memory:
+    </p> 
+    <ul style = "display: block; float: left; width: 100%; padding-left: 20px; padding-bottom: 20px; font-size: 60%;">
+       <li> Read only in kernel</li>
+       <li> No cache coherency mechanism required to support writes
+       <li> Fast and effectively very high bandwidth 
     </ul>
+
   </section>
 
 
   <section>
-    <h4> Schematic: C </h4>
+
+    <h4> Host and device memory </h4>
 
     <p>
     <pre class = "stretch"><code class = "cpp" data-trim>
-/* Constant data declared at file scope with
- *  __constant__ memory space qualifier  */
 
-static __constant__ double coeffs[3];
+    /* Schematically */
 
-int someHostFunction(...) {
+    /* Allocate and initialise host memory ... */
 
-  /* ... assign some values at run time ... */
+    h_ptr = malloc(nbytes);
+    ...
 
-  double values[3];
+    /* Allocate device memory and copy */
 
-  /* ... and before the relevant kernel ... */
+    cudaMalloc(&d_ptr, nbytes)
+    cudaMemcpy(d_ptr, h_ptr, nbytes, cudaMemCpyHostToDevice);
+    ...
 
-  cudaMemcpyToSymbol(coeffs, values, 3*sizeof(double));
+    /* Use device memory in kernel */
+    kernel<<<...>>> (d_ptr, ...)
 
-  ...
-}
     </code></pre>
 
   </section>
 
+   <section>
+    <h4> Unified memory </h4>
 
-  <section>
-    <h4> Schematic: C kernel </h4>
 
     <p>
-    <pre><code class = "cpp" data-trim>
+    <pre class = "stretch"><code class = "cpp" data-trim data-noescape>
 
-/* Still in the appropriate scope ... */
+  /* Can we do both? */
 
-static __constant__ double coeffs[3];
+  <p class = "fragment" style ="font-size: 100%; margin: 0px;">
+  cudaMallocManaged(&ptr, nbytes);</p>
 
-__global__ void someKernel(...) {
+  /* Initialise data on host */
+  for (i = 0; i < NDATA; i++) {
+    ptr[i] = value;
+  }
 
-  ...
+  /* Use data in kernel */
+  kernel<<<...>>> (ptr, ...)
 
-  /* Reference constant data as usual ... */
+  /* ... and get results back */
 
-  result = coeffs[0]*x + coeffs[1]*y + coeffs[2]*z;
-}
-    </code></pre>
-
-  </section>  
-
-  <section>
-    <h4> Schematic: Fortran </h4>
-
-    <pre class = "stretch"><code class = "fortran" data-trim>
-! Constant variable declared at e.g., module scope
-! with constant attribute
-
-real, constant :: coeffs(3)
-
-contains
-
-subroutine someHostRoutine(...)
-
-  ! ...assign some values at runtime ...
-
-  coeffs(:) = values(1:3)
-
-  ! ...and call relevant kernel ...
-
-end subroutine someHostRoutine
     </code></pre>
 
   </section>
 
-  <section>
-    <h4> Schematic: Fortran kernel </h4>
+    <section>
+    <h4> Managed memory</h4>
+
+    <p style = "font-size:60%">
+    <code class = "cpp">
+    __host__ cudaErr_t cudaMallocManaged(void ** dptr, int sz);
+    </code>
+    </p>
+
+    <p style = "text-align: left;">
+    Allocated on the host
+    </p>
+    <ul style = "display: block; float: left; width: 100%; padding-left: 20px; padding-bottom: 20px; font-size: 60%;">
+       <li> ...but single address space for host and device </li>
+       <li> Management of copies performed by CUDA runtime </li>
+       <li> Release with <code>cudaFree()</code> </li>
+    </ul>
+    
+    <p style = "text-align: left;">
+    Page migration
+    </p>
+    <ul style = "display: block; float: left; width: 100%; padding-left: 20px; padding-bottom: 20px; font-size: 60%;">
+       <li> Access to memory not present generates <i>page fault</i></li>
+       <li>  Pages are then copied; page size may be e.g., 64KB </li>
+       <li>  Costs time, so can be slow relative to <code>cudaMemcpy()</code></li>
+       <li> Can specify prefetches, or provide hints </li>
+    </ul>
+
+    </ul>
+    </p>
+
+  </section>
+
+ <section>
+    <h4> Managed memory (cont..)</h4>
 
     <p>
-    <pre><code class = "fortran" data-trim>
-! Still in the appropriate scope ...
+    <pre class = "stretch"><code class = "cpp" data-trim data-noescape>
 
-real, constant :: coeffs(3)
+    /* Prefetch to destination device */
 
-contains
+    cudaGetDevice(&device)
+    cudaMallocManaged(&ptr, nbytes);
+    ...
+    cudaMemPrefetchAsync(ptr, nbytes, device, NULL);
+    ...
 
-attributes(global) subroutine someKernel(...)
+    /* Hints */
 
-  ! Reference constant data as usual ...
+    cudaMemAdvise(ptr, nbytes, advice, device);
 
-  result = coeffs(1)*x + coeffs(2)*y + coeffs(3)*z
-
-end subroutine someKernel
+    /* advice: cudaMemAdviseSetReadMostly */
+    /*         cudaMemAdviseSetPreferredLocation */
+    /*         cudaMemAdviseSetAccessedBy */
 
     </code></pre>
-
-  </section>
-
-  <section>
-    <h4> Constant memory </h4>
-
-    <ul>
-    <li> A relatively scarce resource </li>
-    <ul class = "inner">
-       <li> Typically 64 kB in total (can inquire at runtime) </li>
-       <li> No huge look-up tables!
-       <li> Also used for kernel actual arguments (by value)
-    </ul>
-    <li> Any "overflow" will spill to normal global memory
-    <ul class = "inner">
-      <li> ... and accesses will be relatively slow
-    </ul>
-    </ul>
+    </p>
 
   </section>
 
   <section>
 
-    <h4> Shared Memory </h4>
+    <h4> Shared memory </h4>
 
-    <ul>
-    <li> Shared between threads in a block </li>
-    <ul class = "inner">
+    <p style = "text-align: left;">
+    Accessible by more than one thread.
+    </p>
+
+
+    <p style = "text-align: left;">
+    E.g., global memory (shared between all threads)
+    </p>
+
+    <pre><code class = "cpp" data-trim data-noescape>
+    __global__ void kernel(double * a) {
+
+      int tid = threadIdx.x; /* Local variable (register) */
+
+      a[tid] = 0.0;          /* a[] (global) */
+      ...
+    </code></pre>
+
+
+  </section>
+
+  <section>
+    <h4> Updates to shared memory </h4>
+
+    <p style = "text-align: left;;">
+    Consider the following kernel code:
+    </p>  
+
+    <pre><code class = "cpp" data-trim data-noescape>
+    /* Variable a is in global memory */
+    /* All threads ... */
+
+    a[0] = a[0] + 1;
+    </code></pre>
+
+    <p style = "text-align: left;">
+    What is really happening on each individual thread?
+    </p>  
+
+  </section>
+
+  <section>
+    <h4> Avoid race conditions </h4>
+
+    <p style = "text-align: left;">
+      Requires an <i>atomic</i> operation.
+    </p>
+
+    <pre><code class = "cpp" data-trim data-noescape>
+    /* Variable n is in global memory */
+    /* All threads ... */
+
+    atomicAdd(&n, 1);
+    </code></pre>
+
+    <p style = "text-align: left;">
+      Separate operations are conbined in a single entity on any thread:
+    </p>
+    <ul style = "display: block; float: left; width: 100%; padding-left: 20px; padding-bottom: 20px; font-size: 60%;">
+      <li> Obtain lock on memory location </li>
+      <li> Read value to register and add relevant increment (1 here) </li>
+      <li> Write result back to the same global memory location </li>
+      <li> Release the lock on the memory location </li>
+    </ul>
+
+    <p style = "text-align: left;">
+    In general: updates to shared memory may need synchronisation
+    </p>
+
+  </section>
+
+  <section>
+
+    <h4> <code>__shared__</code> qualifier </h4>
+
+    <p style = "text-align: left; padding-top: 10px;">
+    Within a kernel, e.g.,:
+    </p>
+
+    <pre><code class = "cpp" data-trim data-noescape>
+     __shared__ double tmp[NTHREADS_PER_BLOCK];
+    </code></pre>
+
+    <p style = "text-align: left; padding-top: 10px;">
+    Shared only between threads in the same block
+    </p>
+    <ul style = "display: block; float: left; width: 100%; padding-left: 20px; padding-bottom: 20px; font-size: 60%;">
        <li> Useful for temporary values, particularly if significant reuse
        <li> Marshalling data within a block
        <li> May be used to perform reductions (sum, min, max)
     </ul>
-    <li> May require care in synchronisation with a block
-    <ul class = "inner">
-      <li> Basic synchonisation is <code>__syncthreads()</code>
-      <li> Many others 
-    </ul>
-    <li> Declaration
-    <ul class = "inner">
-      <li> C: via <code>__shared__</code> memory space qualifier
-      <li> Fortran: via <code>shared</code> attribute 
+
+    <p style = "text-align: left; padding-top: 10px;">
+    Caveats
+    </p>
+    <ul style = "display: block; float: left; width: 100%; padding-left: 20px; padding-bottom: 20px; font-size: 60%;">
+      <li> May require synchronistations
+      <li> Limited resource, e.g., 50 kB per block
     </ul>
 
-    </ul>
   </section>
 
   <section>
+    <h4> Synchronisation </h4>
+
+    <p style = "text-align: left; padding-top: 10px;">
+    Basic synchroniation via <code>__syncthreads()</code>
+    </p>
+    <ul style = "display: block; float: left; width: 100%; padding-left: 20px; padding-bottom: 20px; font-size: 60%;">
+      <li> All threads must arrive before any can continue
+      <li> All threads in block must call (or deadlock)
+    </ul>
+    <p style = "text-align: left; padding-top: 10px;">
+    Many other intrinsics perform variations on theme
+    </p>
+    
+  </section>
+  
+  <section>
     <h4> Example: Reverse elements in array </h4>
 
-    <!-- Note in the fragment, the two spaces after the end of
-         the <p> tag are the actual indent that appears -->
 
     <pre><code class = "cpp" data-trim data-noescape>
 /* Reverse elements so that the order 0,1,2,3,...
  * becomes ...,3,2,1,0
  * Assume we have one block. */
+</pre></code>
 
+    <pre><code class = "cpp" data-trim data-noescape>
 __global__ void reverseElements(int * myArray) {
 
   __shared__ int tmp[THREADS_PER_BLOCK];
 
   int idx = threadIdx.x;
   tmp[idx] = myArray[idx];
-<p class = "fragment" style = "margin: 0em">  __syncthreads();</p>
+<p class = "fragment" style = "margin: 0em; font-size: 100%;">
+  __syncthreads();
+</p>
   myArray[THREADS_PER_BLOCK - (idx+1)] = tmp[idx];
-}    
+}
     </code></pre>
   </section>
 
   <section>
-    <h4> Shared Memory Summary </h4>
 
-    <ul>
-    <li> Again, a relatively scarce resource </li>
-    <ul class = "inner">
-       <li> E.g., 50 kB per block
-       <li> Some care may be required (check at runtime)
-    </ul>
-    <li> Various performance considerations
-    <ul class = "inner">
-      <li> E.g., "bank conflicts"
-      <li> Warp divergence related to synchronisation
-    </ul>
-    </ul>
+    <h4> Constant memory </h4>
 
+    <p style = "text-align: left;">
+    E.g., variables passed by value to a kernel
+    </p>
+
+    <pre><code class = "cpp" data-trim data-noescape>
+      __global__ void scale_vector(double a, double * x) {
+
+      ...
+      x[tid] = a*x[tid];      /* a appears in constant memory */
+    </code></pre>
+
+    <p style = "text-align: left;">
+      Constant memory:
+    </p> 
+    <ul style = "display: block; float: left; width: 100%; padding-left: 20px; padding-bottom: 20px; font-size: 60%;">
+      <li> fast read-only cache available to all threads</li>
+      <li> no updates so no cache coherencey required</li>
+      <li> Limited resource 64kB total</li>
+    </ul>
+    
+  </section>
+    
+  <section>
+    <h4> Constant memory </h4>
+
+    <p style = "text-align: left;">
+    You may also see:
+    </p> 
+
+    <p>
+    <pre class = "stretch"><code class = "cpp" data-trim>
+  /* Variable declared at file scope with
+   *  __constant__ memory space qualifier  */
+
+  static __constant__ double coeffs[3];
+
+  __host__ int main(int argc, char ** argv) {
+
+    ...
+    cudaMemcpyToSymbol(coeffs, values, 3*sizeof(double));
+    ...
+  }
+
+  __global__ void kernel(...) {
+    ...
+    /* may reference coeffs[] */
+  }
+    </code></pre>
+
+  </section>
+
+  <section>
+    <h4> Exercises </h4>
+
+    <p style = "text-align: left;">
+      Use of <code>__shared__</code> and atomic updates is important
+    </p>
+    <ul style = "display: block; float: left; width: 100%; padding-left: 20px; padding-bottom: 20px; font-size: 60%;">
+      <li> Allows reductions</li>
+    </ul>
   </section>
 
 </div>

@@ -1,6 +1,5 @@
 # 
 # Makefile cuda-intro Frrotran
-#
 
 MF=  Makefile
 EXE= intro
@@ -8,8 +7,8 @@ SRC= array_negate.cuf  gpu_utils.cuf  intro.cuf
 
 CC=     nvfortran
 CFLAGS= -Mcuda -O3 
-# required for cublas linking
-LIBS=${MATHLIB}
+# if required for cublas linking
+LIBS= #-L${MATHLIB}
 
 default: $(EXE)
 
@@ -24,7 +23,7 @@ OBJ=	$(SRC:.cuf=.o)
 	$(CC) $(CFLAGS) -c $<
 
 $(EXE):	$(OBJ) 
-	$(CC) $(CFLAGS) -o $@ $(OBJ) -L$(LIBS)
+	$(CC) $(CFLAGS) -o $@ $(OBJ) $(LIBS)
 
 $(OBJ):	$(MF) 
 
