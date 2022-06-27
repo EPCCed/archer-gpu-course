@@ -206,28 +206,25 @@ long as they still multiply to give the array size.
 
 ## Part 3: Handling any size of array
 
-Currently we are insisting that the array size be an exact multiple of the block
-size. In general we should handle any size that will fit in GPU
+Currently we are insisting that the array size be an exact multiple of the
+block size. In general we should handle any size that will fit in GPU
 memory.
-
----
 
 Let the total number of elements be $N$ and the block size be $B$.
 
 Recall that in integer division we discard the fractional part so we can
 write:
-
-$$N = k * B + r$$
-
-i.e. $N$ can divided into $k$ (an integer) number of blocks, plus a
-remainder, $r$. If $r$ is zero, then we need $k$ blocks, or else we
-need $k + 1$.
-
----
+```
+N = k*B + r
+```
+i.e. `N` can divided into `k` (an integer) number of blocks, plus a
+remainder, `r`. If `r` is zero, then we need `k` blocks, or else we
+need `k + 1` blocks.
 
 This can be expressed in a simple formula:
-$$nBlocks = \frac{N-1}{B} + 1$$
-
+```
+nBlocks = 1 + (N-1)/B
+```
 Convince yourself this is correct.
 
 * 3A
