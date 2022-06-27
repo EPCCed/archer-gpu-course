@@ -627,6 +627,58 @@ $ pgf90 -Mcuda -o example example.cuf
   </section>
 
   <section>
+
+    <h4><code>pyCUDA</code></h4>
+
+    <pre><code class = "python" data-trim>
+	from pycuda.compiler import SourceModule
+
+	kernel_code = SourceModule("""
+	  __global__ void my_kernel(...) {
+	    /* C code */
+	  }
+	""")
+    </code></pre>
+    <pre><code class = "python" data-trim>
+
+	# Compile
+	kernel = kernel_code.get_function("my_kernel")
+
+	# Execute kernel
+	# block and grid are tuples describing the execution
+
+	kernel(..., block = threads_per_block, grid = blocks)
+    </code></pre>
+
+  </section>
+
+  <section>
+    <h4><code> pyCUDA </code></h4>
+    <pre><code class = "python" data-trim>
+	import numpy
+	import pycuda.driver as cuda
+	import pycuda.autoinit
+
+	# Establish data as numpy objects
+	x = numpy.zeros(ARRAY_SIZE, dtype = numpy.double)
+    </code></pre>
+    <pre><code class = "python" data-trim>
+    
+	# Allocate device copy
+	# Copy to device, and copy back again
+
+	x_d = cuda.mem_alloc(x.bytes)
+
+	cuda.memcpy_htod(x_d, x)
+
+	kernel(x_d, ...)
+
+	cuda.memcpy_dtoh(x, x_d)
+    </code></pre>
+
+  </section>
+
+  <section>
     <h4> Summary </h4>
 
     <dl style = "font-size: 80%">
