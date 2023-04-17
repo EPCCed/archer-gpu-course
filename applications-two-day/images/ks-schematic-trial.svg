@@ -2,9 +2,9 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="162.38826mm"
-   height="146.83333mm"
-   viewBox="1 1 162.38826 146.83329"
+   width="106.07471mm"
+   height="88.074997mm"
+   viewBox="1 1 106.07471 88.074975"
    version="1.1"
    id="svg8"
    inkscape:version="1.1 (c4e8f9e, 2021-05-24)"
@@ -42,8 +42,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.6158182"
-     inkscape:cx="277.67935"
-     inkscape:cy="254.94537"
+     inkscape:cx="143.71124"
+     inkscape:cy="144.52317"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -56,8 +56,8 @@
      inkscape:snap-text-baseline="true"
      inkscape:window-width="1440"
      inkscape:window-height="830"
-     inkscape:window-x="182"
-     inkscape:window-y="115"
+     inkscape:window-x="245"
+     inkscape:window-y="162"
      inkscape:window-maximized="0"
      fit-margin-top="20"
      fit-margin-left="30"
@@ -73,8 +73,8 @@
        empspacing="10"
        spacingx="0.52916667"
        spacingy="0.52916667"
-       originx="-11.901778"
-       originy="-142.54158" />
+       originx="-40.058554"
+       originy="-171.92067" />
   </sodipodi:namedview>
   <metadata
      id="metadata5">
@@ -91,64 +91,68 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-11.901773,-5.6249981)">
+     transform="translate(-40.058548,-35.004164)">
     <rect
-       style="opacity:0.541;fill:none;fill-opacity:0.0784314;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+       style="opacity:0.541;fill:none;fill-opacity:0.0784314;stroke:#000000;stroke-width:0.45;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
        id="rect817"
-       width="58.208332"
-       height="42.333332"
-       x="63.5"
-       y="27.124998" />
+       width="26.19375"
+       height="19.049999"
+       x="80.327751"
+       y="56.229164" />
     <rect
-       style="opacity:0.541;fill:none;fill-opacity:0.0784314;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+       style="opacity:0.541;fill:none;fill-opacity:0.0784314;stroke:#000000;stroke-width:0.45;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
        id="rect817-0"
-       width="58.208332"
-       height="42.333332"
-       x="63.5"
-       y="90.625" />
+       width="26.19375"
+       height="19.049999"
+       x="80.327751"
+       y="84.804161" />
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.5833px;line-height:1.25;font-family:Helvetica;-inkscape-font-specification:'Helvetica, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
-       x="68.791664"
-       y="50.408333"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.76248px;line-height:1.25;font-family:Helvetica;-inkscape-font-specification:'Helvetica, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.119062"
+       x="82.708992"
+       y="66.706665"
        id="text838"><tspan
          sodipodi:role="line"
          id="tspan840"
-         x="68.791664"
-         y="50.408333">Processor</tspan></text>
+         x="82.708992"
+         y="66.706665"
+         style="stroke-width:0.119062">Processor</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.05556px;line-height:1.25;font-family:Helvetica;-inkscape-font-specification:'Helvetica, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.264583"
-       x="42.333332"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.175px;line-height:1.25;font-family:Helvetica;-inkscape-font-specification:'Helvetica, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.119062"
+       x="70.80275"
        y="80.041664"
        id="text844"><tspan
          sodipodi:role="line"
          id="tspan846"
-         x="42.333332"
-         y="80.041664">DATA IN</tspan></text>
+         x="70.80275"
+         y="80.041664"
+         style="stroke-width:0.119062">DATA IN</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.05556px;line-height:1.25;font-family:Helvetica;-inkscape-font-specification:'Helvetica, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.264583"
-       x="111.125"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.175px;line-height:1.25;font-family:Helvetica;-inkscape-font-specification:'Helvetica, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.119062"
+       x="101.759"
        y="80.041664"
        id="text844-2"><tspan
          sodipodi:role="line"
          id="tspan866"
-         x="111.125"
-         y="80.041664">DATA OUT</tspan></text>
+         x="101.759"
+         y="80.041664"
+         style="stroke-width:0.119062">DATA OUT</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.5833px;line-height:1.25;font-family:Helvetica;-inkscape-font-specification:'Helvetica, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
-       x="74.083336"
-       y="113.90833"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.76248px;line-height:1.25;font-family:Helvetica;-inkscape-font-specification:'Helvetica, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.119062"
+       x="85.090248"
+       y="95.28167"
        id="text838-5"><tspan
          sodipodi:role="line"
          id="tspan886"
-         x="74.083336"
-         y="113.90833">Memory</tspan></text>
+         x="85.090248"
+         y="95.28167"
+         style="stroke-width:0.119062">Memory</tspan></text>
     <g
        id="g1357-5"
-       transform="matrix(0.4164407,0,0,0.50700341,73.205351,29.006493)"
+       transform="matrix(0.18739832,0,0,0.22815154,84.695155,57.075837)"
        style="fill:#e00000;fill-opacity:1;stroke:#000000;stroke-width:1.08815;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">
       <rect
          y="90.839821"
@@ -166,7 +170,7 @@
     </g>
     <g
        id="g1357-5-6"
-       transform="matrix(-0.4164407,0,0,-0.50700342,112.44433,131.44614)"
+       transform="matrix(-0.18739832,0,0,-0.22815154,102.35269,103.17368)"
        style="fill:#e00000;fill-opacity:1;stroke:#000000;stroke-width:1.08815;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">
       <rect
          y="90.839821"
