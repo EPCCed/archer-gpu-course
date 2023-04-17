@@ -7,7 +7,7 @@
 
 A very simple picture of a computer might be
 
-![A simple picture of CPU/memory](../../src/ks-schemetic-4factors.svg)
+![A simple picture of CPU/memory](../images/ks-schematic-trial.svg)
 
 Correspondingly, there might be a number of factors which could be
 taken into consideration in a performance model:
