@@ -41,16 +41,16 @@ the advertised start and finish times, and the break times.
 
 ### Day one
 
-| Time  | Content                                  | Section       |
-|-------|------------------------------------------|---------------|
-| 09:30 | Logistics, login, modules, local details | See above     |
-| 10:00 | Introduction                             |               |
-|       | Performance model; Graphics processors   | [section-1.01](section-1.01)    |
-| 10:30 | The CUDA/HIP programming model           |               |
-|       | Host/device model; memory, kernels       | [section-1.02](section-1.02)      |
-| 11:00 | Break                                    |               |
-| 11:30 | CUDA/HIP programming                     | []()          |
-|       | Memory management, exercise              | section-2.01  |
+| Time  | Content                                  | Section                      |
+|-------|------------------------------------------|------------------------------|
+| 09:30 | Logistics, login, modules, local details | See above                    |
+| 10:00 | Introduction                             |                              |
+|       | Performance model; Graphics processors   | [section-1.01](section-1.01) |
+| 10:30 | The CUDA/HIP programming model           |                              |
+|       | Host/device model; memory, kernels       | [section-1.02](section-1.02) |
+| 11:00 | Break                                    |                              |
+| 11:30 | CUDA/HIP programming                     |                              |
+|       | Memory management, exercise              | [section-2.01](section-2.01) |
 
 
 
