@@ -60,3 +60,26 @@ standard C:
 $ nvcc -x cu code.c
 ```
 where the `-x cu` option instructs `nvcc` to interpret code as CUDA C.
+
+
+## Possible errors
+
+E.g., the default `sm_52` will be applied if no `arch` is spcecified:
+```
+$ nvcc intro.cu
+```
+This will result in a run-time error of the form
+```
+cudaErrorUnsupportedPtxVersion: the provided PTX was compiled with an unsupported toolchain.
+```
+at the first device side operation - often `cudaMalloc()`.
+
+On the other side, if the `sm` specification is too high, e.g.,
+```
+$ nvcc -arch=sm_90
+```
+then one will obtain a
+```
+cudaErrorNoKernelImageForDevice: no kernel image is available for execution on the device
+```
+at the point of kernl launch.
