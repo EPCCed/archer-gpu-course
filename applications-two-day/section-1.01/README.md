@@ -7,26 +7,28 @@
 
 A very simple picture of a computer might be
 
-![A simple picture of CPU/memory](../images/ks-schematic-trial.svg)
+![A simple picture of CPU/memory](../images/ks-schematic-simple.svg)
 
 Correspondingly, there might be a number of factors which could be
 taken into consideration in a performance model:
 
-1. Clock speed: the rate of issue of instructions
-2. Memory latency: time taken to retreive a datum from memory
+1. Clock speed: the rate of issue of instructions by the processor
+2. Memory latency: time taken to retreive a data item from memory
 3. Memory bandwidth: amount of data transferred in unit time
 4. Parallelism: can I replicate the basic unit above?
 
 
 ### Clocks speeds
 
-Determine the fundamental rate of processing instructions.
+Processor clock speed determines the fundamental rate of processing
+instructions, and hence data.
 
-Hardware clock speeds have largely ceased to increase, owing to power
-considerations, so most modern processors have a clock speed of
-around 2 GHz. Absent some unforseen fundamental breakthrough,
-it is not expected that this will increase signficantly in the
-future.
+Historically, increases in CPU performance have been related to increases
+in clock speed. However, owing largely to power constraints, most modern
+processors have a clock speed of around 2-3 GHz.
+
+Absent some unforseen fundamental breakthrough, it is not expected that
+this fundamental speed will increase signficantly in the future.
 
 ### Memory latency
 
@@ -69,13 +71,13 @@ Memory bandwidth can then be a key consideration.
 
 ### Parallelism
 
-While it is not possible to increases the clock speed
-of an indivdual processor, one can use add more processing units
-(for which we will read: "cores").
+While it is not possible to increase the clock speed of an indivdual
+processor, one can use add more processing units (for which we will
+read: "cores").
 
 Many CPUs are now mutli-core or many-core, with perhaps O(100)
 cores. Applications wishing to take advantage of such architectures
-must be parallel.
+*must* be parallel.
 
 #### Exercise (1 minute)
 
@@ -92,18 +94,21 @@ to resolve them have been specificially related to the parallel pixel
 rendering problem (a trivially parallel problem).
 
 Clocks speeds have, historically, have lagged behind CPUs, but are now
-broadly similar.
+broadly similar. However, increases in GPU performance are releted to
+parallelism.
 
 Memory latency has not gone away, but the mechanism used to mitigate it
-is to allow very fast switching between parallel tasks.
+is to allow very fast switching between parallel tasks. This eliminates
+idle time.
 
 GPUs typically have included high-bandwidth memory (HBM): a relatively
 small capacity O(10) GB but relatively large bandwidth O(1000) GB/second
 configuration. This gives a better balance between data supply and data
 processing for the parallel rendering problem.
 
-A modern GPU may have O(1000) cores (arranged in some heirarchy).
-
+So GPUs have been specifically designed to solve the parallel problem of
+the rendering of independent pixels. A modern GPU may have O(1000) cores
+(arranged in some heirarchy).
 
 
 ## Host/device picture
