@@ -2,6 +2,8 @@
 <img src="./images/archer2_logo.png" align="left" width="355" height="100" />
 <img src="./images/epcc_logo.jpg" align="right" width="133" height="100" />
 
+<br><br><br><br>
+
 # Introduction to GPU programming with CUDA/HIP
 
 [![CC BY-NC-SA 4.0][cc-by-nc-sa-shield]][cc-by-nc-sa]
