@@ -1,5 +1,10 @@
 
+<img src="./images/archer2_logo.png" align="left" width="355" height="100" />
+<img src="./images/epcc_logo.jpg" align="right" width="133" height="100" />
+
 # Introduction to GPU programming with CUDA/HIP
+
+[![CC BY-NC-SA 4.0][cc-by-nc-sa-shield]][cc-by-nc-sa]
 
 This short course will provide an introduction to GPU computing with CUDA
 aimed at scientific application programmers wishing to develop their own
@@ -33,6 +38,35 @@ programming is required.
 
 ## Installation
 
+For details of how to log into a Cirrus account, see
+https://cirrus.readthedocs.io/en/main/user-guide/connecting.html
+
+Check out the git repository to your Cirrus account.
+```
+$ cd ${HOME/home/work}
+$ https://github.com/EPCCed/archer-gpu-course.git
+$ cd archer-gpu-course
+```
+For the examples and exercises in the course, we will use the
+NVIDIA compiler driver `nvcc`. To access this
+```
+$ module load nvidia/nvhpc
+```
+Check you can compile and run a very simple program
+and submit the associated script to the queue system.
+```
+$ cd section-2.01
+$ nvcc -arch=sm_70 intro.cu
+$ sbatch submit.sh
+```
+The result should appear in a file `slurm-123456.out` in the working
+directory.
+
+Each section of the course is associated with a different directory, each
+of which contains a number of example programs and exercise templates.
+Answers to exercises generally re-appear as templates to later exercises.
+Miscellaneous solutions also appear in the solutions directory.
+
 
 ## Timetable
 
@@ -51,7 +85,22 @@ the advertised start and finish times, and the break times.
 | 11:00 | Break                                    |                              |
 | 11:30 | CUDA/HIP programming                     |                              |
 |       | Memory management, exercise              | [section-2.01](section-2.01) |
+|       | Kernels, exercise                        | [section-2.02](section-2.02) |
+| 13:00 | Lunch                                    |                              |
+| 14:00 | Some performance considerations          | [section-2.03](section-2.03) |
 
 
 
 ### Day two
+
+
+
+---
+This work is licensed under a
+[Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License][cc-by-nc-sa].
+
+[cc-by-nc-sa]: http://creativecommons.org/licenses/by-nc-sa/4.0/
+[cc-by-nc-sa-image]: https://licensebuttons.net/l/by-nc-sa/4.0/88x31.png
+[cc-by-nc-sa-shield]: https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg
+
+[![CC BY-NC-SA 4.0][cc-by-nc-sa-image]][cc-by-nc-sa]

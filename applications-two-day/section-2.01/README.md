@@ -22,24 +22,31 @@ There is also a subset
 ```
 which is the C interface which does not need to be compiled with `nvcc`.
 
+C programmers: C must be the subset of C which is also valid C++ to
+use `nvcc`.
+
+
 There is also
 ```
 #include "cuda.h"
 ```
 which is the CUDA driver API (a lower level interface). We will not
-consider the driver API in this course.
+consider the driver API in this course. (CUDA driver API routines
+are of the form `cuDeviceGet()`.)
+
+## Context
 
 
 ## Memory management
 
-Data accessed bh kernels must reside in device memory, sometimes also
+Data accessed by kernels must reside in device memory, sometimes also
 referred to as device global memory, or just "global memory".
 
 There are different ways of managing the allocation and movement
 of data between host and device. Broadly:
 
-1. explicit allocations and exxplicit copies
-2. use of 'managed' memory
+1. explicit allocations and explicit copies;
+2. use of 'managed' memory.
 
 We will look at the explicit mechanism first.
 
@@ -53,13 +60,13 @@ Declaration is via standard C data types and pointers, e.g.,
 
   err = cudaMalloc(&data, nArray*sizeof(double));
 
-  ...
+  /* ... perform some work ... */
 
   err = cudaFree(data);
 ```
 
 Such pointers are "host pointers to device memory". They have a value,
-but cannot be dereferred in host code.
+but cannot be dereferrenced in host code (a programmer error).
 
 We will return to error handling below.
 
@@ -70,10 +77,13 @@ via `cudaMemcpy()`. Schematically,
 ```
   err = cudaMemcpy(data, hostdata, nArray*sizeof(double), cudaMemcpyHostToDevice);
 
-  /* ... do seomthing ... */
+  /* ... do something ... */
 
   err = cudaMemcpy(hostdata, data, nArray*sizeof(double), cudaMemcpyDeviceToHost);
 ```
+
+These are *blocking* calls: they will not return until the data has been
+stored in GPU memory (or and error has occurred).
 
 Formally, the API reads
 
