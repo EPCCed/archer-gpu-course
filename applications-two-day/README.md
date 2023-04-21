@@ -83,14 +83,20 @@ the advertised start and finish times, and the break times.
 | 10:00 | Introduction                             |                              |
 |       | Performance model; Graphics processors   | [section-1.01](section-1.01) |
 | 10:30 | The CUDA/HIP programming model           |                              |
-|       | Host/device model; memory, kernels       | [section-1.02](section-1.02) |
+|       | Abstraction; host code and device code   | [section-1.02](section-1.02) |
 | 11:00 | Break                                    |                              |
 | 11:30 | CUDA/HIP programming                     |                              |
 |       | Memory management, exercise              | [section-2.01](section-2.01) |
+| 12:15 | CUDA/HIP programming (cont.)             |                              |
 |       | Kernels, exercise                        | [section-2.02](section-2.02) |
 | 13:00 | Lunch                                    |                              |
-| 14:00 | Some performance considerations          | [section-2.03](section-2.03) |
-
+| 14:00 | Some performance considerations          |                              |
+|       | Exercise on matrix operation             | [section-2.03](section-2.03) |
+| 15:00 | Break                                    |                              |
+| 15:20 | More on memory: managed memory           |                              |
+|       | Exercise on managed memory               | [section-2.04](section-2.04) |
+| 15:50 | More on memory: shared memory            |                              |
+| 16:10 | Exercise on vector product               | [section-2.05](section-2.05) |
 
 
 ### Day two
