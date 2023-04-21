@@ -135,9 +135,17 @@ the queue system.
 
 Second, undertake the following steps:
 
-1A. declare and allocate device memory (call it `d_x`) of type `double`;
-1B. copy the initialised host array `h_x` to device array `d_x`
-1C. copy the (unaltered) device array `d_x` back to the host array `h_out`
+1. declare and allocate device memory (call it `d_x`) of type `double`;
+2. copy the initialised host array `h_x` to device array `d_x`
+3. copy the (unaltered) device array `d_x` back to the host array `h_out`
     and check that `h_out` has the expected values;
-1D. release the device resources `d_x` at the end of execution.
+4. release the device resources `d_x` at the end of execution.
+
+
+
+#### Finished?
+
+Check the CUDA documentation to see what other information is available
+from the structure `cudaDeviceProp`. This will be in the section on
+device management.
 

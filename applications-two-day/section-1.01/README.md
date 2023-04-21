@@ -107,8 +107,30 @@ configuration. This gives a better balance between data supply and data
 processing for the parallel rendering problem.
 
 So GPUs have been specifically designed to solve the parallel problem of
-the rendering of independent pixels. A modern GPU may have O(1000) cores
-(arranged in some heirarchy).
+the rendering of independent pixels. A modern GPU may have O(1000) cores.
+
+
+### Hardware organiastion
+
+Cores on NVIDIA GPUs are organised into units referred to as
+*streaming multiprocessors*, or SMs. There might be 32 or
+64 cores per SM, e.g., depending on 32 or 64 bit operations.
+
+More recent architectures also have "tensor" cores for 16-bit
+(half precision) operations.
+
+Each SM has its own resources in terms of data/instruction caches,
+registers, and floating point units.
+
+The Cirrus V100 GPU cards have 80 SMs each (so 80x32 = 2560 cores
+for double precision arithmetic).
+
+
+A more complete overview is given by NVIDIA
+https://developer.nvidia.com/blog/inside-volta/
+
+For AMD GPUs, the picture is essentially similar, although some of the
+jargon differs.
 
 
 ## Host/device picture
