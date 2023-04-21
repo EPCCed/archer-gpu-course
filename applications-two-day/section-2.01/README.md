@@ -6,6 +6,9 @@ spaces for CPU and GPU memory, and moving data between them.
 ![Schematic of host/device memories](../images/ks-schematic-memory-transfer.svg)
 
 
+We need to take appropriate action in our code.
+
+
 ## What to include and what not to include
 
 A standard C/C++ source file may include
@@ -34,6 +37,11 @@ consider the driver API in this course. (CUDA driver API routines
 are of the form `cuDeviceGet()`.)
 
 ## Context
+
+There is no explicit initialisation required in the code. The first
+call to the CUDA API will cause the CUDA context to be initialised
+behind the scenes.
+
 
 
 ## Memory management
@@ -125,7 +133,7 @@ context, and may avoid surprises later in the code.
 
 ## Exercise (20 minutes)
 
-Look at the associated exercise `intro.cu`. This provides a template
+Look at the associated exercise `exercise_dscal.cu`. This provides a template
 for a first exercise which is to implement a simple scale function,
 which will multiply all the elements of an array by a constant.
 
@@ -134,6 +142,12 @@ from the GPU. We will address the kernel in the next exercise.
 
 First, check you can compile and run the unaltered template code in
 the queue system.
+
+Recall that we should use
+```
+$ nvcc -arch=sm_70 exercise_dscal.cu
+```
+and submit to the queue system with `sbatch submit.sh`.
 
 Second, undertake the following steps:
 
@@ -146,7 +160,7 @@ Second, undertake the following steps:
 As there is no kernel yet, the output `h_out` should just be the same
 as the input `h_in` if operating correctly.
 
-#### Finished?
+### Finished?
 
 Check the CUDA documentation to see what other information is available
 from the structure `cudaDeviceProp`. This will be in the section on
@@ -155,3 +169,8 @@ device management in the CUDA runtime API reference.
 What other possiblities exist for `cudaMemcpyKind`?
 
 https://docs.nvidia.com/cuda/cuda-runtime-api/index.html
+
+### What can go wrong?
+
+What happens if you forget the `-arch=sm_70` in the compilation?
+
