@@ -75,7 +75,7 @@ While it is not possible to increase the clock speed of an indivdual
 processor, one can use add more processing units (for which we will
 read: "cores").
 
-Many CPUs are now mutli-core or many-core, with perhaps O(100)
+Many CPUs are now mutli-core or many-core, with perhaps O(10) or O(100)
 cores. Applications wishing to take advantage of such architectures
 *must* be parallel.
 
@@ -115,13 +115,11 @@ the rendering of independent pixels. A modern GPU may have O(1000) cores.
 Cores on NVIDIA GPUs are organised into units referred to as
 *streaming multiprocessors*, or SMs. There might be 32 or
 64 cores per SM, e.g., depending on 32 or 64 bit operations.
-
 More recent architectures also have "tensor" cores for 16-bit
 (half precision) operations.
 
 Each SM has its own resources in terms of data/instruction caches,
 registers, and floating point units.
-
 The Cirrus V100 GPU cards have 80 SMs each (so 80x32 = 2560 cores
 for double precision arithmetic).
 
