@@ -3,6 +3,8 @@
 The first topic we must address is the existance of separate address
 spaces for CPU and GPU memory, and moving data between them.
 
+![Schematic of host/device memories](../images/ks-schematic-memory-transfer.svg)
+
 It may be useful to look at the CUDA runtime API reference:
 https://docs.nvidia.com/cuda/cuda-runtime-api/index.html
 
@@ -75,20 +77,23 @@ We will return to error handling below.
 Assuming we have established some data on the host, copies are
 via `cudaMemcpy()`. Schematically,
 ```
-  err = cudaMemcpy(data, hostdata, nArray*sizeof(double), cudaMemcpyHostToDevice);
+  err = cudaMemcpy(data, hostdata, nArray*sizeof(double),
+                   cudaMemcpyHostToDevice);
 
   /* ... do something ... */
 
-  err = cudaMemcpy(hostdata, data, nArray*sizeof(double), cudaMemcpyDeviceToHost);
+  err = cudaMemcpy(hostdata, data, nArray*sizeof(double),
+                   cudaMemcpyDeviceToHost);
 ```
 
 These are *blocking* calls: they will not return until the data has been
 stored in GPU memory (or and error has occurred).
 
 Formally, the API reads
-
-cudaError_t cudaMemcpy(void * dest, void * src, size_t sz, cudaMemcpyKind direction);
-
+```
+cudaError_t cudaMemcpy(void * dest, void * src, size_t sz,
+                       cudaMemcpyKind direction);
+```
 
 ## Error handling
 
@@ -141,11 +146,11 @@ Second, undertake the following steps:
     and check that `h_out` has the expected values;
 4. release the device resources `d_x` at the end of execution.
 
-
+As there is no kernel yet, the output `h_out` should just be the same
+as the input `h_in` if operating correctly.
 
 #### Finished?
 
 Check the CUDA documentation to see what other information is available
 from the structure `cudaDeviceProp`. This will be in the section on
 device management.
-
