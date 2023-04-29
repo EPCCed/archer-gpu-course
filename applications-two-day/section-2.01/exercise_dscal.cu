@@ -64,7 +64,7 @@ int main(int argc, char *argv[]) {
 
   CUDA_ASSERT( cudaGetDevice(&deviceNum) );
   CUDA_ASSERT( cudaGetDeviceProperties(&prop, deviceNum) );
-  printf("Device name: %s\n", prop.name);
+  printf("Device %d name: %s\n", deviceNum, prop.name);
   printf("Maximum number of threads per block: %d\n", prop.maxThreadsPerBlock);
 
 
@@ -94,10 +94,11 @@ int main(int argc, char *argv[]) {
   {
     int ncorrect = 0;
     for (int i = 0; i < ARRAY_SIZE; i++) {
-      printf("%9d %5.2f\n", i, h_out[i]);
+      /* The print statement can be uncommented for debuging... */
+      /* printf("%9d %5.2f\n", i, h_out[i]); */
       if (fabs(h_out[i] - a*h_x[i]) < DBL_EPSILON) ncorrect += 1;
     }
-    printf("No. elements %d, and correct elements %d\n", ARRAY_SIZE, ncorrect);
+    printf("No. elements %d, and correct: %d\n", ARRAY_SIZE, ncorrect);
   }
 
   /* free device buffer */
