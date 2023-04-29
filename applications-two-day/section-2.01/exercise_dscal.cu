@@ -31,7 +31,7 @@ __host__ void myErrorHandler(cudaError_t ifail, const char * file,
 
 
 /* The number of integer elements in the array */
-#define ARRAY_SIZE 256
+#define ARRAY_LENGTH 256
 
 /* Suggested kernel parameters */
 #define NUM_BLOCKS  1
@@ -42,7 +42,7 @@ __host__ void myErrorHandler(cudaError_t ifail, const char * file,
 
 int main(int argc, char *argv[]) {
 
-  size_t sz = ARRAY_SIZE*sizeof(double);
+  size_t sz = ARRAY_LENGTH*sizeof(double);
 
   double a = 1.0;          /* constant a */
   double * h_x = NULL;     /* input array (host) */
@@ -75,7 +75,7 @@ int main(int argc, char *argv[]) {
   assert(h_x);
   assert(h_out);
 
-  for (int i = 0; i < ARRAY_SIZE; i++) {
+  for (int i = 0; i < ARRAY_LENGTH; i++) {
     h_x[i] = 1.0*i;
     h_out[i] = 0;
   }
@@ -93,12 +93,12 @@ int main(int argc, char *argv[]) {
   printf("Results:\n");
   {
     int ncorrect = 0;
-    for (int i = 0; i < ARRAY_SIZE; i++) {
+    for (int i = 0; i < ARRAY_LENGTH; i++) {
       /* The print statement can be uncommented for debuging... */
       /* printf("%9d %5.2f\n", i, h_out[i]); */
       if (fabs(h_out[i] - a*h_x[i]) < DBL_EPSILON) ncorrect += 1;
     }
-    printf("No. elements %d, and correct: %d\n", ARRAY_SIZE, ncorrect);
+    printf("No. elements %d, and correct: %d\n", ARRAY_LENGTH, ncorrect);
   }
 
   /* free device buffer */
