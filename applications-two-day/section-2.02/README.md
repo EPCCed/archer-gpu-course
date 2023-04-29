@@ -31,7 +31,8 @@ __global__ void myKernel(int * result) {
 ```
 The `__global__` is a so-called execution space qualifier and
 indicates to the compiler that this is an entry point for
-GPU execution.
+GPU execution. The `threadIdx.x` is a special variable that CUDA
+provides to allow us to identify the thread.
 
 The second step is to execute, or *launch*, the kernel on the GPU.
 This is done by specifying the number of blocks, and the number
@@ -100,10 +101,10 @@ thread's position in the abstract grid picture:
    dim3 blockDim;    /* The number of threads per block */
    
    /* Unique to each block: */
-   dim3 blockIdx;    /* 0 <= blockIdx.x < gridDim.x   */
+   dim3 blockIdx;    /* 0 <= blockIdx.x < gridDim.x  etc. for y,z */
 
    /* Unique to each thread (within a block): */
-   dim3 threadIdx;   /* 0 <= threadIdx.x < blockDim.x */
+   dim3 threadIdx;   /* 0 <= threadIdx.x < blockDim.x  etc. for y,z */
 ```
 These names should be considered reserved.
 
@@ -150,10 +151,11 @@ a programmer error which will need to be debugged.
 ## Exercise (cont.)
 
 Starting from your solution to the previous exercise, we will now
-add the relevant kernel and execution configuration.
+add the relevant kernel and execution configuration. You should
+adjust the value of the constant `a` to be e.g., `a = 2.0`.
 
-(There is also a new template with a canned solution to the previous
-part in this directory.)
+There is also a new template with a canned solution to the previous
+part in this directory.
 
 ### Sugggested procedure
 
@@ -173,7 +175,7 @@ instance.
 
 ### More than one block
 
-Update kernel, and then the execution configuration parameters
+Update the kernel, and then the execution configuration parameters
 to allow more than one block. We will keep the assumption that
 the array length is a whole number of blocks.
 
@@ -200,5 +202,30 @@ Set the array size to, e.g., 100, and then to 1000 to check your result.
 
 All kernels must be declared `void`. Why do you think this is the case?
 
-If you are not keen on the non-standard looking execution configuration
-```<<<...>>>```, one can also use the C API function `cudaLaunchKernel()`.
+
+Adapt your program to try another simple level one BLAS routine, which
+we will take to have the prototype:
+```
+  void daxpy(int nlen, double a, const double * x, double * y);
+```
+This is the operation `y := ax + y` where `y` is incremented, and `x` is
+unchanged. Both vectors have length `nlen`.
+
+
+**Expert point**. If you are not keen on the non-standard looking execution
+configuration ```<<<...>>>```, one can also use the C++ API function
+`cudaLaunchKernel()`. However, this is slightly more awkward.
+
+The prototype expected is:
+```
+  cudaErr_t cudaLaunchKernel(const void * func, dim3 blocks, dim3 threads, void ** args, ...);
+```
+where only the first 4 arguments are required. The kernel function is `func`, while
+the second and third arguments are the number of blocks and threads per block
+(taking the place of the execution configuration). The fourth argument holds the
+kernel parameters. Hint: for our first kernel this final argument will be
+```
+   void *args[] = {&a, &d_x};
+```
+As `cudaLaunchKernel()` is an API function returning an error, the return code can be
+inpsected with the macro to check for errors in the launch (instead of `cudaPeekAtLastError()`). 
