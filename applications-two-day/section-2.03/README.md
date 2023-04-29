@@ -28,7 +28,8 @@ high *occupancy*.
 
 This may be thought of simply as having a very high degree of thread
 parallelism. However, the degree is much higher than would be expected
-on the basis of a threaded CPU program (where threads \sim cores).
+on the basis of a threaded CPU program (where threads is usually the
+number of cores).
 
 Typically, a GPU kernel wants at least O(10^5) or O(10^6) threads to be
 effective. That is, the problem space should have this number of elements.
