@@ -186,3 +186,9 @@ https://docs.nvidia.com/cuda/cuda-runtime-api/index.html
 
 What happens if you forget the `-arch=sm_70` in the compilation?
 
+What happens if you mess up the order of the host and device references in
+a call to `cudaMemcpy()`? E.g.,
+```
+  cudaMemcpy(hostdata, devicedata, sz, cudaMemcpyHostToDevice);
+```
+where the data has been allocated as the names suggest.
