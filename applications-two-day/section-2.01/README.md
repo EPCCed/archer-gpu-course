@@ -114,8 +114,8 @@ const char * cudaGetErrorString(cudaError_t err);  /* Descriptive string */
 
 ## Error handling in practice
 
-The requirement for error handling is often handled in real C code
-using a macro, e.g.,
+The requirement for error handling often appears in real C code
+as a macro, e.g.,
 ```
   CUDA_ASSERT( cudaMalloc(&data, nArray*sizeof(double) );
 ```
@@ -147,7 +147,15 @@ Recall that we should use
 ```
 $ nvcc -arch=sm_70 exercise_dscal.cu
 ```
-and submit to the queue system with `sbatch submit.sh`.
+and submit to the queue system using the script provided. If the code has run
+correctly, you should see in the output something like:
+```
+Device 0 name: Tesla V100-SXM2-16GB
+Maximum number of threads per block: 1024
+Results:
+No. elements 256, and correct: 1
+```
+showing that only one output array element is correct.
 
 Second, undertake the following steps:
 
@@ -157,8 +165,12 @@ Second, undertake the following steps:
     and check that `h_out` has the expected values;
 4. release the device resources `d_x` at the end of execution.
 
+Remember to use the macro to check the return value of each of the CUDA
+API calls.
+
 As there is no kernel yet, the output `h_out` should just be the same
-as the input `h_in` if operating correctly.
+as the input `h_in` if operating correctly. All 256 array elements
+should be correct.
 
 ### Finished?
 
