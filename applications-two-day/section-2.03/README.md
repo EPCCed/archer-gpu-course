@@ -59,7 +59,7 @@ This would clearly be poor occupancy.
 
 
 If we parallelised both loops, we would have 512 x 512 = 262,144 threads
-(1024 blocks). This is much better. We now have a chance to emply many
+(1024 blocks). This is much better. We now have a chance to employ many
 SMs.
 
 ## Memory usage
