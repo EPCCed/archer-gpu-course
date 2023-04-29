@@ -129,7 +129,7 @@ The the current directory is a template `exercise_dger.cu` in which you
 are asked to implement a kernel which computes the following matrix
 operation
 ```
-  A_mn := A_mn + alpha x_m y_n
+  A_ij := A_ij + alpha x_i y_j
 ```
 for a matrix A with m rows and n columns, a vector `x` of length m, a
 vector `y` of length `n`, and constant `alpha`. The data type is
@@ -139,21 +139,19 @@ For the matrix `a` we will adopted a flattened one-dimensional indexing
 for which element row `i` and column `j` is addressed as `a[i*nrow + j]`.
 
 As this is partly a performance issue (a correct answer is also required!)
-we will implement some simple profiling by compiling with
-```
-$ nvcc -arch=sm_70 -pg exercise_dger.cu
-```
-This is accompanied in the submission script by the use of 'nvprof',
-which will give some basic profile information for routines involving
-the GPU at the end of execution. Try to keep a note of the time taken
-by the kernel at each stage (reported in either milliseconds, `ms`,
+we will implement some simple profiling by adding `nvprof` to the submission
+script.
+
+`nvprof` gives some basic text-based profile information for routines
+involving the GPU at the end of execution. Try to keep a note of the time
+taken by the kernel at each stage (reported in either milliseconds, `ms`,
 or micro seconds, `us` by `nvprof`).
 
 
 A suggested procedure is:
-1. Allocate memory for the matrix following the example of the two
-   vectors already present.
-2. Initialise all the elements of the array to be zero. Hint: you can
+1. Declare and allocate memory on the device for the matrix following the example
+   of the host matrix already present. Call it `d_a`.
+2. Initialise all the elements of the *device* matrix to be zero. Hint: you can
    use the function `cudaMemset()` to do this from the host.
 3. Implement the most simple kernel in which the update is entirely
    serialised. E.g.,
@@ -168,7 +166,7 @@ A suggested procedure is:
      }
    }
    ```
-   Run the kernel with an appropriate execution configuration.
+   Check the code to run the kernel with an appropriate execution configuration.
 
 4. Eliminate the `i`-loop and make the relevant adjustment to
    the kernel launch parameters to provide parallelism over rows.
@@ -192,6 +190,11 @@ A suggested procedure is:
 
 
 ### Finished?
+
+If we had not used `cudaMemset()` to initialise the device values for
+the matrix, what other options to initialise these values on the device
+are available to us? (cudaMemset()` is limited in that it can only be
+used to initialise array values to zero, but not to other, non-zero, values.
 
 For your best effort for the kernel, what is the overhead of the actual
 kernel launch (`cudaLaunchKernel` in the profile) compared with the
