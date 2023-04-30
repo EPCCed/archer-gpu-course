@@ -12,7 +12,8 @@ take on a distinct value for each thread, e.g.,
 ```
 
 While global memory is shared between all threads, the usage of
-'shared memory' is reserved for something more specific.
+'shared memory' is reserved for something more specific in the
+GPU context. This is discussed below.
 
 
 ## Independent accesses to global memory
@@ -88,21 +89,28 @@ example above:
 Such updates are usually implemented by dome form of lock.
 
 So the atomic update is a single unified operation on a single thread:
-1. Obtain a lock on the relevant memory location (`sum`);
-2. Read the existing value into register and update;
+1. obtain a lock on the relevant memory location (`sum`);
+2. read the existing value into register and update;
 3. store the result back to the global memory location;
-4. Release the lock on that location.
+4. release the lock on that location.
 
 
 ## Shared memory in blocks
 
-There is an additional type of shared memory in kernels introduced
-using the `__shared__` memory space quanlifer. E.g.,
+There is an additional type of shared memory available in kernels
+introduced using the `__shared__` memory space qualifier. E.g.,
 ```
   __shared__ double tmp[THREADS_PER_BLOCK];
 ```
 These values are shared only between threads in the same block.
 
+Potential uses:
+1. marshalling data within a block;
+2. temprary values (particularly if there is signficant reuse);
+3. contributions to reduction operations.
+
+Note: in the above example we have fixed the size of the `tmp`
+object at compile time ("static" shared memory).
 
 ### Synchonisation
 
@@ -116,18 +124,68 @@ the threads in the block must reach the `__syncthreads()`
 statement before any are allowed to continue.
 
 
+### Example
+Here is a (slightly contrived) example:
+```
+/* Reverse elements so that the order 0,1,2,3,...
+ * becomes ...,3,2,1,0
+ * Assume we have one block. */
+__global__ void reverseElements(int * myArray) {
+
+  __shared__ int tmp[THREADS_PER_BLOCK];
+
+  int idx = threadIdx.x;
+  tmp[idx] = myArray[idx];
+
+  __syncthreads();
+
+  myArray[THREADS_PER_BLOCK - (idx+1)] = tmp[idx];
+}
+```
+
+## Potential performance concerns
+
+Shared memory via `__shared__` is a finite resource. The exact amount
+will depend on the particular hardware, but may be in the region of
+64 KB. (A portable program might have to take action at run time to
+control this: e.g., using "dynamic" shared memory, where the size is
+set as a kernel launch parameter.)
+
+If an individual block requires a large amount of shared memory, then
+this may limit the number of blocks that can be scheduled at the same
+time, and so harm occupancy.
 
 
-## Exercise
+## Exercise (20 minutes)
 
 In the following exercise we we implement a vector scalar product
 in the style of the BLAS levle 1 routine `ddot()`.
 
 The template provided sets up two vectors `x` and `y` with some
 initial values. The exercise is to complete the `ddot()` kernel
-which we will give prototype:
+which we will give the prototype:
 ```
-  __global__ void ddot(int n, double * x, double * result);
+  __global__ void ddot(int n, double * x, double * y, double * result);
 ```
 where the `result` is a single scalar value which is the dot
-product.
+product. A naive serial kernel is provided to give the correct
+result.
+
+Suggested procedure
+1. Use a `__shared__` temporary variable to store the contribution from
+each different thread in a block, and then compute the sum for the block.
+2. Accumulate the sum from each block to the final answer.
+
+Remember to deal correctly with any array 'tail'.
+
+Some care may be needed to check the results for this problem. For
+debugging, one may want to reduce the problem size; however, there
+is the chance that an erroneous code actually gives the expected
+answer by chance. Be sure to check with a larger problem size.
+
+### Finished?
+
+It is possible to use solely `atomicAdd()` to form the result (and not
+do anything using `__shared__` within a block). Investigate the performance
+implications of this (particularly, if the problem size becomes larger).
+You will need two versions of the kernel.
