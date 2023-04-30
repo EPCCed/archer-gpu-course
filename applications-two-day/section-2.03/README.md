@@ -149,11 +149,15 @@ or micro seconds, `us` by `nvprof`).
 
 
 A suggested procedure is:
-1. Declare and allocate memory on the device for the matrix following the example
-   of the host matrix already present. Call it `d_a`.
-2. Initialise all the elements of the *device* matrix to be zero. Hint: you can
-   use the function `cudaMemset()` to do this from the host.
-3. Implement the most simple kernel in which the update is entirely
+1. Check the template to see that the matrix and vectors have been established
+   in device memory. Note that the template uses the CUDA API call
+   ```
+      cudaErr_t cudaMemset(void * dptr, int value, size_t sz);
+   ```
+   to initialise all the device matrix elements to zero directly. The template
+   should compile and run, but will not compute the correct ansswer as the
+   kernel stub supplied does nothing.
+2. Implement the most simple kernel in which the update is entirely
    serialised. E.g.,
    ```
    int tid = blockIdx.x*blockDim.x + threadIdx.x;
@@ -166,14 +170,15 @@ A suggested procedure is:
      }
    }
    ```
-   Check the code to run the kernel with an appropriate execution configuration.
+   Check the execution configuration and run the code to ensure it reports
+   the correct answer.
 
-4. Eliminate the `i`-loop and make the relevant adjustment to
-   the kernel launch parameters to provide parallelism over rows.
+3. Eliminate the `i`-loop and re-check the kernel launch parameters to
+   provide parallelism over rows of the matrix.
    Remember to allow that the problem size is not a whole number
    of blocks.
 
-5. In addition, eliminate the `j`-loop to have parallelism over
+4. In addition, eliminate the `j`-loop to have parallelism over
    both rows and columns. You will need to introduce two dimensions
    in the abstract description, e.g., via
    ```
@@ -183,7 +188,7 @@ A suggested procedure is:
    Hint: keep the same total number of threads per block; but the block
    must become two-dimensional.
 
-6. Is your resultant code getting the coalescing right? Consectutive
+5. Is your resultant code getting the coalescing right? Consectutive
    threads, that is, threads with consecutive $x$-index, should
    access consecutive memory location.
 
@@ -198,7 +203,7 @@ used to initialise array values to zero, but not to other, non-zero, values.
 
 For your best effort for the kernel, what is the overhead of the actual
 kernel launch (`cudaLaunchKernel` in the profile) compared with the
-time taken for the kernl itself?
+time taken for the kernel itself?
 
 What's the overhead for the host-device transfers?
 
