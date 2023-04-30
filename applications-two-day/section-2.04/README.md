@@ -1,7 +1,7 @@
 # Managed memory
 
 CUDA provides a number of different ways to establish device
-memory and transfer memory between host and device.
+memory and transfer data between host and device.
 
 
 Different mechanisms may be favoured in different situations.
@@ -9,7 +9,7 @@ Different mechanisms may be favoured in different situations.
 
 ## Explicit memory allocation/copy
 
-We have seen the explicit mechanics using standa C pointers.
+We have seen the explicit mechanics of using standard C pointers.
 Schematically:
 ```
 
@@ -28,7 +28,8 @@ The host pointer to the device memory is then used in the kernel invocation.
 However, pointers to device memory cannot be dereferenced on the host.
 
 This is a perfectly sound mechanism, particularly if we are only
-considering the transfers of large contigous blocks of data.
+considering the transfers of large contiguous blocks of data.
+(It is also likely to be the fastest mechanism.)
 
 However, this can become onerous if there are complex data access
 patterns, or if rapid testing and development are required. It also
@@ -44,7 +45,7 @@ __host__ cudaErr_t cudaMallocManaged(void ** ptr, size_t sz, ...);
 ```
 in place of the combination of `malloc()` and `cudaMalloc()`.
 
-This established an effective single reference to memory which can be
+This establishes an effective single reference to memory which can be
 accessed on both host and device.
 
 Host/device transfers are managed automatically as the need arises.
@@ -54,7 +55,7 @@ So, a schematic of usage might be:
 
   double * ptr = NULL;
 
-  cudaMallocManaged(&pre, nbytes);
+  cudaMallocManaged(&ptr, nbytes);
 
   /* Initialise values on host ... */
 
@@ -77,6 +78,25 @@ which is the same as for memory allocated via `cudaMalloc()`.
 
 ### Mechanism: page migration
 
+Transfers are implemented through the process of page migration.
+A page is the smallest unit of memory management and is often
+4096 bytes on a typical (CPU) machine. For CUDA managed memory
+the page size is often 64K bytes.
+
+Assume - and this may or may not be the case - that
+`cudaMallocManaged()` establishes memory in the host space.
+We can initialise memory on the host and call a kernel.
+
+When the GPU starts executing the kernel, any access to the
+relevant (virtual) address is not present on the GPU, and
+the GPU will issue a page fault.
+
+The relevant page of memory must then be migrated (i.e., copied)
+from the host to the GPU before useful execution can continue.
+
+Likewise, if the same data is required by the host after the kernel,
+an access on the host will trigger a page fault on the CPU, and the
+relevant data must be copied back from the GPU to the host.
 
 ### Prefetching
 
@@ -115,7 +135,7 @@ This is done via
 ```
 The `cudaMemoryAdvise` value may include:
 
-1. `cudamemAdviseSetReadMostly` indicates infrequent reads;
+1. `cudaMemAdviseSetReadMostly` indicates infrequent reads;
 2. `cudaMemAdviseSetPreferredLocation` sets the preferred location to
    the specified device (`cudaCpuDeviceId` for the host); 
 3. `cudaMemAdviseSetAccessedBy` suggests that the data will be accessed
@@ -147,6 +167,20 @@ It may be useful to run the unaltered code once to have a reference
 
 Confirm you can replace the explicit memory management using
 `malloc()/cudaMalloc()` and `cudaMemcpy()` with managed memory.
+It is suggested that, e.g., both `d_a` and `h_a` are replaced
+by the single declaration `a` in the main function.
 
-Add the relevant prefetches.
+Run the new code to check the answers are correct, and the new output
+of `nvprof` associated with managed (unified) memory.
+
+
+Add the relevant prefetch requests for the vectors `x` and `y` before
+the kernel, and the matrix `a` after the kernel. Note that the device
+id is already present in the code as `deviceNum`.
+
+
+### What can go wrong?
+
+What happens if you should accidentally use `cudaMalloc()` where you intended
+to use `cudaMallocManaged()`?
 
