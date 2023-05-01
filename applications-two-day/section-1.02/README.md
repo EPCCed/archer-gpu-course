@@ -14,7 +14,7 @@ organisation of threads.
 If we have a one-dimensional problem, e.g., an array, we can assign
 individual elements to threads.
 
-PICTURE
+![A single thread block in one dimension](../images/ks-threads.jpeg)
 
 Threads are typically executed in groups of 32, known as a *warp*
 (the terminology is borrowed from weaving).
