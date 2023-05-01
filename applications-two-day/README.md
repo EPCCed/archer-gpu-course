@@ -58,7 +58,7 @@ Check you can compile and run a very simple program
 and submit the associated script to the queue system.
 ```
 $ cd section-2.01
-$ nvcc -arch=sm_70 intro.cu
+$ nvcc -arch=sm_70 exercise_dscal.cu
 $ sbatch submit.sh
 ```
 The result should appear in a file `slurm-123456.out` in the working
@@ -97,9 +97,19 @@ the advertised start and finish times, and the break times.
 |       | Exercise on managed memory               | [section-2.04](section-2.04) |
 | 15:50 | More on memory: shared memory            |                              |
 | 16:10 | Exercise on vector product               | [section-2.05](section-2.05) |
+| 16:30 | All together: matrix-vector product      | [][]                         |
+| 17:00 | Close                                    |                              |
 
 
 ### Day two
+
+
+| Time  | Content                                  | Section                      |
+|-------|------------------------------------------|------------------------------|
+| 09:00 | Detour: visual profiler                  |                              |
+| 09:10 | Exercise: nsight systems and compute     | [section-3.01](section-3.01)      |
+| 09:30 | Streams                                  |                              |
+| 09:50 | Streams exercise                         | [section-4.01](section-4.01) |
 
 
 
