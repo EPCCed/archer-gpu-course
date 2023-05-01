@@ -75,6 +75,7 @@ Miscellaneous solutions also appear in the solutions directory.
 The timetable may shift slightly in terms of content, but we will stick to
 the advertised start and finish times, and the break times.
 
+
 ### Day one
 
 | Time  | Content                                  | Section                      |
@@ -109,7 +110,21 @@ the advertised start and finish times, and the break times.
 | 09:00 | Detour: visual profiler                  |                              |
 | 09:10 | Exercise: nsight systems and compute     | [section-3.01](section-3.01)      |
 | 09:30 | Streams                                  |                              |
-| 09:50 | Streams exercise                         | [section-4.01](section-4.01) |
+|       | Using `cudaMempcyAsync()` etc            | [section-4.01](section-4.01) |
+| 10:00 | Graph API                                |                              |
+|       | Using `cudaGraphLaunch()` etc            | [section-4.02](section-4.02) |
+| 11:00 | Break                                    |                              |
+| 11:30 | Device management: more then one GPU     |                              |
+|       | `cudaMemcpy()` again                     | [section-5.01](section-5.01) |
+| 12:15 | Special topic: GPU-aware MPI             |                              |
+|       | Exercise                                 | [section-5.02](section-5.02) |
+| 13:00 | Lunch                                    |                              |
+| 14:00 | Putting it all together                  |                              |
+|       | Conjugate gradient exercise              | [section-6.01](section-6.01) |
+| 15:00 | Break                                    |                              |
+| 15:20 | Exercises                                |                              |
+| 15:50 | Miscellaneous comments                   | [section-7.01](section-7.01) |
+| 16:00 | Close                                    |                              |
 
 
 
