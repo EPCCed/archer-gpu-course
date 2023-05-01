@@ -25,7 +25,7 @@ Threads are typically executed in groups of 32, known as a *warp*
 Groups of threads are further organised into blocks. In our
 one-dimensional picture we may have:
 
-PICTURE
+![Threads and blocks in one dimension](../images/ks-threads-blocks.jpeg)
 
 Blocks are scheduled to SMs.
 
@@ -39,7 +39,7 @@ the maximum number of threads per block is 1024. A value of
 For two-dimensional problems (e.g., images) it is natural to have
 a two-dimensional Cartesian picture:
 
-PICTURE
+![Threads and blocks in two dimensions](../images/ks-threads-blocks-grids.jpeg)
 
 The arrangement of blocks is referred to as the *grid* in CUDA.
 
