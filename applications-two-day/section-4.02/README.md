@@ -3,7 +3,7 @@
 Streams provide a mechanism to control the execution of independent,
 or asynchronous, work.
 
-A more general mechanism, introduced more recently, introduces the
+A more general mechanism, added more recently in CUDA, introduces the
 idea of a graph.
 
 Graphs can be used to orchestrate complex workflows, and may be
@@ -62,7 +62,7 @@ one creates an executable graph object
 ```
   cudaGraphExec_t graphExec;
 
-  cudaGraphInstantiate(&graphExec, myGraph);
+  cudaGraphInstantiate(&graphExec, myGraph, NULL, NULL, 0);
 
   /* ... and launch the graph into a stream ... */
 
@@ -98,7 +98,7 @@ those we have seen for `cudaMemcpy()` before.
 
 Suppose we have a kernel function with arguments
 ```
-  __global void myKernel(double a, double * x);
+  __global__ void myKernel(double a, double * x);
 ```
 and which is executed with configuration including `blocks` and
 `threadsPerBlock`.
@@ -188,19 +188,35 @@ section of the CUDA runtime API.
 
 https://docs.nvidia.com/cuda/cuda-runtime-api/annotated.html#annotated
 
+## Synchronisation
+
+If executing a graph in a particular stream, one can use
+```
+  cudaStreamSynchronize(stream);
+```
+to ensure that the graph is complete. It is also possible to use
+```
+  cudaDeviceSynchronize();
+```
+which actually synchronises all streams running on the current
+device.
 
 
 ## Exercise (30 minutes)
 
 The exercise revisits again the problem for `A_ij := A_ij + x_i y_j`,
 and the exercise is to see whether you can replace the single
-kernel launch with the execution of a graph.
+kernel launch with the execution of a graph. When you have a
+working program, check with nsight systems that this is doing what
+you expect.
 
 A new template is supplied if you wish to start afresh.
 
+While it will not be possible to see any performance improvement
+associated with this single kernel launch, the principle should
+be clear.
 
 ### Finished?
 
-The truly commited may wish to have a go at adding to the graph the
-dependent operation which is the device to host `cudaMemcpy()` of
-the result.
+Have a go at adding to the graph the dependent operation which is the
+device to host `cudaMemcpy()` of the result.
