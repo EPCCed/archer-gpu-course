@@ -151,7 +151,7 @@ Again, the relevant memory must be managed by CUDA.
 ## When to use
 
 Often useful to start development and testing with managed memory, and
-then move to explicit `cudaMalloc()/cudaMmecpy()` if it is required for
+then move to explicit `cudaMalloc()/cudaMemcpy()` if it is required for
 performance and is simple to do so.
 
 
