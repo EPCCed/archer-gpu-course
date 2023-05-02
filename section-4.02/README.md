@@ -20,7 +20,7 @@ The idea (taken from graph theory) is to represent individual executable
 items of work by the nodes of the graph, and the dependencies between
 them as edges connecting the relevant nodes.
 
-PICTURE
+![Some simple graph structures](../images/graph.svg)
 
 There is the assumption that there is a beginning and an end (ie., there
 is a direction), and that there are no closed loops in the graph picture.
