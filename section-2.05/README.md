@@ -86,7 +86,7 @@ example above:
   *sum += data[i];            /* WRONG: unsafe update */
   atomicAdd(sum, data[i]);    /* Correct: atomic update */
 ```
-Such updates are usually implemented by dome form of lock.
+Such updates are usually implemented by some form of lock.
 
 So the atomic update is a single unified operation on a single thread:
 1. obtain a lock on the relevant memory location (`sum`);
