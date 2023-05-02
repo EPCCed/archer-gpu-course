@@ -14,7 +14,7 @@
  *         managed memory.
  * Part 2. Add prefetch requests for x and y before the kernel,
  *         and the matrix a after the kernel.
- * 
+ *
  * Copyright EPCC, The University of Edinburgh, 2023
  */
 
@@ -126,7 +126,7 @@ int main(int argc, char *argv[]) {
   CUDA_ASSERT( cudaPeekAtLastError() );
   CUDA_ASSERT( cudaDeviceSynchronize() );
 
-  /* Retreive the results to h_a and check the results */
+  /* Retrieve the results to h_a and check the results */
 
   kind = cudaMemcpyDeviceToHost;
   CUDA_ASSERT( cudaMemcpy(h_a, d_a, mrow*ncol*sizeof(double), kind) );

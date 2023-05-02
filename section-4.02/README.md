@@ -22,7 +22,7 @@ them as edges connecting the relevant nodes.
 
 PICTURE
 
-There is the assumption that there is a begining and an end (ie., there
+There is the assumption that there is a beginning and an end (ie., there
 is a direction), and that there are no closed loops in the graph picture.
 This gives rise to a *directed acyclic graph*, or DAG.
 
@@ -51,7 +51,7 @@ For example, the life-cycle would typically be:
 
   cudaGraphDestroy(myGraph);
 ```
-Destroying the graph will also destoy any component nodes/dependencies.
+Destroying the graph will also release any component nodes/dependencies.
 
 
 ### Instantiating and executing a graph
@@ -77,7 +77,7 @@ the luanch is relately small compared with a standard launch.
 
 ## Graph definition
 
-The following sections consider the explicit definintion of graph
+The following sections consider the explicit definition of graph
 structure.
 
 ### Node types
@@ -131,7 +131,7 @@ be `myGraph`):
 This creates a new kernel node, adds it to the existing graph, and
 returns a handle to the new node.
 
-The formal descrition is
+The formal description is
 ```
 __host__ cudaErr_t cudaGraphAddKernelNode(cudaGraphNode_t * node,
                                           cudaGraph_t graph,

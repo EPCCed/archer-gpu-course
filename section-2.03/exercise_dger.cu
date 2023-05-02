@@ -121,7 +121,7 @@ int main(int argc, char *argv[]) {
   CUDA_ASSERT( cudaPeekAtLastError() );
   CUDA_ASSERT( cudaDeviceSynchronize() );
 
-  /* Retreive the results to h_a and check the results */
+  /* Retrieve the results to h_a and check the results */
 
   kind = cudaMemcpyDeviceToHost;
   CUDA_ASSERT( cudaMemcpy(h_a, d_a, mrow*ncol*sizeof(double), kind) );

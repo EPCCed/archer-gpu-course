@@ -5,7 +5,7 @@ The application programmer does not want to have to worry about
 the exact disposition of cores/SMs, or whatever, in the hardware.
 An abstraction is wanted.
 
-In CUDA and HIP, this abstraction is based on an heirarchical
+In CUDA and HIP, this abstraction is based on an hierarchical
 organisation of threads.
 
 
@@ -106,7 +106,7 @@ $ nvcc -arch=sm_70 code.cu
 ```
 will run  on Volta. Minor versions such as `sm_72` also exist.
 
-This should not be confued with the CUDA version. The SM is a hardware
+This should not be confused with the CUDA version. The SM is a hardware
 feature, which the CUDA version is a software issue.
 
 
@@ -114,7 +114,7 @@ feature, which the CUDA version is a software issue.
 
 CUDA has been under development by NVIDIA since around 2005. AMD, rather
 later to the party, develops HIP, which shadows CUDA. For
-example, a C/C++ call to 
+example, a C/C++ call to
 ```
   cudaMalloc(...);
 ```

@@ -24,7 +24,7 @@ or eliminate host operations in favour of device operations.
 
 Potentially, the GPU has a lot of SMs/cores that can be used. Having very
 many blocks of work available at an one time is said to favour
-high *occupancy*. 
+high *occupancy*.
 
 This may be thought of simply as having a very high degree of thread
 parallelism. However, the degree is much higher than would be expected
@@ -64,7 +64,7 @@ SMs.
 
 ## Memory usage
 
-### CPU: caching bahaviour
+### CPU: caching behaviour
 
 A given thread in a CPU code favours consecutive memory accesses.
 E.g., in C, recall that it is the right-most index that runs
@@ -83,7 +83,7 @@ contiguous memory accesses.
 ### GPU: coalescing behaviour
 
 For GPU global memory, the opposite is true. The hardware wants
-to have warps of consectutive threads load consectutive memory
+to have warps of consecutive threads load consecutive memory
 locations in a contiguous block.
 
 Consider a one-dimensional example:
@@ -107,7 +107,7 @@ Consider first:
   }
 ```
 Here, a given thread makes `NY` consecutive accesses to the arrays. This
-does not favour coalesed access.
+does not favour coalesced access.
 
 We want consecutive threads to have consecutive accesses, e.g.,
 ```
@@ -188,7 +188,7 @@ A suggested procedure is:
    Hint: keep the same total number of threads per block; but the block
    must become two-dimensional.
 
-5. Is your resultant code getting the coalescing right? Consectutive
+5. Is your resultant code getting the coalescing right? Consecutive
    threads, that is, threads with consecutive $x$-index, should
    access consecutive memory location.
 
@@ -206,5 +206,3 @@ kernel launch (`cudaLaunchKernel` in the profile) compared with the
 time taken for the kernel itself?
 
 What's the overhead for the host-device transfers?
-
-

@@ -13,7 +13,7 @@ Correspondingly, there might be a number of factors which could be
 taken into consideration in a performance model:
 
 1. Clock speed: the rate of issue of instructions by the processor
-2. Memory latency: time taken to retreive a data item from memory
+2. Memory latency: time taken to retrieve a data item from memory
 3. Memory bandwidth: amount of data transferred in unit time
 4. Parallelism: can I replicate the basic unit above?
 
@@ -27,8 +27,8 @@ Historically, increases in CPU performance have been related to increases
 in clock speed. However, owing largely to power constraints, most modern
 processors have a clock speed of around 2-3 GHz.
 
-Absent some unforseen fundamental breakthrough, it is not expected that
-this fundamental speed will increase signficantly in the future.
+Absent some unforeseen fundamental breakthrough, it is not expected that
+this fundamental speed will increase significantly in the future.
 
 ### Memory latency
 
@@ -40,7 +40,7 @@ operated on in a register).
 
 CPUs mitigate this problem by having caches: memory that is
 "closer" to the processor, and so reduces the time for access.
-Many caches are heirarchical in nature: the nearer the processor
+Many caches are hierarchical in nature: the nearer the processor
 the smaller the cache size in bytes, but the faster the access.
 These are typically referred to  as Level 1, Level 2, Level 3,
 (L1, L2, L3) and so on
@@ -51,7 +51,7 @@ Try the command
 ```
 $ lscpu
 ```
-on Cirrus to see what the cache heirarchy looks like.
+on Cirrus to see what the cache hierarchy looks like.
 
 Other latency hiding measures exist, e.g., out-of-order execution
 where instructions are executed based on the availability of data,
@@ -71,7 +71,7 @@ Memory bandwidth can then be a key consideration.
 
 ### Parallelism
 
-While it is not possible to increase the clock speed of an indivdual
+While it is not possible to increase the clock speed of an individual
 processor, one can use add more processing units (for which we will
 read: "cores").
 
@@ -89,12 +89,12 @@ available on Cirrus.
 
 Driven by commercial interest (games), a many-core processor *par exellence*
 has been developed. These are graphics processors. Subject to the same
-considerations as thoese discussed above, the hardware design choices taken
-to resolve them have been specificially related to the parallel pixel
+considerations as those discussed above, the hardware design choices taken
+to resolve them have been specifically related to the parallel pixel
 rendering problem (a trivially parallel problem).
 
 Clocks speeds have, historically, have lagged behind CPUs, but are now
-broadly similar. However, increases in GPU performance are releted to
+broadly similar. However, increases in GPU performance are related to
 parallelism.
 
 Memory latency has not gone away, but the mechanism used to mitigate it

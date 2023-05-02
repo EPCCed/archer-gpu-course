@@ -137,9 +137,9 @@ The `cudaMemoryAdvise` value may include:
 
 1. `cudaMemAdviseSetReadMostly` indicates infrequent reads;
 2. `cudaMemAdviseSetPreferredLocation` sets the preferred location to
-   the specified device (`cudaCpuDeviceId` for the host); 
+   the specified device (`cudaCpuDeviceId` for the host);
 3. `cudaMemAdviseSetAccessedBy` suggests that the data will be accessed
-   by the specfied device.
+   by the specified device.
 
 Each option has a corresponding `Unset` value which can be used to
 nullify the effect of a preceding `Set` specification.
@@ -183,4 +183,3 @@ id is already present in the code as `deviceNum`.
 
 What happens if you should accidentally use `cudaMalloc()` where you intended
 to use `cudaMallocManaged()`?
-

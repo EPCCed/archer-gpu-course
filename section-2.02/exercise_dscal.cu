@@ -96,7 +96,7 @@ int main(int argc, char *argv[]) {
 
   /* ... kernel will be here  ... */
 
-  /* copy the result array back to the host output arrray */
+  /* copy the result array back to the host output array */
 
   CUDA_ASSERT( cudaMemcpy(h_out, d_x, sz, cudaMemcpyDeviceToHost) );
 
@@ -105,7 +105,7 @@ int main(int argc, char *argv[]) {
   {
     int ncorrect = 0;
     for (int i = 0; i < ARRAY_LENGTH; i++) {
-      /* The print statement can be uncommented for debuging... */
+      /* The print statement can be uncommented for debugging... */
       /* printf("%9d %5.2f\n", i, h_out[i]); */
       if (fabs(h_out[i] - a*h_x[i]) < DBL_EPSILON) ncorrect += 1;
     }

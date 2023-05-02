@@ -60,7 +60,7 @@ We have introduced the structure
     unsigned int z;
   } dim3;
 ```
-which may be intialised in C as above, or using C++ style
+which may be initialised in C as above, or using C++ style
 constructors.
 
 
@@ -99,7 +99,7 @@ thread's position in the abstract grid picture:
 ```
    dim3 gridDim;     /* The number of blocks */
    dim3 blockDim;    /* The number of threads per block */
-   
+
    /* Unique to each block: */
    dim3 blockIdx;    /* 0 <= blockIdx.x < gridDim.x  etc. for y,z */
 
@@ -128,7 +128,7 @@ completed, we need synchronisation.
 
 ### Error handling
 
-Errors occuring in the kernel execution are also asynchronous, which
+Errors occurring in the kernel execution are also asynchronous, which
 can cause some confusion. As a result, one will sometimes see this
 usage:
 ```
@@ -157,7 +157,7 @@ adjust the value of the constant `a` to be e.g., `a = 2.0`.
 There is also a new template with a canned solution to the previous
 part in this directory.
 
-### Sugggested procedure
+### Suggested procedure
 
 1. Write a kernel of the prototype
 ```
@@ -185,13 +185,13 @@ the correct behaviour. Check for larger multiples of
 
 ### Problem size not a whole number of blocks
 
-As we are effectively contrained in the choice of `THREADS_PER_BLOCK`,
+As we are effectively constrained in the choice of `THREADS_PER_BLOCK`,
 it is likely that the problem space is not an integral number of
 blocks for general problems. How can we deal with this situation?
 
 1. For the launch parameters, you will need to compute a number of blocks
 that is sufficient and necessary to cover the entire problem space. (There
-needs to be at least one block, but no more than necesary.)
+needs to be at least one block, but no more than necessary.)
 2. You will also need to make an adjustment in the kernel. To avoid what
 type of error?
 
@@ -228,4 +228,4 @@ kernel parameters. Hint: for our first kernel this final argument will be
    void *args[] = {&a, &d_x};
 ```
 As `cudaLaunchKernel()` is an API function returning an error, the return code can be
-inpsected with the macro to check for errors in the launch (instead of `cudaPeekAtLastError()`). 
+inpsected with the macro to check for errors in the launch (instead of `cudaPeekAtLastError()`).

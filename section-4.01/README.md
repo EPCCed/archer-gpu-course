@@ -28,7 +28,7 @@ and is released when it is no longer required with
 ```
   cudaStreamDestroy(stream);
 ```
-One can create an arbitary number of streams.
+One can create an arbitrary number of streams.
 
 
 ### Asynchronous copies
@@ -58,7 +58,7 @@ have completed.
 
 ## Kernels
 
-Kernals may also be submitted to a non-default stream by using an
+Kernels may also be submitted to a non-default stream by using an
 optional argument to the execution configuration. In general, the
 arguments are of the form
 ```
@@ -103,15 +103,10 @@ Suggested procedure:
    an asynchronous operation using two different streams. Make sure
    that the data has reached the device before the kernel launch.
 
-   While it is unlikely that this will have any signficant beneficial
+   While it is unlikely that this will have any significant beneficial
    effect in performance, it should be possible to view the result in
    nsight systems and see the different streams in operation.
 
 2. Check you can replace the host allocations of `x` and `y` with
-   `cudaMallocHost()` and make the apprpriate adjustment to free
+   `cudaMallocHost()` and make the appropriate adjustment to free
    resources at the end of execution.
-
-
-
-
-

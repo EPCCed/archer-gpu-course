@@ -94,11 +94,12 @@ the advertised start and finish times, and the break times.
 | 14:00 | Some performance considerations          |                              |
 |       | Exercise on matrix operation             | [section-2.03](section-2.03) |
 | 15:00 | Break                                    |                              |
-| 15:20 | More on memory: managed memory           |                              |
+| 15:20 | Managed memory                           |                              |
 |       | Exercise on managed memory               | [section-2.04](section-2.04) |
-| 15:50 | More on memory: shared memory            |                              |
+| 15:50 | Shared memory                            |                              |
 | 16:10 | Exercise on vector product               | [section-2.05](section-2.05) |
-| 16:30 | All together: matrix-vector product      | [][]                         |
+| 16:30 | Constant memory                          |                              |
+| 16:40 | All together: matrix-vector product      | [section-2.06](section-2,06) |
 | 17:00 | Close                                    |                              |
 
 

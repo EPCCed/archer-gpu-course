@@ -77,7 +77,7 @@ conditions.
 ### The solution
 
 In practice, potentially unsafe updates to any form of shared memory
-must be protected by appropriate synchronisation: guarentees that
+must be protected by appropriate synchronisation: guarantees that
 operations happen in the correct order.
 
 For global memory, we require a so-called *atomic* update. For our
@@ -94,6 +94,15 @@ So the atomic update is a single unified operation on a single thread:
 3. store the result back to the global memory location;
 4. release the lock on that location.
 
+### Note
+
+`atomicAdd()` is an overloaded device function:
+```
+__device__ int atomicAdd(int * address, int value);
+__device__ double atomicAdd(double * address, double value);
+```
+and so on. The old value of the target variable is returned.
+
 
 ## Shared memory in blocks
 
@@ -106,13 +115,13 @@ These values are shared only between threads in the same block.
 
 Potential uses:
 1. marshalling data within a block;
-2. temprary values (particularly if there is signficant reuse);
+2. temporary values (particularly if there is significant reuse);
 3. contributions to reduction operations.
 
 Note: in the above example we have fixed the size of the `tmp`
 object at compile time ("static" shared memory).
 
-### Synchonisation
+### Synchronisation
 
 There are quite a large number of synchronisation options for
 threads within a block in CUDA. The essential one is probably
@@ -130,6 +139,7 @@ Here is a (slightly contrived) example:
 /* Reverse elements so that the order 0,1,2,3,...
  * becomes ...,3,2,1,0
  * Assume we have one block. */
+
 __global__ void reverseElements(int * myArray) {
 
   __shared__ int tmp[THREADS_PER_BLOCK];
@@ -159,7 +169,7 @@ time, and so harm occupancy.
 ## Exercise (20 minutes)
 
 In the following exercise we we implement a vector scalar product
-in the style of the BLAS levle 1 routine `ddot()`.
+in the style of the BLAS level 1 routine `ddot()`.
 
 The template provided sets up two vectors `x` and `y` with some
 initial values. The exercise is to complete the `ddot()` kernel
@@ -186,6 +196,6 @@ answer by chance. Be sure to check with a larger problem size.
 ### Finished?
 
 It is possible to use solely `atomicAdd()` to form the result (and not
-do anything using `__shared__` within a block). Investigate the performance
+do anything using `__shared__` within a block)? Investigate the performance
 implications of this (particularly, if the problem size becomes larger).
 You will need two versions of the kernel.

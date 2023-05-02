@@ -96,7 +96,7 @@ int main(int argc, char *argv[]) {
   CUDA_ASSERT( cudaPeekAtLastError() );
   CUDA_ASSERT( cudaDeviceSynchronize() );
 
-  /* Retreive the result and check. */
+  /* Retrieve the result and check. */
 
   kind = cudaMemcpyDeviceToHost;
   CUDA_ASSERT( cudaMemcpy(&h_result, d_result, sizeof(double), kind) );

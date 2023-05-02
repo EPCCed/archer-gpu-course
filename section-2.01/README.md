@@ -1,6 +1,6 @@
 # CUDA Programming
 
-The first topic we must address is the existance of separate address
+The first topic we must address is the existence of separate address
 spaces for CPU and GPU memory, and moving data between them.
 
 ![Schematic of host/device memories](../images/ks-schematic-memory-transfer.svg)
@@ -178,7 +178,7 @@ Check the CUDA documentation to see what other information is available
 from the structure `cudaDeviceProp`. This will be in the section on
 device management in the CUDA runtime API reference.
 
-What other possiblities exist for `cudaMemcpyKind`?
+What other possibilities exist for `cudaMemcpyKind`?
 
 https://docs.nvidia.com/cuda/cuda-runtime-api/index.html
 
