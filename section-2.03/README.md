@@ -132,11 +132,11 @@ operation
   A_ij := A_ij + alpha x_i y_j
 ```
 for a matrix A with m rows and n columns, a vector `x` of length m, a
-vector `y` of length `n`, and constant `alpha`. The data type is
+vector `y` of length n, and constant `alpha`. The data type is
 `double` in all cases.
 
 For the matrix `a` we will adopted a flattened one-dimensional indexing
-for which element row `i` and column `j` is addressed as `a[i*nrow + j]`.
+for which element row `i` and column `j` is addressed as `a[i*ncol + j]`.
 
 As this is partly a performance issue (a correct answer is also required!)
 we will implement some simple profiling by adding `nvprof` to the submission
