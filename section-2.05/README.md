@@ -153,7 +153,46 @@ __global__ void reverseElements(int * myArray) {
 }
 ```
 
-## Potential performance concerns
+### Synchronisation hazards
+
+The usual conisderations apply when thinking about thread
+synchronisation. E.g.,
+```
+   if (condition) {
+      __syncthreads();
+   }
+```
+There is a potential for deadlock.
+
+### Branch divergence
+
+It is beneficial for performance to avoid "warp divergence"
+e.g.,
+```
+  int tid = blockIdx.x*blockDim.x + threadIdx.x;
+  
+  if (tid % 2 == 0) {
+    /* threads 0, 2, 4, ... */
+  }
+  else {
+    /* threads 1, 3, 5 ... *.
+  }
+```
+may cause seralisation. For this reason you may see things
+like
+```
+  int tid = blockIdx.x*blockDim.x + threadIdx.x;
+  
+  if ((tid / warpSize) % 2 == 0) {
+     /* threads 0, 1, 2, ... */
+  }
+  else {
+     /* threads 32, 33, 34, ... */
+  }
+```
+where `warpSize` is another special value provided by CUDA.
+
+## Other potential performance concerns
 
 Shared memory via `__shared__` is a finite resource. The exact amount
 will depend on the particular hardware, but may be in the region of
