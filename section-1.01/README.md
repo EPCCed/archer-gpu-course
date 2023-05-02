@@ -93,7 +93,7 @@ considerations as those discussed above, the hardware design choices taken
 to resolve them have been specifically related to the parallel pixel
 rendering problem (a trivially parallel problem).
 
-Clocks speeds have, historically, have lagged behind CPUs, but are now
+Clocks speeds have, historically, lagged behind CPUs, but are now
 broadly similar. However, increases in GPU performance are related to
 parallelism.
 
