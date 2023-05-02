@@ -37,7 +37,7 @@ Host values can be copied to the device with the API function
 ```
   double values[3] = {1.0, 2.0, 3.0};
 
-  cudaMamcpyToSymbol(data_read_only, values, 3*sizeof(double));
+  cudaMemcpyToSymbol(data_read_only, values, 3*sizeof(double));
 ```
 The object `data_read_only` may then be accessed by a kernel or kernels
 at the same scope.
@@ -62,16 +62,19 @@ Suggested procedure:
 1. To start, make the simplifying assumption that we have only 1 block
    per row, and that the number of columns is equal to the number of
    threads per block. This should allow the elimination of the loop
-   over both rows and columns with judicious use of thread indices.
-2. The limitation to one block per row will harm occupancy. So we
+   over both rows and columns with judicious choice of thread indices.
+2. The limitation to one block per row may harm occupancy. So we
    need to generalise to allow columns to be distributed between
    different blocks. Hint: you will probably need a two-dimensional
    `__shared__` provision in the kernel. Use the same total number
    of threads per block with `blockDim.x == blockDim.y`.
-3. Leave the concern of coalescing until last. The indexing can be rather
-   confusing.
 
-### Finished
+   Make sure you can increase the problem size (specifically, the number
+   of columns `ncol`) and retain the correct answer.
+3. Leave the concern of coalescing until last. The indexing can be rather
+   confusing. Again, remember to deal with any array 'tails'.
+
+### Finished?
 
 A fully robust solution might check the result with a rectangular
 thread block.
