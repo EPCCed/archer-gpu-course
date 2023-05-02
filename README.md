@@ -86,10 +86,10 @@ the advertised start and finish times, and the break times.
 | 10:30 | The CUDA/HIP programming model           |                              |
 |       | Abstraction; host code and device code   | [section-1.02](section-1.02) |
 | 11:00 | Break                                    |                              |
-| 11:30 | CUDA/HIP programming                     |                              |
-|       | Memory management, exercise              | [section-2.01](section-2.01) |
-| 12:15 | CUDA/HIP programming (cont.)             |                              |
-|       | Kernels, exercise                        | [section-2.02](section-2.02) |
+| 11:30 | CUDA/HIP programming: memory managenent  |                              |
+|       | `cudaMaloc(), cudaMmecpy()`              | [section-2.01](section-2.01) |
+| 12:15 | Executing a kernel                       |                              |
+|       | `__global__` functions `<<<...>>>`       | [section-2.02](section-2.02) |
 | 13:00 | Lunch                                    |                              |
 | 14:00 | Some performance considerations          |                              |
 |       | Exercise on matrix operation             | [section-2.03](section-2.03) |
@@ -99,7 +99,7 @@ the advertised start and finish times, and the break times.
 | 15:50 | Shared memory                            |                              |
 | 16:10 | Exercise on vector product               | [section-2.05](section-2.05) |
 | 16:30 | Constant memory                          |                              |
-| 16:40 | All together: matrix-vector product      | [section-2.06](section-2,06) |
+| 16:40 | All together: matrix-vector product      | [section-2.06](section-2.06) |
 | 17:00 | Close                                    |                              |
 
 
