@@ -75,7 +75,7 @@ In general, one should ensure peer access via:
 where `device1` is the destination device, and `device2` is the source
 device.
 
-If available, it is possible to disable and enable the perr access using
+If available, it is possible to disable and enable the peer access using
 ```
   cudaDeviceDisablePeerAccess(int peerDevice);
   cudaDeviceEnablePeerAccess(int perrDevice, unsigned int flags);
