@@ -26,7 +26,7 @@ There is the assumption that there is a beginning and an end (ie., there
 is a direction), and that there are no closed loops in the graph picture.
 This gives rise to a *directed acyclic graph*, or DAG.
 
-The idea is then to construct a descipriotn of the graph from the
+The idea is then to construct a description of the graph from the
 constituent nodes and dependencies, and then execute the graph.
 
 ### Creating a CUDA graph
@@ -104,10 +104,10 @@ and which is executed with configuration including `blocks` and
 `threadsPerBlock`.
 
 These parameters are described in CUDA by a structure `cudaKernelNodeParams`
-which included the public members:
+which includes the public members:
 ```
    void * func;             /* pointer to the kernel function */
-   void ** kernelParams;    /* List of kernel dummy arguments */
+   void ** kernelParams;    /* List of kernel arguments */
    dim3 gridDim;            /* Number of blocks */
    dim3 blockDim;           /* Number of threads per block */
 ```
