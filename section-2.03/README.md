@@ -152,7 +152,7 @@ A suggested procedure is:
 1. Check the template to see that the matrix and vectors have been established
    in device memory. Note that the template uses the CUDA API call
    ```
-      cudaErr_t cudaMemset(void * dptr, int value, size_t sz);
+      cudaError_t cudaMemset(void * dptr, int value, size_t sz);
    ```
    to initialise all the device matrix elements to zero directly. The template
    should compile and run, but will not compute the correct ansswer as the
