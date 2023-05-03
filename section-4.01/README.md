@@ -16,11 +16,11 @@ activities.
 
 ## Stream management
 
-A stream object is decalred using
+A stream object is declared using
 ```
-  cudaStreanm_t stream;
+  cudaStream_t stream;
 ```
-and needds to be initialised before use via the API call
+and needs to be initialised before use via the API call
 ```
   cudaStreamCreate(&stream);
 ```
@@ -81,7 +81,7 @@ By using, e.g.,
   cudaMallocHost(&h_ptr, ndata*sizeof(double));
 ```
 in place of `malloc()` we can obtained page-locked, or pinned, memory.
-By allowing CUDA to supervise page migration, optimisations in transfers
+By allowing CUDA to supervise allocation, optimisations in transfers
 may be available to the CUDA run-time.
 
 Page-locked memory should be released with
@@ -95,7 +95,11 @@ efficiency is a paramount concern.
 
 ## Exercise
 
-Revisit the previous problem X.
+Revisit the previous problem for BLAS call `dger()`. (A new working
+template is supplied.)
+
+The exercise is just to illustrate the use of streams, and of
+page-locked host memory.
 
 Suggested procedure:
 
@@ -110,3 +114,4 @@ Suggested procedure:
 2. Check you can replace the host allocations of `x` and `y` with
    `cudaMallocHost()` and make the appropriate adjustment to free
    resources at the end of execution.
+
