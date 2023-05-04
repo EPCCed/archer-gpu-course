@@ -114,4 +114,3 @@ Suggested procedure:
 2. Check you can replace the host allocations of `x` and `y` with
    `cudaMallocHost()` and make the appropriate adjustment to free
    resources at the end of execution.
-

@@ -170,7 +170,7 @@ It is beneficial for performance to avoid "warp divergence"
 e.g.,
 ```
   int tid = blockIdx.x*blockDim.x + threadIdx.x;
-  
+
   if (tid % 2 == 0) {
     /* threads 0, 2, 4, ... */
   }
@@ -182,7 +182,7 @@ may cause seralisation. For this reason you may see things
 like
 ```
   int tid = blockIdx.x*blockDim.x + threadIdx.x;
-  
+
   if ((tid / warpSize) % 2 == 0) {
      /* threads 0, 1, 2, ... */
   }
