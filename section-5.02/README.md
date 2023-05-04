@@ -4,7 +4,7 @@ If one has more than one GPU, and certainly if one has
 more than one node with GPUs, it is natural to ask how
 to think about programming with MPI.
 
-First, this may require a design decission about how
+First, this may require a design decision about how
 to go about the problem.
 
 ## Setting the device based on rank
@@ -55,11 +55,8 @@ also favour use of GPU-aware MPI.
 ## Exercise
 
 The NVIDIA HPC SDK includes a build of OpenMPI with GPU-aware MPI
-enabled. A sample program has been provded with measures the time
+enabled. A sample program has been provided with measures the time
 taken for messages of different size to be send between to MPI
 tasks by the two methods outlined above.
 
 Have a look at the program, and try to compile and run it.
-
-
-
