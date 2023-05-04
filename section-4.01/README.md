@@ -115,10 +115,11 @@ Suggested procedure:
    `cudaMallocHost()` and make the appropriate adjustment to free
    resources at the end of execution.
 
-### Finished
+### Finished?
 
 Note that it is possible to add a meaningful label to a stream
-(and to other types of object) via the NVTX library. For a stream use:
+(and to other types of object) via the NVTX library. The label
+will then appear in the Nsight profile. For a stream use:
 ```
   void nvtxNameCudaStreamA(cudaStream_t stream, const char * name);
 ```
