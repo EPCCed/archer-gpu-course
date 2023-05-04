@@ -178,7 +178,7 @@ simple helper functions to hide this complexity.
 
 The information is added via:
 ```
-  cudaGraphAddMemcpyNode(mNode, myGraph, &kNode, 1, &mParams);
+  cudaGraphAddMemcpyNode(&mNode, myGraph, &kNode, 1, &mParams);
 ```
 where we have made it dependent on the preceding kernel node.
 
