@@ -92,7 +92,7 @@ Consider a one-dimensional example:
 
   a_output[i] = a_input[i];
 ```
-Here, there is no issue, consectutive threads (those with consecutive
+Here, there is no issue, consecutive threads (those with consecutive
 x-index) access consecutive memory locations.
 
 
