@@ -189,7 +189,7 @@ A suggested procedure is:
    must become two-dimensional.
 
 5. Is your resultant code getting the coalescing right? Consecutive
-   threads, that is, threads with consecutive $x$-index, should
+   threads, that is, threads with consecutive x-index, should
    access consecutive memory location.
 
 
