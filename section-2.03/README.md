@@ -155,7 +155,7 @@ A suggested procedure is:
       cudaError_t cudaMemset(void * dptr, int value, size_t sz);
    ```
    to initialise all the device matrix elements to zero directly. The template
-   should compile and run, but will not compute the correct ansswer as the
+   should compile and run, but will not compute the correct answer as the
    kernel stub supplied does nothing.
 2. Implement the most simple kernel in which the update is entirely
    serialised. E.g.,
