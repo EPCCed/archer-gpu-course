@@ -124,10 +124,10 @@ thread making a strided memory access.
 
 ## Exercise (30 minutes)
 
-The following exercise will examine the issue of paralllem and occupancy.
-The the current directory is a template `exercise_dger.cu` in which you
+The following exercise will examine the issue of parallelism and occupancy.
+The current directory is a template `exercise_dger.cu` in which you
 are asked to implement a kernel which computes the following matrix
-operation
+operation:
 ```
   A_ij := A_ij + alpha x_i y_j
 ```
@@ -135,7 +135,7 @@ for a matrix A with m rows and n columns, a vector `x` of length m, a
 vector `y` of length n, and constant `alpha`. The data type is
 `double` in all cases.
 
-For the matrix `a` we will adopted a flattened one-dimensional indexing
+For the matrix `a` we will adopt a flattened one-dimensional indexing
 for which element row `i` and column `j` is addressed as `a[i*ncol + j]`.
 
 As this is partly a performance issue (a correct answer is also required!)
@@ -155,7 +155,7 @@ A suggested procedure is:
       cudaError_t cudaMemset(void * dptr, int value, size_t sz);
    ```
    to initialise all the device matrix elements to zero directly. The template
-   should compile and run, but will not compute the correct ansswer as the
+   should compile and run, but will not compute the correct answer as the
    kernel stub supplied does nothing.
 2. Implement the most simple kernel in which the update is entirely
    serialised. E.g.,
@@ -189,7 +189,7 @@ A suggested procedure is:
    must become two-dimensional.
 
 5. Is your resultant code getting the coalescing right? Consecutive
-   threads, that is, threads with consecutive $x$-index, should
+   threads, that is, threads with consecutive x-index, should
    access consecutive memory location.
 
 
