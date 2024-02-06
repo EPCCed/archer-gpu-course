@@ -7,7 +7,7 @@ A more general mechanism, added more recently in CUDA, introduces the
 idea of a graph.
 
 Graphs can be used to orchestrate complex workflows, and may be
-particularly unseful in amortising the overhead of many small
+particularly useful in amortising the overhead of many small
 kernel launches.
 
 Note: the latest HIP does support a subset of Graph API operations,
