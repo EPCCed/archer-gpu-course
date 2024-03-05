@@ -50,7 +50,7 @@ function name, and the arguments.
 We must arrange that the product of the number of blocks and the
 number of threads per block give the correct total number of
 threads for the problem at hand (i.e., `ARRAY_LENGTH`). This is
-only valid is `ARRAY_LENGTH` is the number of threads per block.
+only valid if `ARRAY_LENGTH` is the number of threads per block.
 
 We have introduced the structure
 ```
