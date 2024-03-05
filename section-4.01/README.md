@@ -72,7 +72,7 @@ This matches the full form of the analogous `cudaLaunchKernel()`:
 
 ## Page-locked, or pinned, memory
 
-CUDA provides a mechanism to allow it control allocations made on the host.
+CUDA provides a mechanism to allow it to control allocations made on the host.
 So far we have used `malloc()`.
 
 By using, e.g.,

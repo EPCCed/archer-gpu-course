@@ -10,10 +10,12 @@
  * a vector of length n, and alpha is a constant. The data type
  * is double.
  *
- * Part 1. Replace the explicit cudaMalloc()/cudaMemcpy() by
- *         managed memory.
- * Part 2. Add prefetch requests for x and y before the kernel,
- *         and the matrix a after the kernel.
+ * Part 1. For vectors x and y replace the relevant cudaMemcpy() 
+ *         with an asynchronous operation using two different streams. 
+ *         Make sure that the data has reached the device before the kernel launch.
+ * Part 2. Check you can replace the host allocations of x and y with
+ *         cudaMallocHost() and make the appropriate adjustment to free resources 
+ *         at the end of execution.
  *
  * Copyright EPCC, The University of Edinburgh, 2023
  */
