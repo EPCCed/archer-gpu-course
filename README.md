@@ -1,6 +1,6 @@
 
 <img src="./images/archer2_logo.png" align="left" width="355" height="100" />
-<img src="./images/epcc-logo.png" align="right" height="100" />
+<img src="./images/epcc-logo.png" align="right" height="80" />
 
 <br><br><br><br>
 
