@@ -135,7 +135,7 @@ This is done via
 ```
 The `cudaMemoryAdvise` value may include:
 
-1. `cudaMemAdviseSetReadMostly` indicates infrequent reads;
+1. `cudaMemAdviseSetReadMostly` indicates infrequent writes;
 2. `cudaMemAdviseSetPreferredLocation` sets the preferred location to
    the specified device (`cudaCpuDeviceId` for the host);
 3. `cudaMemAdviseSetAccessedBy` suggests that the data will be accessed
@@ -157,7 +157,7 @@ performance and is simple to do so.
 
 ## Exercise (15 minutes)
 
-It the current directory we have supplied as a template the solution
+In the current directory we have supplied as a template the solution
 to the exercise to the previous section. This just computes the
 operation `A_ij := A_ij + alpha x_i y_j`.
 
