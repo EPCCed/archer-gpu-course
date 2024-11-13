@@ -198,7 +198,7 @@ A suggested procedure is:
 
 If we had not used `cudaMemset()` to initialise the device values for
 the matrix, what other options to initialise these values on the device
-are available to us? (cudaMemset()` is limited in that it can only be
+are available to us? (`cudaMemset()` is limited in that it can only be
 used to initialise array values to zero, but not to other, non-zero, values.
 
 For your best effort for the kernel, what is the overhead of the actual
