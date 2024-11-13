@@ -52,6 +52,7 @@ $ cd archer-gpu-course
 For the examples and exercises in the course, we will use the
 NVIDIA compiler driver `nvcc`. To access this
 ```
+$ module load gcc
 $ module load nvidia/nvhpc
 ```
 Check you can compile and run a very simple program
