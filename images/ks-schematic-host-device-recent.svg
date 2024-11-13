@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.2432572"
-     inkscape:cx="511.96164"
-     inkscape:cy="300.01837"
+     inkscape:zoom="3.2796268"
+     inkscape:cx="440.44646"
+     inkscape:cy="370.16407"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -40,8 +40,8 @@
      inkscape:snap-text-baseline="true"
      inkscape:window-width="1440"
      inkscape:window-height="830"
-     inkscape:window-x="391"
-     inkscape:window-y="202"
+     inkscape:window-x="403"
+     inkscape:window-y="200"
      inkscape:window-maximized="0"
      fit-margin-top="0"
      fit-margin-left="0"
@@ -52,7 +52,7 @@
     <inkscape:grid
        type="xygrid"
        id="grid815"
-       empspacing="10"
+       empspacing="5"
        spacingx="0.26458333"
        spacingy="0.26458333"
        originx="-17.874881"
@@ -141,9 +141,10 @@
        y="21.833326" />
     <path
        style="fill:#ff0000;fill-opacity:0.497664;stroke:#000000;stroke-width:0.576311;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
-       d="m 152.63349,109.67502 -3.99946,-4.76249 v 1.5875 H 131.8243 v 6.60165 h 16.80973 v 1.33584 z"
+       d="m 157.57464,109.67502 -3.99946,-4.76249 v 1.5875 h -31.98369 l 0.11684,6.61458 31.86685,-0.0129 v 1.33584 z"
        id="path2266-0-9"
-       inkscape:connector-curvature="0" />
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccccccc" />
     <rect
        style="opacity:0.54100001;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.95742708;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
        id="rect944-8"
@@ -302,9 +303,10 @@
          y="121.38146">O(100) GB/s</tspan></text>
     <path
        style="fill:#ff0000;fill-opacity:0.497664;stroke:#000000;stroke-width:0.568937;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
-       d="m 130.78612,128.44752 3.89775,4.76251 v -1.5875 h 16.38226 v -6.60167 h -16.38226 v -1.33584 z"
+       d="m 122.84862,128.44752 3.89775,4.76251 v -1.5875 l 32.00363,0.0129 v -6.61458 l -32.00363,0 v -1.33584 z"
        id="path2266-8"
-       inkscape:connector-curvature="0" />
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccccccc" />
   </g>
   <g
      inkscape:groupmode="layer"
