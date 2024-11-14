@@ -1,6 +1,6 @@
 
 <img src="./images/archer2_logo.png" align="left" width="355" height="100" />
-<img src="./images/epcc_logo.jpg" align="right" width="133" height="100" />
+<img src="./images/epcc-logo.png" align="right" height="80" />
 
 <br><br><br><br>
 
@@ -88,7 +88,7 @@ the advertised start and finish times, and the break times.
 |       | Abstraction; host code and device code   | [section-1.02](section-1.02) |
 | 11:00 | Break                                    |                              |
 | 11:30 | CUDA/HIP programming: memory managenent  |                              |
-|       | `cudaMaloc(), cudaMmecpy()`              | [section-2.01](section-2.01) |
+|       | `cudaMalloc(), cudaMemcpy()`              | [section-2.01](section-2.01) |
 | 12:15 | Executing a kernel                       |                              |
 |       | `__global__` functions `<<<...>>>`       | [section-2.02](section-2.02) |
 | 13:00 | Lunch                                    |                              |
