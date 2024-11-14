@@ -92,7 +92,7 @@ via `cudaMemcpy()`. Schematically,
 ```
 
 These are *blocking* calls: they will not return until the data has been
-stored in GPU memory (or and error has occurred).
+stored in GPU memory (or an error has occurred).
 
 Formally, the API reads
 ```

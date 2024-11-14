@@ -131,7 +131,7 @@ For AMD GPUs, the picture is essentially similar, although some of the
 jargon differs.
 
 
-## Host/device picture
+## Host/device (historical) picture
 
 GPUs are typically 'hosted' by a standard CPU, which is responsible
 for orchestration of GPU activities. In this context, the CPU and GPU
@@ -139,6 +139,20 @@ are often referred to as *host* and *device*, respectively.
 
 ![Host/device schematic](../images/ks-schematic-host-device.svg)
 
+There is clearly potential for a bottleneck in transfer of data
+between host and device.
+
 
 A modern configuration may see the host (a multi-core CPU) host 4-8
 GPU devices.
+
+
+## Host/device picture
+
+The most recent hardware has attempted to address the potential
+bottleneck in host/dvice transfer by using a higher bandwidth
+"chip-to-chip " connection.
+
+![Host/device schematic](../images/ks-schematic-host-device-recent.svg)
+
+This model here is typically 1 CPU associated with 1 GPU.

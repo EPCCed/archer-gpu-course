@@ -14,7 +14,7 @@ organisation of threads.
 If we have a one-dimensional problem, e.g., an array, we can assign
 individual elements to threads.
 
-![A single thread block in one dimension](../images/ks-threads.jpeg)
+![A single thread block in one dimension](../images/ks-threads-1d-1block.svg)
 
 Threads are typically executed in groups of 32, known as a *warp*
 (the terminology is borrowed from weaving).
@@ -25,7 +25,7 @@ Threads are typically executed in groups of 32, known as a *warp*
 Groups of threads are further organised into blocks. In our
 one-dimensional picture we may have:
 
-![Threads and blocks in one dimension](../images/ks-threads-blocks.jpeg)
+![Threads and blocks in one dimension](../images/ks-threads-1d-3blocks.svg)
 
 Blocks are scheduled to SMs.
 
@@ -39,7 +39,7 @@ the maximum number of threads per block is 1024. A value of
 For two-dimensional problems (e.g., images) it is natural to have
 a two-dimensional Cartesian picture:
 
-![Threads and blocks in two dimensions](../images/ks-threads-blocks-grids.jpeg)
+![Threads and blocks in two dimensions](../images/ks-threads-2d-4blocks.svg)
 
 The arrangement of blocks is referred to as the *grid* in CUDA.
 
